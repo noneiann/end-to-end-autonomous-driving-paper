@@ -1,0 +1,68 @@
+\chapter{Introduction}
+
+Rather than relying on manually tuned classical controllers, this study implements an end-to-end control strategy where a single neural network is responsible for the entire navigation pipeline, from perception to actuation. By preprocessing the environment using ArUco-based localization, the 'intelligence' is shifted from complex feature extraction to direct motion planning. This eliminates the latency and complexity associated with tuning PID gains, resulting in a potentially better architecture where the robot learns to interpret geometric spatial relationships and execute smooth motor responses simultaneously.
+
+\section{Background of the Study}
+
+Autonomous navigation is the ability of robots and autonomous vehicles to generate a path and move along it without human intervention, utilizing data captured from onboard sensors and sometimes remote navigation aids \cite{Cebollada2020MobileRoboticsAI}. These systems consistently rely on simultaneous localization and mapping (SLAM) for autonomous navigation. Additionally, these systems also utilize LiDAR, depth cameras, or multi-sensor fusion \citep{Liu2024IndoorSensingReview, Wei2024SLAMResearchReview, Zhu2023CameraLidarIMUFusionSLAMSurvey}. While generally effective, these robotic systems demand high computational costs, expensive robotics components, and complex software integration requirements, which makes them less accessible for developing low-cost robotics platforms \citep{Chea2023CollaborativeConstructionRobot}. To address these limitations, previous studies have already explored computer-vision navigation using fiducial markers, which offer a simple, lightweight, and reliable framework for localization, particularly in structured environments \citep{Alghamdi2025MobileRobotMarkersMapping}.
+
+According to \cite{Kuzmenko_2025}, a fiducial marker refers to a specialized code-type marker used in computer vision, which is set in an environment or scene to help imaging systems find reference points. The robustness of fiducial markers such as ArUco and AprilTag in providing low-cost localization has already been explored in a 2025 systematic review of the mapping of mobile robot navigation \citep{Alghamdi2025MobileRobotMarkersMapping}. The study of \cite{Mantha2022FiducialNetworkNavigation} concluded that marker size, spacing, and the placement of a fiducial marker may affect robot navigation, well-designed markers show potential in achieving high success rates with minimal computational overhead. 
+
+Several recent studies probed the ability of ArUco markers to provide indoor localization for autonomous robot navigation. Research on planar indoor localization using ArUco \cite{Hinderer2025ArucoPlacementIndoor} and multi-marker setups illustrates that planar marker fields can deliver accurate 2-D pose estimates which are appropriate for autonomous robot navigation \citep{Lin2023MarkerBasedLocalization}, especially when combined with simple filters or odometry. To further maximize localization, multi-camera setups are also explored, as seen in the study of \cite{Sevgi2025MulticameraIndoorAruco}. Studies on fiducial‑marker networks for indoor navigation \citep{Braun2022RobotAtFactoryLocalization} explicitly frame markers as an alternative to the expensive SLAM for building service and inspection robots, highlighting low instrumentation and computation as key advantages.
+
+For robot navigation, recent research has shown interest in using end-to-end frameworks that map visual input directly to steering \citep{Han2024NeuPAN} or obstacle avoidance actions, usually with deep reinforcement learning or attention-based architecture \citep{Zhou2025DRLSpatiotemporalTransformer, Yu2025RLAUVMotionSystems}. Although such methods can achieve strong obstacle avoidance performance in simulation or structured test environments, multiple studies emphasize issues with stability, overfitting, and susceptibility to noise, leading to poor generalization outside training conditions. 
+
+Current research in End-to-End Visual Navigation (e.g., NVIDIA’s PILOTNet) focuses predominantly on unstructured environments using raw, ego-centric camera feeds. Because these systems must implicitly learn to interpret depth, perspective, and 3D geometry from raw pixels, they require deep, computationally expensive Convolutional Neural Networks (CNNs). This requires high-performance onboard hardware (GPUs), which significantly increases system cost and complexity.
+
+There is a distinct lack of research that leverages geometric constraints to simplify this learning process. Most existing studies either use fiducial markers (like ArUco) solely for coordinate-based localization or rely on heavy deep learning models for raw visual perception. Few have explored bridging these domains by using markers to pre-process the visual feed.
+
+This study addresses this gap by proposing a lightweight architecture where ArUco-based homography is used to transform raw video frames into rectified, top-down (Birds-Eye-View) images. By feeding these geometrically simplified images, rather than raw perspective views, into the neural network, the complexity of the learning task is greatly reduced. This allows a standard CNN to map visual inputs directly to steering angles with high accuracy, enabling robust end-to-end autonomous navigation on significantly constrained hardware.
+
+
+\section{Statement of the Problem} 
+This study aims to address the lack of an accessible, low‑cost autonomous navigation framework for small indoor mobile robots that relies solely on camera input and operates in a structured 2‑D environment, since existing SLAM‑based solutions depend on expensive sensors, high computational resources, and complex software pipelines, while current computer‑vision and self-driving approaches either overlook planar ArUco‑based localization or fail to integrate it with end-to-end strategies in a way that is suitable for resource‑constrained platforms.
+
+
+\section{Research Objective} 
+The following are the general objective and specific objectives of the study.
+
+\subsection{General Objective}
+To develop an autonomous vehicle system utilizing an end-to-end Convolutional Neural Network (CNN) architecture that maps raw visual input directly to steering and throttle actuation signals, eliminating the need for intermediate feedback control algorithms (PID).
+
+
+\subsection{Specific Objectives}
+\begin{enumerate}
+    \item To implement a robust Inverse Perspective Mapping (IPM) pipeline using ArUco markers for dynamic homography calibration, capable of transforming angled, ego-centric RGB camera frames into rectified, top-down, bird’s-eye view (BEV) representations of the local path.
+    \item To construct a specialized behavioral cloning dataset consisting of synchronized pairs of preprocessed BEV path images and human-demonstrated steering angles, collected across various track configurations.
+    \item To design and train a regression-based Convolutional Neural Network (CNN) architecture that maps high-dimensional BEV visual inputs directly to continuous steering commands (and optionally linear velocity), utilizing Mean Squared Error (MSE) loss for optimization.
+    \item To deploy the trained model onto the vehicle's onboard computer (e.g., Raspberry Pi or Jetson) such that the inference output is sent directly to the motor drivers without corrective feedback or error-calculation layers.
+    \item To test the vehicle's ability to navigate a course autonomously, measuring success based on lane-keeping accuracy and smoothness of motion, and comparing these metrics against the original human training data.
+\end{enumerate}
+
+%\section{Proposed Solution} 
+
+\section{Scope and Limitations of the Research}
+This study focuses on the development of a low-cost, end-to-end autonomous navigation system using a single onboard RGB camera. The system utilizes Inverse Perspective Mapping (IPM) facilitated by ArUco markers to process visual inputs.
+
+The hardware implementation is restricted to computationally constrained platforms (e.g., Raspberry Pi or NVIDIA Jetson Nano) to validate the lightweight nature of the proposed architecture. The robot operates exclusively in structured environments where ArUco markers can be reliably detected, and no 3-D mapping, LiDAR, or depth-based perception is included. Unlike traditional SLAM systems that integrate probabilistic mapping and multi-sensor fusion \cite{Cadena2016SLAMRobustPerception, Cieslewski2017DecentralizedVisualSLAM}, this study does not attempt full environment reconstruction or dynamic obstacle mapping. Instead, localization is constrained to planar marker fields consistent with research demonstrating accurate 2-D pose estimation using fiducials \citep{GarridoJurado2014FiducialMarkers, RomeroRamirez2018SpeededFiducialDetection}.
+
+As for the environmental scope of this study, the navigation environment is limited to structured, planar indoor surfaces with consistent artificial lighting. The robot operates within an area of interest, which is a predefined 2-D plane where ArUco markers are visible and explicitly placed to define track boundaries or reference points. The system is not designed for outdoor environments, uneven terrain, or varying illumination conditions.
+
+Neural-network steering prediction is trained only on data collected within the experimental environment. Thus, the learned model is not expected to generalize to unstructured or markerless environments, consistent with known limitations of end-to-end visual navigation models regarding generalization and noise sensitivity \citep{Bansal2020ChauffeurNet, Codevilla2019BehaviorCloningLimits}. The evaluation metrics, path accuracy, time to goal, and success rate, are limited to controlled indoor trials and do not include long-term autonomy, multi-robot coordination, or obstacle-rich navigation.
+
+\section{Significance of the Research } 
+This study contributes to the growing demand for accessible and low cost autonomous driving robot navigation frameworks by presenting a system that removes the need for expensive sensors, advanced SLAM algorithms, and high-end computing hardware. While previous works have highlighted that fiducial markers such as Aruco provide efficient localization \citep{GarridoJurado2014FiducialMarkers, RomeroRamirez2018SpeededFiducialDetection}, relatively few studies have used these markers into a complete low cost 2-D navigation system suited for educational or research purposes.
+
+This research contributes to the field of robotic control by exploring the potential of End-to-End Imitation Learning in constrained environments. While previous works have validated ArUco markers for localization \citep{RomeroRamirez2018SpeededFiducialDetection} and CNNs for visual navigation separately, this study bridges these domains. It investigates whether a homography-based pre-processing step can simplify visual inputs enough to allow a lightweight neural network to provide navigation controls accurately without the computational overhead of deeper, complex architectures.
+
+The study is locally and globally significant because it provides:
+
+\begin{enumerate}
+    \item This study provides a framework for implementing these advanced Deep Learning concepts using only a standard webcam and a microcontroller, making the technology accessible for educational and low-resource industrial applications.
+    \item A simple experimental platform for teaching concepts related to localization, control systems, and machine learning.
+    \item A replicable and scalable framework for researchers exploring low-cost autonomous navigation in structured indoor spaces.
+\end{enumerate}
+
+Overall, this study aims to address the gaps in the literature by producing a fully integrated, low-cost navigation framework that combines fiducial-marker localization and End-to-End robot control, offering a practical solution for accessible autonomous robot navigation systems.
+
+%\blindtext

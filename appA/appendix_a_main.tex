@@ -1,0 +1,39 @@
+\chapter{Calendar of Activities}
+
+\begin{table}[h]
+\centering
+\caption{Project Implementation Schedule and Timeline}
+\label{tab:project_schedule}
+\resizebox{0.9\linewidth}{!}{% scale to 90% of text width
+\renewcommand{\arraystretch}{1.1}%
+\begin{tabularx}{\textwidth}{@{} l X l @{}}
+\toprule
+\textbf{Phase} & \textbf{Activity} & \textbf{Timeline} \\
+\midrule
+\multicolumn{3}{@{}l}{\textbf{I. Hardware Setup}} \\
+& Hardware \& system configuration & Jan Week 1--2 \\
+& Chassis assembly \& wiring        & Jan Week 2--3 \\
+& Camera mounting \& calibration    & Jan Week 2--3 \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textbf{II. Software Development}} \\
+& OS \& environment setup           & Jan Week 3--4 \\
+& Dev: perception (homography)      & Jan Week 4--Feb Week 6 \\
+& Dev: data logger module           & Feb Week 6--7 \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textbf{III. Data Pipeline}} \\
+& Dataset collection (driving)      & Feb Week 7--Mar Week 9 \\
+& Data cleaning \& augmentation     & Mar Week 10--11 \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textbf{IV. Model Development}} \\
+& CNN architecture design \& dev.   & Mar Week 12--13 \\
+& Model training (GPU)              & Apr Week 13--14 \\
+& Hyperparameter tuning             & Apr Week 14--15 \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textbf{V. Integration \& Testing}} \\
+& Deployment to robot               & May Week 14--15 \\
+& Scenario testing (A, B, C)        & May Week 15--17 \\
+& Analysis \& documentation         & May Week 17 \\
+\bottomrule
+\end{tabularx}
+}% end resizebox
+\end{table}
