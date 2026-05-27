@@ -43,6 +43,8 @@
 \usepackage{pdflscape}
 \usepackage{pgfgantt}
 \usepackage{xcolor}
+\usepackage{tabularx}
+
 %% ***************** (Your) Packages (End) *******************
 
 
@@ -58,11 +60,16 @@ Autonomous Navigation using Homography-Based Overhead Localization
 }                                                   % use \\ here otherwise you get a justified title
                                                     % note capitalization of the title (only common 
                                                     % words in lower case) 
+
+\makeatletter
+\def\@tagline{}
+\makeatother
+
 \author{John Christian Niño T. Abuel \\
         Rey Iann Tigley\\
         Kervin Lemuel Paalisbo\\
         }                             
-        
+
 \supervisor{Asst Prof. Renato V. Crisostomo, MSCS}                 % your supervisor(s) name - no . in Dr
 %\cosupervisor{Dr Who}                              % your cosupervisor(s) name - no . in Dr ** OPTIONAL ** 
                                                     % simply comment out the above line if absent
