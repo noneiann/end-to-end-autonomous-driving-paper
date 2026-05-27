@@ -1,14 +1,69 @@
-\chapter{Conclusions}
-\textbf{This section should have a summary of the whole project.  The original aims and objective and whether these have been met should be discussed. It should include a section with a critique and a list of limitations of your proposed solutions.  Future work should be described, and this should not be marginal or silly (e.g.\ add machine learning models).  It is always good to end on a positive note (i.e.\ `Final Remarks').}
+\chapter{Conclusions and Recommendations}
 
-\section{Achieved Objectives}
-\blindtext
+\section{Summary of Findings}
 
-\section{Critique and Limitations}
-\blindtext
+This study developed and evaluated a lightweight, end-to-end autonomous navigation framework for a differential-drive robot operating in a structured indoor environment. The system replaced traditional sensor-heavy approaches such as LiDAR-based SLAM and multi-sensor fusion with a single overhead RGB camera and four ArUco fiducial markers. A planar homography matrix was dynamically computed at runtime to transform the angled camera feed into a geometrically rectified Bird's-Eye View (BEV) representation of the arena. A modernized DAVE-2 Convolutional Neural Network (CNN), trained exclusively through Behavioral Cloning on human-demonstrated steering data, then mapped this preprocessed visual state directly to continuous steering commands without any intermediate PID feedback or classical planning algorithm.
 
-\section{Future Work}
-\blindtext
+Physical deployment initially revealed a critical failure mode: the allocentric (full-AOI) state representation caused the network to overfit to the robot's absolute pixel position rather than learn generalizable path-following features, a manifestation of the ``Clever Hans'' effect in machine learning. This issue was resolved through an architectural pivot to an egocentric perception model, wherein the CNN received only a robot-centered crop drawn on a semantically abstracted black canvas. This information bottleneck forced the convolutional layers to learn translation-invariant relative geometric features.
+
+The resulting egocentric model successfully navigated straight paths, 90-degree turns, U-turns, and off-center recovery scenarios, demonstrating that homography-based preprocessing combined with a strict visual information bottleneck can substantially bridge the gap between offline training loss and real-world kinematic performance.
+
+\section{Conclusion}
+
+This study conclusively demonstrates that a lightweight end-to-end autonomous navigation framework using homography-based overhead localization over an egocentric semantic state representation approach can achieve reliable autonomous navigation on a resource-constrained robotic platform. The research directly addressed the central problem statement: the absence of an accessible, low-cost autonomous navigation framework that operates exclusively on camera input in a structured planar environment.
+
+The proposed system fulfilled this requirement without resorting to expensive range sensors, probabilistic mapping pipelines, or high-end onboard computing hardware. A central achievement of this work was the successful elimination of classical PID feedback loops from the control architecture. The trained DAVE-2 CNN produced sufficiently smooth and accurate continuous steering outputs to maintain stable path following across all tested track topologies, including geometrically demanding 90-degree turns and hairpin U-turns.
+
+This validates the core hypothesis of end-to-end Behavioral Cloning: that a neural network, given a well-constructed visual state, can implicitly learn the non-linear control mapping that a PID controller approximates explicitly. The absence of derivative-term damping did not produce the oscillatory behavior commonly associated with proportional-only controllers, suggesting that the CNN learned a temporally coherent steering policy from the expert demonstrations.
+
+Perhaps the most significant and transferable finding of this study is the decisive role of the visual information bottleneck in bridging the sim-to-real gap inherent in Behavioral Cloning. The full-AOI allocentric model achieved low validation loss during training yet failed catastrophically in physical deployment, demonstrating a textbook manifestation of covariate shift exacerbated by misleading spatial memorization. By replacing this representation with a semantically abstracted robot-centered crop on a black canvas, the network's input distribution became invariant to the robot's absolute arena position.
+
+This forced the convolutional feature extractor to operate exclusively on relative geometric cues such as the curvature, orientation, and proximity of the approaching path boundaries, which are the only features that generalize across track positions and recovery scenarios. This architectural decision became the definitive factor separating successful real-world deployment from offline training success and represents a replicable design principle for future low-cost end-to-end navigation systems.
+
+More broadly, this study demonstrates that the integration of classical geometric computer vision, specifically projective homography, with modern imitation learning is a viable and computationally efficient strategy for structured indoor robot navigation. By offloading the burden of 3D geometry interpretation from the neural network to a deterministic analytical transformation, the complexity of the learning task was substantially reduced.
+
+A standard CNN with fewer than 300,000 parameters was sufficient to learn reliable path-following behaviors that would otherwise require much deeper architectures when operating on raw perspective images. The system's successful operation on a laptop-class GPU, with real-time inference delivered over a local wireless link to a low-cost microcontroller-driven robot, further confirms the feasibility of this approach for educational and resource-constrained industrial applications.
+
+\section{Recommendations for Future Work}
+
+\subsection{Onboard Hardware Acceleration and Latency Reduction}
+
+The current architecture offloads all image processing and CNN inference to a remote workstation, with control commands transmitted to the robot over a local Wi-Fi link. This centralized design introduces network-dependent latency that may become problematic at higher robot velocities or in environments with wireless interference.
+
+Future work should explore migrating the inference pipeline directly onto an onboard edge computing platform. Deploying the trained DAVE-2 model on an NVIDIA Jetson Nano or a Google Coral Edge TPU would eliminate the round-trip network delay and increase the effective control loop frequency beyond the current target of 15--20 Hz.
+
+Model compression techniques such as post-training quantization (INT8) and structured pruning should also be evaluated, as the simplified BEV input representation suggests that the network may be substantially over-parameterized for the task.
+
+\subsection{Dynamic Obstacle Integration}
+
+A fundamental limitation of the current Behavioral Cloning approach is its inability to safely handle dynamic obstacles. The training dataset captures human driving in a static environment, and the learned policy has no mechanism for detecting or responding to objects that appear unexpectedly on the track.
+
+Future iterations should investigate integrating the existing vision pipeline with lightweight secondary sensing modalities. Ultrasonic rangefinders or miniature 1D LiDAR sensors mounted on the robot chassis could provide a proximity signal that triggers a rule-based stop or yield behavior operating independently of the CNN controller.
+
+Alternatively, a lightweight object detection module such as MobileNet-SSD running in parallel on the overhead frame could inject obstacle presence as an additional channel in the state representation, allowing the CNN to learn obstacle-aware steering policies through augmented data collection sessions.
+
+\subsection{Arena Scaling and Marker-Free Generalization}
+
+The current system is constrained to a predefined arena bounded by four fixed ArUco corner markers, limiting its operational area to approximately one square meter in the prototype implementation.
+
+Future work should investigate scaling the homography framework to larger environments through distributed marker networks or the use of higher-resolution cameras with wider fields of view. A more ambitious extension would explore replacing the fiducial-marker homography system with a learned monocular depth estimation module capable of generating approximate BEV representations in environments where physical marker installation is impractical.
+
+\subsection{Dataset Augmentation and Robustness to Illumination Variation}
+
+The trained model is sensitive to environmental conditions that affect ArUco marker detectability, particularly inconsistent or low-contrast lighting. Because the current training dataset was collected under controlled artificial lighting conditions, the learned policy is not robust to detection failures caused by natural light variation, specular reflections, or partial marker occlusion.
+
+Future data collection protocols should deliberately include sessions under varied lighting conditions, shadow patterns, and partial marker visibility to improve the robustness of the perception pipeline. Additionally, offline data augmentation strategies such as synthetic brightness and contrast jitter applied to the egocentric crops may improve the CNN's tolerance to minor rendering artifacts without requiring additional physical driving sessions.
+
+\subsection{Recurrent and Attention-Based Architectures}
+
+The current DAVE-2 architecture processes each frame independently as a stateless regression model. This design does not leverage temporal context, such as recent steering history or the observed trajectory of the approaching path over preceding frames.
+
+Integrating a recurrent module such as a Long Short-Term Memory (LSTM) layer appended to the fully connected stack, or a lightweight spatiotemporal attention mechanism, could enable the network to anticipate upcoming curves based on changes in path curvature rather than reacting solely to the instantaneous visual state.
+
+This is particularly relevant for suppressing the residual oscillatory steering behavior observed at higher throttle speeds, where latency in the single-frame control loop becomes a contributing factor to instability.
 
 \section{Final Remarks}
-\blindtext
+
+This research demonstrates that reliable autonomous navigation can be achieved using a minimal and low-cost vision-based framework when classical geometric transformations are effectively combined with modern imitation learning techniques. The study highlights the importance of carefully designing the robot's visual state representation, particularly in mitigating overfitting and improving sim-to-real transfer performance.
+
+By leveraging homography-based overhead localization and an egocentric semantic perception pipeline, the proposed system achieved stable real-world navigation without relying on expensive sensing hardware or computationally intensive mapping algorithms. The findings of this study contribute toward the development of accessible and scalable autonomous robotic systems suitable for educational, research, and resource-constrained deployment scenarios.
