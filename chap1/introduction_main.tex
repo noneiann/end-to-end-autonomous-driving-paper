@@ -36,7 +36,7 @@ To develop an autonomous vehicle system utilizing an end-to-end Convolutional Ne
     \item To construct a specialized behavioral cloning dataset consisting of synchronized pairs of preprocessed BEV path images and human-demonstrated steering angles, collected across various track configurations.
     \item To design and train a regression-based Convolutional Neural Network (CNN) architecture that maps high-dimensional BEV visual inputs directly to continuous steering commands (and optionally linear velocity), utilizing Mean Squared Error (MSE) loss for optimization.
     \item To deploy the trained model onto the vehicle's onboard computer (e.g., Raspberry Pi or Jetson) such that the inference output is sent directly to the motor drivers without corrective feedback or error-calculation layers.
-    \item To test the vehicle's ability to navigate a course autonomously, measuring success based on lane-keeping accuracy and smoothness of motion, and comparing these metrics against the original human training data.
+    \item To demonstrate and evaluate the trained controller on the physical robot (with inference executed onboard a Raspberry Pi), measuring lane‑keeping accuracy (CTE/RMSE), heading error, per‑lap consistency, and steering actuation behaviour (raw command magnitudes after scaling by $k_{steer}$), and summarizing results using confusion matrices and per‑scenario statistics.
 \end{enumerate}
 
 %\section{Proposed Solution} 
