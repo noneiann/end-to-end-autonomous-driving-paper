@@ -205,16 +205,17 @@ concerns and allowing independent testing of subsystems.
 
     \item \textbf{Inference Engine (\textit{PilotModel}):} Loads the pre-trained CNN
     weights into memory on startup and exposes a \texttt{predict()} method that accepts
-    a processed image tensor and returns the raw normalized steering command.
+    a processed image tensor and returns a normalized steering command.
 
     \item \textbf{Actuation Interface (\textit{MotorDriver}):}
     \begin{itemize}
         \item Abstracts low-level GPIO commands from the rest of the pipeline.
-        \item Converts the normalized CNN output $\in [-1.0,\ 1.0]$ into
-              hardware-specific PWM duty cycles transmitted to the L298N motor driver.
+        \item Converts the normalized CNN output into a raw steering command using a
+              fixed gain and saturation, then maps it to hardware-specific PWM duty cycles
+              transmitted to the L298N motor driver.
         \item Triggers a safety stop, defaulting all motors to zero velocity if the
               control loop is interrupted or the watchdog timer expires.
-    \end{itemize}
+        \end{itemize}
 \end{enumerate}
 
 
@@ -289,17 +290,20 @@ concerns and allowing independent testing of subsystems.
 
     \Statex
     \State \textbf{// Step 1: Pre-processing}
-    \State $input \gets \textsc{Resize}(warped\_frame, 66 \times 200)$
+    \State $input \gets \textsc{Resize}(warped\_frame, 200 \times 200)$
     \State $input \gets \textsc{NormalizePixelValues}(input)$ \Comment{Scale to range [0, 1]}
 
     \Statex
     \State \textbf{// Step 2: Deep Learning Inference}
     \State $(raw\_steer, raw\_throttle) \gets \textsc{ModelPredict}(cnn\_model, input)$
+    \State $k_{steer} \gets 50$ \Comment{Scaling gain from normalized model output to raw command}
+    \State $steering\_cmd \gets k_{steer} \cdot raw\_steer$ \Comment{Scale normalized steering}
+    \State $steer\_min, steer\_max \gets -50, 50$ \Comment{Raw command saturation bounds}
 
     \Statex
     \State \textbf{// Step 3: Safety Saturation}
     \State \Comment{Clip outputs to ensure values are within hardware limits}
-    \State $steering \gets \textsc{Clip}(raw\_steer, -1.0, 1.0)$
+    \State $steering \gets \textsc{Clip}(steering\_cmd, steer\_min, steer\_max)$
     \State $throttle \gets \textsc{Clip}(raw\_throttle, 0.0, 1.0)$
 
     \State \Return $steering, throttle$
@@ -361,7 +365,7 @@ The main execution pipeline follows a ``Sense-Think-Act'' cycle:
 \end{enumerate}
 
 \paragraph{Timing and Latency}
-To maintain smooth motion, the software is designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution is kept minimal to mitigate latency. A software watchdog is implemented to monitor the loop time; if the camera disconnects or the loop hangs, the actuation interface triggers a safety stop to prevent runaway behavior.
+To maintain smooth motion, the software is designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution is kept minimal to mitigate latency. During physical deployment the recorded telemetry timestamps indicate an effective sampling/inference frequency of approximately 60~Hz; Chapter~4 reports per-frame durations using this observed rate where relevant. A software watchdog is implemented to monitor the loop time; if the camera disconnects or the loop hangs, the actuation interface triggers a safety stop to prevent runaway behavior.
 
 
 \section{Data Acquisition and Processing}
@@ -372,7 +376,7 @@ operationalizes the Behavioral Cloning paradigm described in Section 2.7.3, cons
 supervised dataset that will serve as the sole source of driving knowledge for the Convolutional
 Neural Network. The data acquisition pipeline is designed to ensure that every recorded sample
 is a semantically meaningful, temporally synchronized pair of a preprocessed visual state and a
-human-demonstrated steering command.
+human-demonstrated steering command. Telemetry frames are recorded frame-by-frame during deployment; the recorded timestamps show an effective sampling frequency of roughly 60~Hz.
 
 \subsection{Dataset Collection}
 
@@ -384,11 +388,13 @@ controller while the overhead camera system and data logger run concurrently in 
 
 During collection sessions, the robot is driven remotely via a gamepad (e.g., Xbox-compatible
 controller) interfaced with the workstation through Python's \texttt{pygame} library. The left
-analog stick's horizontal axis is mapped to a normalized steering command
-$a_t \in [-1.0,\ 1.0]$, where $-1.0$ corresponds to a full left turn and $+1.0$ to a full right
-turn. Throttle is held at a fixed, conservative value throughout data collection, consistent with
-the deployment strategy described in Section 3.5.4, so that the network is trained exclusively
-as a steering regressor.
+analog stick's horizontal axis is mapped to a normalized steering command $\hat{u}_t \in [-1.0,\ 1.0]$
+and then scaled by a fixed steering gain to the raw command $a_t$ (we use $k_{steer}=50$, so
+$a_t = k_{steer}\cdot\hat{u}_t$, yielding raw command units in approximately $[-50,50]$). Negative
+values correspond to left turns, positive values to right turns, and $a_t \approx 0$ indicates
+straight-line motion. Throttle is held at a fixed, conservative value throughout data collection,
+consistent with the deployment strategy described in Section 3.5.4, so that the network is trained
+exclusively as a steering regressor.
 
 \subsubsection{Synchronization Protocol}
 
@@ -561,7 +567,7 @@ Following feature extraction, a flattening operation converts the multidimension
 \end{figure}
 
 Once flattened, the data passes through the Fully Connected (Dense) Layers. Three hidden dense layers (containing 100, 50, and 10 neurons, respectively) interpret the extracted spatial features to serve as the decision-making bottleneck.These layers also utilize Batch Normalization and ELU activations. 
-Furthermore, a mild Dropout rate of 10\% (0.1) is applied to the first two dense layers to provide regularization and prevent overfitting, specifically tuned to avoid variance shifts when combined with Batch Normalization. The pipeline concludes with the Output Layer, consisting of a single neuron utilizing a Hyperbolic Tangent (Tanh) activation function. This function strictly binds the output to a [-1.0, 1.0] range, corresponding directly to the vehicle's normalized steering command.
+Furthermore, a mild Dropout rate of 10\% (0.1) is applied to the first two dense layers to provide regularization and prevent overfitting, specifically tuned to avoid variance shifts when combined with Batch Normalization. The pipeline concludes with the Output Layer, consisting of a single neuron utilizing a Hyperbolic Tangent (Tanh) activation function. This bounds the normalized steering output to $[-1.0,\ 1.0]$, which is then scaled to the raw steering command for actuation and logging.
 
 \begin{table}[h!]
 \centering
@@ -759,8 +765,8 @@ environment with constant artificial lighting to minimize perception noise.
 To accurately measure the real-world kinematic performance of the robot without relying
 on manual estimation, the system utilizes an automated error-logging script during physical
 deployment. By tracking the robot's chassis-mounted ArUco marker relative to the digitally
-injected reference path, the script directly computes instantaneous error metrics
-frame-by-frame at a target frequency of 15\,Hz.
+    injected reference path, the script directly computes instantaneous error metrics
+    frame-by-frame; the recorded timestamps show an effective sampling frequency of approximately 60\,Hz during deployment.
 
 Unlike traditional SLAM-based evaluations that require logging global $(X, Y)$ spatial
 coordinates and absolute yaw angles, this lightweight evaluation pipeline records only the
