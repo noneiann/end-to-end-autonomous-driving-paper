@@ -1,178 +1,193 @@
 \chapter{Results \& Discussion}
-\textbf{Should include a reiteration of the experiments, and their outcome.  Together with a description (discussion).  Preamble should include a reminder of the aims and objectives together with a list of experiments to achieve these.  Should include many charts and other visualization with appropriate descriptions}.  
+This chapter presents the evaluation of the developed end-to-end autonomous navigation system. The results are presented chronologically, tracing the system's iterative development.
 
-\Blindtext
+To validate the necessity of the final image preprocessing architecture, the chapter first details the offline training and real-world physical testing of two early experimental baselines. By analyzing the specific failure modes of these early iterations, the empirical justification for the proposed Egocentric Dynamic Crop Model is established.
 
-\section{An Example of a Table Spanning Multiple Pages}
 
-The following is an example of a table (Table~\ref{tab:full_dude_results}) spanning multiple pages.
+\section{Chronological Development and Experimental Baselines}
+During the development of the navigation framework, the state representation of the track underwent three major iterations. All models were trained using a modified NVIDIA DAVE-2 Convolutional Neural Network (CNN) architecture with 2,211,175 parameters, processing $200 \times 200$ pixel images, and minimizing Mean Squared Error (MSE) using the Adam optimizer.
 
-\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
-\begin{center}
-	\begingroup
-	\renewcommand\arraystretch{0.66} % only applicable to this table because of group
-	\begin{footnotesize}
-		\begin{longtable}{lrrrrrrrr}
-			\caption{Performance of Ligity in HTS mode against the Ligity-compatible DUD-E targets. The mean (and standard deviation in parentheses) values of ROC AUC using Tanimoto is 0.622 ($\pm 0.132$), while for Tversky it is 0.671 ($\pm 0.142$); the mean EF\textsubscript{1\%} using Tanimoto is 5.648 ($\pm 8.668$), while for EF\textsubscript{1\%} using Tversky it is 9.047 ($\pm 12.713$).} 
-			\label{tab:full_dude_results} 
-			\\ 
-			\toprule 
-			\multicolumn{1}{l}{\textbf{Target}}
-			& \multicolumn{1}{P{1cm}}{\textbf{No.\ of Actives}}
-			& \multicolumn{1}{P{1cm}}{\textbf{No.\ of Decoys}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{ROC AUC Tanimoto}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{ROC AUC Tversky}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{BEDROC Tanimoto}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{BEDROC Tversky}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{EF\textsubscript{1\%} Tanimoto}} 
-			& \multicolumn{1}{P{1.5cm}}{\textbf{EF\textsubscript{1\%} Tversky}}\\	
-			\midrule
-			\endfirsthead
-			\midrule
-			\multicolumn{1}{l}{\textbf{Target}}
-			& \multicolumn{1}{P{1cm}}{\textbf{No.\ of Actives}}
-			& \multicolumn{1}{P{1cm}}{\textbf{No.\ of Decoys}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{ROC AUC Tanimoto}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{ROC AUC Tversky}}
-			& \multicolumn{1}{P{1.25cm}}{\textbf{BEDROC Tanimoto}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{BEDROC Tversky}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{EF\textsubscript{1\%} Tanimoto}} 
-			& \multicolumn{1}{P{1.25cm}}{\textbf{EF\textsubscript{1\%} Tversky}}\\	
-			\midrule	
-			\endhead
-			\midrule	
-			\multicolumn{7}{r@{}}{(continued\ldots)}\\
-			\endfoot
-			\endlastfoot
-			ABL1   & 182   & 10,750   & 0.563   & 0.473   & 0.077   & 0.077   & 1.653   & 2.204  \\
-			ACE    & 281   & 16,877   & 0.787   & 0.787   & 0.336   & 0.401   & 12.425  & 19.525 \\
-			ACES   & 453   & 26,242   & 0.634   & 0.645   & 0.077   & 0.155   & 1.766   & 5.518  \\
-			ADA    & 93    & 5,450    & 0.724   & 0.660   & 0.149   & 0.147   & 3.251   & 3.251  \\
-			ADA17  & 532   & 35,898   & 0.638   & 0.728   & 0.103   & 0.283   & 1.317   & 9.030  \\
-			ADRB1  & 247   & 15,850   & 0.523   & 0.647   & 0.065   & 0.129   & 1.619   & 5.262  \\
-			ADRB2  & 231   & 14,999   & 0.523   & 0.589   & 0.052   & 0.040   & 1.735   & 0.000  \\
-			AKT1   & 293   & 16,450   & 0.386   & 0.548   & 0.039   & 0.107   & 2.737   & 3.080  \\
-			AKT2   & 117   & 6,900    & 0.511   & 0.685   & 0.140   & 0.194   & 8.568   & 8.568  \\
-			ALDR   & 159   & 8,988    & 0.574   & 0.610   & 0.202   & 0.172   & 10.747  & 6.322  \\
-			AMPC   & 48    & 2,845    & 0.521   & 0.541   & 0.049   & 0.023   & 0.000   & 0.000  \\
-			ANDR   & 269   & 14,349   & 0.722   & 0.742   & 0.194   & 0.354   & 4.839   & 24.938 \\
-			AOFB   & 121   & 6,875    & 0.422   & 0.464   & 0.045   & 0.027   & 1.652   & 0.000  \\
-			BACE1  & 283   & 18,100   & 0.441   & 0.775   & 0.017   & 0.310   & 0.000   & 13.062 \\
-			BRAF   & 152   & 9,950    & 0.612   & 0.639   & 0.208   & 0.165   & 12.502  & 5.264  \\
-			CASP3  & 199   & 10,694   & 0.600   & 0.734   & 0.068   & 0.258   & 0.502   & 7.031  \\
-			CDK2   & 474   & 27,838   & 0.467   & 0.507   & 0.021   & 0.048   & 0.000   & 1.055  \\
-			COMT   & 41    & 3,846    & 0.789   & 0.889   & 0.338   & 0.665   & 19.447  & 58.341 \\
-			CP2C9  & 120   & 7,449    & 0.518   & 0.634   & 0.058   & 0.186   & 1.660   & 8.299  \\
-			CP3A4  & 170   & 11,787   & 0.450   & 0.493   & 0.022   & 0.057   & 0.000   & 2.345  \\
-			CSF1R  & 166   & 12,149   & 0.526   & 0.542   & 0.136   & 0.152   & 6.031   & 7.238  \\
-			CXCR4  & 40    & 3,405    & 0.575   & 0.722   & 0.217   & 0.134   & 12.665  & 0.000  \\
-			DEF    & 102   & 5,699    & 0.732   & 0.833   & 0.212   & 0.379   & 10.786  & 15.689 \\
-			DHI1   & 330   & 19,348   & 0.481   & 0.595   & 0.089   & 0.062   & 2.422   & 1.211  \\
-			DPP4   & 533   & 40,941   & 0.586   & 0.591   & 0.154   & 0.157   & 4.312   & 3.937  \\
-			DRD3   & 480   & 34,048   & 0.484   & 0.441   & 0.043   & 0.046   & 1.251   & 0.626  \\
-			DYR    & 231   & 17,196   & 0.694   & 0.758   & 0.210   & 0.230   & 6.504   & 7.371  \\
-			EGFR   & 542   & 35,047   & 0.593   & 0.491   & 0.054   & 0.037   & 0.922   & 0.000  \\
-			ESR1   & 383   & 20,683   & 0.838   & 0.861   & 0.527   & 0.594   & 31.281  & 39.101 \\
-			ESR2   & 367   & 20,199   & 0.844   & 0.870   & 0.563   & 0.644   & 20.130  & 32.644 \\
-			FA10   & 537   & 28,324   & 0.564   & 0.674   & 0.058   & 0.118   & 0.930   & 2.232  \\
-			FA7    & 114   & 6,249    & 0.762   & 0.859   & 0.210   & 0.332   & 6.105   & 8.721  \\
-			FABP4  & 47    & 2,749    & 0.786   & 0.744   & 0.191   & 0.276   & 0.000   & 10.623 \\
-			FAK1   & 100   & 5,350    & 0.642   & 0.531   & 0.111   & 0.065   & 2.019   & 0.000  \\
-			FGFR1  & 139   & 8,698    & 0.511   & 0.522   & 0.036   & 0.088   & 0.722   & 1.445  \\
-			FKB1A  & 111   & 5,799    & 0.605   & 0.751   & 0.162   & 0.164   & 8.122   & 3.610  \\
-			FNTA   & 592   & 51,493   & 0.411   & 0.625   & 0.012   & 0.132   & 0.000   & 4.053  \\
-			FPPS   & 85    & 8,842    & 0.917   & 0.985   & 0.323   & 0.776   & 2.360   & 36.581 \\
-			GCR    & 258   & 14,998   & 0.805   & 0.834   & 0.244   & 0.324   & 3.092   & 8.116  \\
-			GLCM   & 54    & 3,790    & 0.667   & 0.685   & 0.182   & 0.279   & 1.873   & 11.240 \\
-			GRIA2  & 158   & 11,842   & 0.662   & 0.684   & 0.248   & 0.154   & 11.392  & 5.696  \\
-			GRIK1  & 101   & 6,547    & 0.656   & 0.668   & 0.203   & 0.102   & 7.978   & 1.995  \\
-			HDAC2  & 185   & 10,300   & 0.676   & 0.734   & 0.187   & 0.201   & 4.318   & 4.318  \\
-			HDAC8  & 170   & 10,449   & 0.640   & 0.819   & 0.120   & 0.377   & 2.946   & 8.250  \\
-			HIVINT & 100   & 6,640    & 0.390   & 0.554   & 0.030   & 0.116   & 0.000   & 3.018  \\
-			HIVPR  & 535   & 35,724   & 0.663   & 0.872   & 0.072   & 0.490   & 0.187   & 23.898 \\
-			HIVRT  & 338   & 18,884   & 0.495   & 0.475   & 0.124   & 0.085   & 4.443   & 1.777  \\
-			HMDH   & 170   & 8,750    & 0.480   & 0.906   & 0.068   & 0.652   & 2.358   & 35.963 \\
-			HS90A  & 88    & 4,850    & 0.635   & 0.506   & 0.096   & 0.083   & 0.000   & 3.436  \\
-			HXK4   & 92    & 4,700    & 0.662   & 0.803   & 0.206   & 0.307   & 15.192  & 9.766  \\
-			IGF1R  & 148   & 9,300    & 0.502   & 0.575   & 0.057   & 0.189   & 2.037   & 14.941 \\
-			INHA   & 43    & 2,300    & 0.493   & 0.575   & 0.031   & 0.045   & 0.000   & 0.000  \\
-			ITAL   & 138   & 8,500    & 0.619   & 0.465   & 0.037   & 0.065   & 0.000   & 0.728  \\
-			JAK2   & 107   & 6,500    & 0.472   & 0.475   & 0.073   & 0.118   & 2.807   & 6.549  \\
-			KIF11  & 116   & 6,850    & 0.755   & 0.781   & 0.149   & 0.219   & 4.289   & 2.574  \\
-			KIT    & 166   & 10,449   & 0.463   & 0.437   & 0.045   & 0.030   & 0.000   & 0.000  \\
-			KITH   & 57    & 2,850    & 0.649   & 0.838   & 0.228   & 0.709   & 14.069  & 47.483 \\
-			KPCB   & 135   & 8,699    & 0.753   & 0.813   & 0.220   & 0.338   & 8.923   & 12.641 \\
-			LCK    & 419   & 27,391   & 0.471   & 0.437   & 0.031   & 0.043   & 0.000   & 1.910  \\
-			LKHA4  & 171   & 9,448    & 0.718   & 0.694   & 0.238   & 0.150   & 8.203   & 1.758  \\
-			MAPK2  & 101   & 6,148    & 0.660   & 0.670   & 0.174   & 0.199   & 5.988   & 3.992  \\
-			MCR    & 94    & 5,149    & 0.816   & 0.888   & 0.215   & 0.454   & 6.436   & 19.307 \\
-			MET    & 166   & 11,249   & 0.566   & 0.531   & 0.130   & 0.065   & 6.032   & 0.603  \\
-			MK01   & 79    & 4,550    & 0.518   & 0.602   & 0.121   & 0.206   & 5.095   & 3.821  \\
-			MK10   & 104   & 6,600    & 0.488   & 0.489   & 0.020   & 0.031   & 0.962   & 0.962  \\
-			MK14   & 578   & 35,847   & 0.511   & 0.589   & 0.040   & 0.064   & 0.173   & 0.519  \\
-			MMP13  & 572   & 37,199   & 0.648   & 0.753   & 0.134   & 0.268   & 2.446   & 9.957  \\
-			MP2K1  & 121   & 8,146    & 0.669   & 0.569   & 0.187   & 0.058   & 3.293   & 0.823  \\
-			NOS1   & 98    & 8,028    & 0.483   & 0.451   & 0.109   & 0.041   & 3.071   & 0.000  \\
-			NRAM   & 98    & 6,200    & 0.853   & 0.859   & 0.342   & 0.290   & 11.221  & 3.060  \\
-			PA2GA  & 99    & 5,150    & 0.793   & 0.756   & 0.225   & 0.153   & 1.020   & 3.059  \\
-			PARP1  & 508   & 30,029   & 0.635   & 0.692   & 0.215   & 0.231   & 11.234  & 7.884  \\
-			PGH1   & 195   & 10,798   & 0.645   & 0.637   & 0.077   & 0.100   & 0.000   & 2.050  \\
-			PGH2   & 435   & 23,139   & 0.716   & 0.780   & 0.166   & 0.291   & 3.444   & 9.874  \\
-			PLK1   & 107   & 6,800    & 0.658   & 0.531   & 0.123   & 0.048   & 1.871   & 0.000  \\
-			PNPH   & 103   & 6,946    & 0.575   & 0.578   & 0.161   & 0.181   & 4.888   & 8.799  \\
-			PPARA  & 373   & 19,399   & 0.783   & 0.778   & 0.262   & 0.280   & 6.693   & 7.764  \\
-			PPARD  & 240   & 12,250   & 0.547   & 0.544   & 0.078   & 0.098   & 1.665   & 2.498  \\
-			PPARG  & 484   & 25,299   & 0.515   & 0.605   & 0.055   & 0.118   & 0.619   & 4.955  \\
-			PRGR   & 293   & 15,648   & 0.740   & 0.793   & 0.142   & 0.318   & 2.053   & 14.714 \\
-			PTN1   & 130   & 7,249    & 0.398   & 0.538   & 0.055   & 0.090   & 0.000   & 3.068  \\
-			PUR2   & 50    & 2,700    & 0.851   & 0.837   & 0.281   & 0.255   & 7.857   & 1.964  \\
-			PYGM   & 77    & 3,944    & 0.403   & 0.492   & 0.016   & 0.137   & 0.000   & 3.917  \\
-			PYRD   & 111   & 6,449    & 0.682   & 0.710   & 0.462   & 0.413   & 34.027  & 16.118 \\
-			RENI   & 104   & 6,956    & 0.720   & 0.789   & 0.043   & 0.138   & 0.000   & 0.000  \\
-			ROCK1  & 100   & 6,300    & 0.347   & 0.449   & 0.020   & 0.084   & 1.000   & 4.000  \\
-			RXRA   & 131   & 6,950    & 0.788   & 0.900   & 0.219   & 0.596   & 6.091   & 27.407 \\
-			SAHH   & 63    & 3,450    & 0.874   & 0.852   & 0.598   & 0.542   & 35.050  & 27.084 \\
-			SRC    & 524   & 34,500   & 0.565   & 0.477   & 0.065   & 0.050   & 0.382   & 0.573  \\
-			TGFR1  & 133   & 8,499    & 0.609   & 0.639   & 0.147   & 0.154   & 10.565  & 4.528  \\
-			THB    & 103   & 7,450    & 0.794   & 0.762   & 0.238   & 0.150   & 10.614  & 0.965  \\
-			THRB   & 461   & 27,000   & 0.605   & 0.706   & 0.063   & 0.166   & 2.166   & 5.632  \\
-			TRY1   & 449   & 25,975   & 0.711   & 0.815   & 0.147   & 0.280   & 2.898   & 6.688  \\
-			TRYB1  & 148   & 7,650    & 0.670   & 0.670   & 0.153   & 0.132   & 3.378   & 3.378  \\
-			TYSY   & 109   & 6,745    & 0.594   & 0.725   & 0.071   & 0.226   & 0.911   & 5.468  \\
-			UROK   & 162   & 9,850    & 0.525   & 0.650   & 0.036   & 0.120   & 0.000   & 1.854  \\
-			VGFR2  & 409   & 24,948   & 0.632   & 0.578   & 0.083   & 0.093   & 1.465   & 1.465  \\
-			WEE1   & 102   & 6,150    & 0.934   & 0.929   & 0.789   & 0.797   & 59.348  & 61.294 \\
-			XIAP   & 100   & 5,150    & 0.752   & 0.974   & 0.190   & 0.897   & 8.077   & 51.490 \\
-			\bottomrule
-			
-		\end{longtable}
-	\end{footnotesize}
-	\endgroup
-\end{center}
+\subsection{Iteration 1: Baseline A (Allocentric Full AOI Model)}
+The initial approach utilized the raw, top-down Bird's-Eye View (BEV) image, retaining the room's floor textures and permanent background elements.
 
-\section{Some Other Section}
-\Blindtext
+During offline training, Baseline A converged rapidly. As shown in Figure~\ref{fig:4.1}, both MSE and MAE decreased exponentially, with validation loss plateauing near 0.05 and 0.13, and reaching a low validation MSE of 0.0489 by Epoch 30.
 
-\section{A Landscape Table Example}
-Next is an example of a wide table on a landscape oriented paper.
-	
-\begin{landscape}
-	\pagestyle{empty} %% only if you want to remove silly headers on the side
-	\begin{tabular}{rrrrrrrrrrrrrrr} \toprule
-		{$m$} & {$x$} & {$y$} & {$z$} & {$a$} & {$A_m$} & {$B$} & {$C$} & {$x$} & {$y$} & {$z$} & {$a$} & {$A_m$} & {$B$} & {$C$} \\ \midrule
-		1  & 16.128 & +8.872 & 16.128 & 1.402 & 1.373 & -146.6 & -137.6 & 16.128 & +8.872 & 16.128 & 1.402 & 1.373 & -146.6 & -137.6\\
-		2  & 3.442  & -2.509 & 3.442  & 0.299 & 0.343 & 133.2  & 152.4 & 3.442  & -2.509 & 3.442  & 0.299 & 0.343 & 133.2  & 152.4 \\
-		3  & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1 \\
-		4  & 0.993  & -0.429 & 0.993  & 0.086 & 0.08  & 25.6   & 90 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1    \\ \midrule
-		5  & 1.29   & +0.099 & 1.29   & 0.112 & 0.097 & -175.6 & -114.7 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1\\
-		6  & 0.483  & -0.183 & 0.483  & 0.042 & 0.063 & 22.3   & 122.5 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1 \\
-		7  & 0.766  & -0.475 & 0.766  & 0.067 & 0.039 & 141.6  & -122 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1  \\
-		8  & 0.624  & +0.365 & 0.624  & 0.054 & 0.04  & -35.7  & 90  & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1   \\ \midrule
-		9  & 0.641  & -0.466 & 0.641  & 0.056 & 0.045 & 133.3  & -106.3 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1\\
-		10 & 0.45   & +0.421 & 0.45   & 0.039 & 0.034 & -69.4  & 110.9  & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1\\
-		11 & 0.598  & -0.597 & 0.598  & 0.052 & 0.025 & 92.3   & -109.3 & 1.826  & -0.363 & 1.826  & 0.159 & 0.119 & 168.5  & -161.1\\ \bottomrule
-	\end{tabular}
-\end{landscape}
+% [Insert Figure 4.1: Baseline A (Allocentric Full AOI) Offline Training and Validation Loss Curves]
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\linewidth]{chap4/images/2nd_session.png}
+	\caption{The near-perfect convergence of MSE and MAE suggested successful learning, though this was later identified as spatial memorization.}\label{fig:4.1}
+\end{figure}
 
-\section{Summary}
-\blindtext\enlargethispage{\baselineskip} % so you do not get a single line in another page
+However, physical deployment resulted in immediate, catastrophic navigation failure. On the physical track, the robot exhibited erratic motor control, immediately veering off-path and breaching the arena boundaries.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/2nd_Metrics_interpretation.png}
+	\caption{Physical deployment of the Allocentric Full AOI Model resulted in immediate navigation failure.}\label{fig:4.2}
+\end{figure}
+
+As shown in Figure~\ref{fig:4.2}, both the Cross-Track Error (CTE) and the Heading Error ($\theta_{err}$) diverged immediately on deployment (CTE quickly exceeding $-100$ pixels and Heading Error dropping past $-60^\circ$). Baseline A maintained the path for only 636 frames with an RMSE of 30.9992 pixels. When analyzing the Error Compounding Rate over the first 500 frames, Baseline A showed rapid, exponential error growth. Minor starting position changes on the real track confused the network, causing it to immediately steer off course.
+
+Post-deployment analysis revealed the model suffered from \textbf{shortcut learning}. Because the room environment and global track remained static in the camera's view, the CNN bypassed learning the path geometry entirely. Instead, it overfit directly to the robot's absolute pixel coordinates within the room frame. The validation error remained low during training because validation images came from that same static frame. During inference, any minor starting deviation created an out-of-distribution pixel state that the model could not interpret.
+
+\subsection{Iteration 2: Baseline B (Feature-Extracted Allocentric Model)}
+To eliminate background shortcuts like floor reflections, shadows, and pixel discrepancies, the pipeline was updated to add a semantic polygon extraction step. This process isolated the AOI as flat white shapes with a red polygon on a pure black canvas, removing all environmental noise and forcing the network to learn the path geometry itself.
+
+While this removed environmental noise, offline training metrics immediately destabilized. As shown in Figure~\ref{fig:4.3}, the training profile exhibited severe validation noise and a massive loss spike near epoch 13, indicating the network struggled to map steering angles without its familiar background shortcuts. The resulting controller was not stable enough to justify full physical deployment, and the model was therefore not advanced beyond limited sanity checks.
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/4th-session.png}
+	\caption{The Feature-Extracted Allocentric Model's training profile was unstable, with severe validation noise and a massive loss spike, indicating the network struggled without background shortcuts.}\label{fig:4.3}
+\end{figure}
+
+Limited real-world trials at reduced speed still exposed the same instability. The failure was reproduced across two separate deployment sessions, in which the controller survived only 772 and 1{,}122 frames with CTE RMSE values of 35.72~px and 84.38~px respectively (Table~\ref{tab:4.1}), confirming that the instability was systematic rather than an isolated event. As shown in Figure~\ref{fig:4.4} for the longer session, the Cross-Track Error (CTE) drifted steadily upward to roughly 80 pixels before collapsing, while the Heading Error hovered around $-20^\circ$ and then jumped abruptly to approximately $+60^\circ$ near the failure point. The steering signal oscillated with a near-zero mean while speed was increased, indicating the controller was reacting to noise rather than tracking a stable path.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/4th_metrics_1_interpretation.png}
+	\caption{Limited real-world trial for Baseline B. CTE drifted upward with a late-stage heading discontinuity, while steering oscillations persisted under increasing speed.}\label{fig:4.4}
+\end{figure}
+
+\subsection*{Failure Analysis of Baselines A and B}
+The two allocentric baselines failed for complementary reasons that both trace back to the state representation. Baseline A preserved the full room context, which enabled shortcut learning: the CNN exploited static background cues and absolute pixel coordinates rather than learning the path geometry. This produced excellent offline metrics but catastrophic real-world generalization under even minor pose shifts.
+
+Baseline B removed the environmental shortcuts, but the allocentric frame still did not encode the robot's egocentric heading and local path curvature in a stable way. The mapping from a global, top-down AOI to a precise steering command became ambiguous and noise-sensitive, leading to unstable training dynamics and a controller that could not be stabilized for deployment.
+
+Together, these failures established the need for a representation that is both egocentric and dynamically aligned to the robot's local path context, motivating the subsequent Egocentric Dynamic Crop Model.
+
+\section{The Egocentric Dynamic Crop Model}
+To resolve both the shortcut learning of Iteration 1 and the spatial translation issues of Iteration 2, the final proposed model implemented the Egocentric Dynamic Crop.
+
+By cropping the image continuously around the ArUco marker, the robot's position remains fixed at the center of the neural network's view. With the background removed, the path geometry simply rotates and approaches the robot, forcing the CNN to learn actual driving rules based strictly on path curvature.
+\subsection{Offline Training Convergence}
+The proposed model resolved the previous instability issues. By centering the image on the robot, the network required only 9,679 samples to establish geometric stability.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/best_model_metrics.png}
+	\caption{The Egocentric Dynamic Crop Model's training profile showed stable convergence, with both MSE and MAE decreasing steadily without significant validation noise.}\label{fig:4.5}
+\end{figure}
+
+As shown in Figure~\ref{fig:4.5}, it quickly achieved a highly stable validation MSE of 0.0615 by Epoch 10. The entire optimization process was completed in just 2 minutes and 24 seconds, proving the model is both accurate and computationally lightweight.
+
+\subsection{Real-World Navigation and Endurance}
+
+The proposed Egocentric Model successfully guided the robot through the entire track.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/Best_Metrics_interpretation.png}
+	\caption{Physical deployment of the Egocentric Dynamic Crop Model resulted in successful navigation through the entire track, with stable CTE and Heading Error profiles.}\label{fig:4.6}
+\end{figure}
+
+Deployed over a continuous run of 3,642 frames, it achieved an extremely low tracking error with an RMSE of 4.0249 pixels and a Mean Absolute CTE of just 3.1700 pixels. The telemetry in Figure 4.6 demonstrates smooth, consistent steering across both straightaways and sharp turns without a single boundary breach.
+
+\section{Comparative Tracking Performance}
+Table~\ref{tab:4.1} and Figure~\ref{fig:4.7} summarize the final real-world tracking metrics across all three chronological iterations, clearly illustrating the dramatic stability improvements achieved by the egocentric crop.
+
+\begin{table}[H]
+\centering
+\caption{Physical Track Testing Results Across All Iterations}
+\label{tab:4.1}
+\begin{tabularx}{\linewidth}{l X r X r}
+\toprule
+\textbf{Physical Trial} & \textbf{Active Model} & \textbf{Total Frames Survived} & \textbf{Track Outcome} & \textbf{CTE (RMSE, px)} \\
+\midrule
+Baseline A & Baseline A (Full AOI) & 636 & Drove off track & 30.9992 \\
+Baseline B (Session 1) & Baseline B (Feature-Extracted) & 772 & Drove off track & 35.7224 \\
+Baseline B (Session 2) & Baseline B (Feature-Extracted) & 1,122 & Drove off track & 84.3785 \\
+Final System & Proposed Egocentric Model & 3,642 & Completed successfully & 4.0249 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/absolute_cte_boxplot.png}
+	\caption{Real-World Trajectory Deviations: Absolute Cross-Track Error Box Plot.}\label{fig:4.7}
+\end{figure}
+The box plot in Figure~\ref{fig:4.7} shows a dramatic contraction of the error distribution for the proposed model, with a much lower median and tighter interquartile range than Baselines A and B. This indicates not only lower average tracking error but also substantially reduced variability and fewer large deviations.
+
+\section{In-Depth Performance of the Model}
+To comprehensively validate the proposed end-to-end architecture, the Egocentric Dynamic Crop model was evaluated across three specific track topologies of increasing B{\'e}zier curve complexity. By entirely removing the PID control components and relying strictly on the Convolutional Neural Network (CNN) for high-level navigation, this phase of testing isolates the controller's ability to dynamically scale continuous steering outputs based solely on visual geometric features.
+
+\subsection{Statistical Analysis Methodology}
+For each evaluation scenario, the robot was deployed in a continuous autonomous run during which the tracking system recorded per-frame Cross-Track Error (CTE) and Heading Error at approximately 60~Hz. To evaluate tracking consistency over sustained periods, telemetry is resolved per \emph{lap} rather than over arbitrary fixed-length frame windows. A lap represents one complete physical circuit of the track, aligning each consistency window with a meaningful unit of the course rather than a time-slice that spans variable parts of a circuit. Laps are partitioned by dividing the total duration of each scenario by the number of complete laps. Mirroring the policy of excluding incomplete segments, partial trailing laps (e.g., the final 14.3~s of the Scenario 3 run) are discarded so that only complete circuits contribute. The full quantitative summary is presented in Tables~\ref{tab:4.2}, \ref{tab:per_lap_consistency}, and \ref{tab:per_lap_detail}.
+
+All cross-track errors are measured in the rectified bird's-eye-view canvas, which spans $800 \times 800$~pixels and maps to the physical arena of approximately $2.0$--$3.0$~m per side. Adopting a nominal arena width of $2.5$~m yields a scale of approximately $0.31$~cm per pixel, which is used throughout this chapter to report approximate real-world deviations alongside the pixel measurements. Because the physical arena dimension is approximate, the centimetre figures are likewise approximate (to within roughly $\pm 20\%$). The steering command reported throughout is the network's normalized output, where positive values denote rightward turns and negative values leftward turns. Empirically, this normalized command maps monotonically to the robot's measured yaw rate and saturates at high-magnitude commands as the differential-drive platform reaches its motor limits; the values are therefore reported as dimensionless command magnitudes rather than physical angles.
+
+\begin{table}[H]
+\centering
+\caption{Kinematic Performance Summary of the Final Egocentric Model}
+\label{tab:4.2}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}l X r r r r@{}}
+\toprule
+ & & & \multicolumn{3}{c@{}}{\textbf{Cross-Track Error (px)}} \\
+\cmidrule(l){4-6}
+\textbf{Scenario} & \textbf{Track Topology} & \textbf{Frames} & \textbf{Mean $\pm$ SD} & \textbf{RMSE} & \textbf{P95} \\
+\midrule
+1 & 45$^\circ$ B{\'e}zier curves & 2{,}934 & 1.91 $\pm$ 1.84 & 2.66 & 5.0 \\
+2 & 90$^\circ$ square path & 1{,}709 & 2.74 $\pm$ 2.23 & 3.54 & 8.0 \\
+3 & 180$^\circ$ sustained U-turn & 13{,}421 & 5.07 $\pm$ 4.62 & 6.86 & 15.0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\input{chap4/per_lap_consistency}
+
+\subsection{Scenario 1: 45-Degree B{\'e}zier Curves}
+The first scenario tests mild, continuous curvature over 2{,}934 frames (49.0~s) of continuous autonomous driving. Rather than exhibiting the fishtailing or oscillatory steering behavior commonly observed in pure behavioral cloning models without derivative damping, the model demonstrated highly anticipatory steering. As the $45^\circ$ curves entered the egocentric bounding box, the convolutional feature extractor registered the gradual geometric shift, resulting in a smooth, continuous adjustment of the steering vector. The model achieved a mean absolute CTE of \textbf{1.91 $\pm$ 1.84}~px (RMSE = 2.66~px, $\approx 0.83$~cm), with 95\% of all frames remaining within 5.0~px ($\approx 1.6$~cm) of the reference path. Per-lap consistency analysis across 10 completed laps yielded a mean per-lap RMSE of \textbf{2.28 $\pm$ 1.37}~px (range: 0.93--4.73~px, Table~\ref{tab:per_lap_consistency}), confirming consistent tracking throughout the run. The Heading Error remained bounded, with a mean of $-1.05 \pm 5.13^\circ$ and peaking at \textbf{31.92$^\circ$} at the sharpest point of the transition, proving that the model does not overreact to gentle path deviations and smoothly tracks shallow curves.
+
+\subsection{Scenario 2: 90-Degree B{\'e}zier Corners (Square Path)}
+Navigating the square path over 1{,}709 frames (28.5~s) tested the model's response to rapid, orthogonal geometric changes. The model achieved a mean absolute CTE of \textbf{2.74 $\pm$ 2.23}~px (RMSE = 3.54~px, $\approx 1.1$~cm), with 95\% of frames within 8.0~px ($\approx 2.5$~cm) of the reference path. The Heading Error remained bounded, with a mean of $-3.16 \pm 5.74^\circ$ and a peak magnitude of $20.98^\circ$. Approaching a $90^\circ$ corner requires a sharp spike in actuation. Upon entering the apex of the corners, the model successfully executed aggressive, high-magnitude steering commands, reaching a peak normalized steering magnitude of \textbf{33.0}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/90_Degree_Telemetry.png}
+	\caption{90-degree cornering telemetry showing rapid actuation and recovery under orthogonal curvature.}\label{fig:4.8}
+\end{figure}
+
+Importantly, as visualized in Figure~\ref{fig:4.8}, the Egocentric Dynamic Crop ensured that the path boundaries remained centered in the network's view rather than sweeping out of frame. This continuous recentering allowed for a rapid and stable recovery; the model brought the heading error back down to $0^\circ$ within just \textbf{11 frames} (approximately \textbf{0.73 s} at a 15 Hz operating frequency) upon exiting the corner, resuming straight-line stability instantly.
+
+\subsection{Scenario 3: 180-Degree Sustained U-Turns}
+The final topology tested the system's kinematic endurance during extreme, continuous curvature. This scenario produced the longest continuous run at 13{,}421 frames over 226.5~s (approximately 3.8 minutes) of uninterrupted autonomous driving, encompassing many complete laps of the U-turn track. During the 180-degree U-turns, the model was forced to hold a near-maximum steering angle for a prolonged period.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/180_Degree_Endurance.png}
+	\caption{180-degree U-turn telemetry illustrating sustained steering actuation under extreme curvature.}\label{fig:4.9}
+\end{figure}
+
+The telemetry in Figure~\ref{fig:4.9} confirms that the network successfully handled the extreme geometric distortion, scaling up its actuation to reach and sustain a maximum normalized steering magnitude of \textbf{47.0}. The model achieved a mean absolute CTE of \textbf{5.07 $\pm$ 4.62}~px (RMSE = 6.86~px, $\approx 2.1$~cm), with 95\% of frames within 15.0~px ($\approx 4.7$~cm) of the reference path and a worst-case deviation of 28.9~px ($\approx 9.0$~cm), which remains below half the chassis width. The Heading Error over the run had a mean of $-0.16 \pm 9.34^\circ$ with a peak magnitude of $33.95^\circ$. Per-lap consistency analysis across 8 completed laps yielded a mean per-lap RMSE of \textbf{6.56 $\pm$ 2.08}~px (range: 4.43--10.14~px, Table~\ref{tab:per_lap_consistency}), demonstrating that tracking performance remained bounded throughout the extended run despite the extreme curvature. This confirms that the CNN effectively learned the structural rules of extreme curvature tracking without requiring a rigid mathematical path-planning algorithm.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{chap4/images/CTE_Boxplot.png}
+	\caption{Distribution of Absolute Cross-Track Error (CTE) across varying B{\'e}zier curve complexities, demonstrating bounded error scaling under extreme geometric distortion.}\label{fig:4.10}
+\end{figure}
+
+\section{Control Decision Discretization and Confusion Matrix}
+To evaluate the directional correctness of steering decisions issued by the end-to-end CNN, the continuous telemetry logs were mapped to discrete control states. Under the system's sign convention, positive values denote rightward sense for both quantities: a positive CTE indicates the robot is displaced to the \emph{right} of the reference path, and a positive steering command drives a rightward turn. Consequently, a positive CTE calls for a corrective \emph{leftward} steering action. The desired corrective action is therefore defined from the lateral displacement (CTE) as:
+
+\begin{equation}
+\text{Desired Action} =
+\begin{cases}
+\text{Left}, & \text{if } \text{CTE} > 2.0\text{ px} \\
+\text{Straight}, & \text{if } -2.0\text{ px} \le \text{CTE} \le 2.0\text{ px} \\
+\text{Right}, & \text{if } \text{CTE} < -2.0\text{ px}
+\end{cases}
+\end{equation}
+
+The executed CNN control action is discretized from the network's normalized steering command using the same $\pm 2.0$ dead-band, with commands greater than $+2.0$ classified as Right, those below $-2.0$ as Left, and those in between as Straight. With this convention, the matrix diagonal corresponds to correct corrective steering. The combined confusion matrix across all three track topologies is shown in Figure~\ref{fig:4.11}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.82\linewidth]{chap4/images/confusion_matrix_combined.png}
+	\caption{Combined Control Decision Confusion Matrix across all track topologies. The matrix maps cross-track error states to the corresponding steering actions.}\label{fig:4.11}
+\end{figure}
+
+A key control-theoretic observation is the \textit{Proactive Curve-Following Paradox}. When tracking a curve accurately, the controller holds the vehicle near the centerline (ground truth classified as Straight) while still executing active left or right steering to follow the upcoming geometry. The resulting label mismatch does not indicate failure; it demonstrates anticipatory, feedforward trajectory planning rather than a purely reactive corrective policy.

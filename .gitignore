@@ -1,0 +1,30 @@
+# Core LaTeX auxiliary files
+*.aux
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Python build and cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

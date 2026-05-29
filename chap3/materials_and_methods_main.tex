@@ -5,19 +5,19 @@
 \subsection{Robot Platform}
 The mobile agent utilized in this study is a custom-built differential drive robot designed for low-latency execution of remote commands. The platform is intentionally minimized to function as a "remote-controlled" agent, removing the need for heavy onboard computation.
 
-\subsubsection{Robot Chassis and Drivetrain}
+\subsubsection*{Robot Chassis and Drivetrain}
 The mobile agent utilizes a DFRobot Devastator Tank Mobile Platform. This platform operates on a 3-8V DC working voltage and features two micro DC geared motors. It weighs 780 g, measures 8.86 x 8.86 x 4.25 inches, and includes driver wheels with a 43mm diameter. The chassis is configured for Differential Drive kinematics, which allows for zero-radius turning and precise heading adjustments.
 
-\subsubsection{Embedded Controller}
+\subsubsection*{Embedded Controller}
 The robot is equipped with a Raspberry Pi 3B running Raspi OS, acting as the low-cost microcontroller and communication bridge. Its sole function is to receive data packets from the central workstation and convert them into Pulse Width Modulation (PWM) signals.
 
-\subsubsection{Motor Controller}
+\subsubsection*{Motor Controller}
 An L298N H-Bridge DC Motor Controller is used to interface the microcontroller with the DC motors. This provides the necessary current amplification and direction control.
 
-\subsubsection{Wireless Handheld Controller}
+\subsubsection*{Wireless Handheld Controller}
 A Logitech Gamepad F710 Joystick Controller with a USB Dongle is utilized for manually controlling the robot during the data collection phase.
 
-\subsubsection{Power Supply}
+\subsubsection*{Power Supply}
 The system is powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 configuration) to provide stable voltage to the microcontroller and raw power to the motor driver.
 
 \subsection{Environment Setup}
@@ -34,7 +34,7 @@ The experimental environment is a controlled, structured arena designed to imple
         \item Extracting, decoding, and filtering ArUco markers, as well as refining corner coordinates to sub-pixel accuracy using the \texttt{cornerSubPix} algorithm.
         \item Computing the analytic $3 \times 3$ transformation matrix using the \texttt{getPerspectiveTransform} function and applying the top-down perspective warp to the raw camera feed via the \texttt{warpPerspective} function.
     \end{itemize}
-    \item \textbf{TensorFlow / PyTorch}: These deep learning libraries are utilized to construct and execute the Inference Engine (the CNN policy). They are responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
+    \item \textbf{PyTorch}: This deep learning library is utilized to construct and execute the Inference Engine (the CNN policy). They are responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
 \end{itemize}
 
 \subsection{Camera and System Calibration}
@@ -54,7 +54,7 @@ from the geometric relationship between the camera and the arena (homography).
 \end{itemize}
 
 In practice, wide-angle lenses such as the Logitech BRIO introduce radial and tangential
-distortion \citep{Brown1966}. These are modelled by the following correction terms:
+distortion \citep{Brown1966DecenteringDistortion}. These are modelled by the following correction terms:
 
 \noindent Radial Distortion:
 \begin{equation}
@@ -436,7 +436,7 @@ the dataset is deliberately structured across three driving modes:
           samples are critical for generalization: they teach the network the corrective
           steering behavior required to recover from covariate shift during autonomous
           deployment, a known failure mode of pure behavioral cloning
-          \cite{codevilla2019}.
+          \cite{Codevilla2019BehaviorCloningLimits}.
 \end{itemize}
 
 After collection, the dataset is post-processed to enforce approximate class balance across
