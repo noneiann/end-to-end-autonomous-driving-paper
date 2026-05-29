@@ -3,42 +3,43 @@
 \section{Hardware Setup}
 
 \subsection{Robot Platform}
-The mobile agent utilized in this study is a custom-built differential drive robot designed for low-latency execution of remote commands. The platform is intentionally minimized to function as a "remote-controlled" agent, removing the need for heavy onboard computation.
+The mobile agent utilized in this study was a custom-built differential drive robot designed for low-latency execution of remote commands. The platform is intentionally minimized to function as a "remote-controlled" agent, removing the need for heavy onboard computation.
 
 \subsubsection*{Robot Chassis and Drivetrain}
-The mobile agent utilizes a DFRobot Devastator Tank Mobile Platform. This platform operates on a 3-8V DC working voltage and features two micro DC geared motors. It weighs 780 g, measures 8.86 x 8.86 x 4.25 inches, and includes driver wheels with a 43mm diameter. The chassis is configured for Differential Drive kinematics, which allows for zero-radius turning and precise heading adjustments.
+The mobile agent utilized a DFRobot Devastator Tank Mobile Platform. This platform operates on a 3-8V DC working voltage and features two micro DC geared motors. It weighs 780 g, measures 8.86 x 8.86 x 4.25 inches, and includes driver wheels with a 43mm diameter. The chassis is configured for Differential Drive kinematics, which allows for zero-radius turning and precise heading adjustments.
 
 \subsubsection*{Embedded Controller}
-The robot is equipped with a Raspberry Pi 3B running Raspi OS, acting as the low-cost microcontroller and communication bridge. Its sole function is to receive data packets from the central workstation and convert them into Pulse Width Modulation (PWM) signals.
+The robot was equipped with a Raspberry Pi 3B running Raspi OS, acting as the low-cost microcontroller and communication bridge. Its sole function is to receive data packets from the central workstation and convert them into Pulse Width Modulation (PWM) signals.
 
 \subsubsection*{Motor Controller}
-An L298N H-Bridge DC Motor Controller is used to interface the microcontroller with the DC motors. This provides the necessary current amplification and direction control.
+An L298N H-Bridge DC Motor Controller was used to interface the microcontroller with the DC motors. This provides the necessary current amplification and direction control.
 
 \subsubsection*{Wireless Handheld Controller}
-A Logitech Gamepad F710 Joystick Controller with a USB Dongle is utilized for manually controlling the robot during the data collection phase.
+A Logitech Gamepad F710 Joystick Controller with a USB Dongle was utilized for manually controlling the robot during the data collection phase.
 
 \subsubsection*{Power Supply}
-The system is powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 configuration) to provide stable voltage to the microcontroller and raw power to the motor driver.
+The system was powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 configuration) to provide stable voltage to the microcontroller and raw power to the motor driver.
 
 \subsection{Environment Setup}
-The experimental environment is a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) is mounted at a fixed height above the area. The camera is positioned at an angle to cover the entire operational area. While the camera is angled, the software pipeline corrects this perspective distortion mathematically. The arena consists of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) are physically defined by four ArUco markers fixed at the corners. These markers serve as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference are performed on a dedicated laptop or desktop computer equipped with a GPU. This workstation runs the Python-based control software, processes the camera feed via USB, and broadcasts control commands to the robot over the local wireless network.
+\label{sec:3.1.2}
+The experimental environment was a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) was mounted at a fixed height above the area. The camera was positioned at an angle to cover the entire operational area. While the camera is angled, the software pipeline corrects this perspective distortion mathematically. The arena consisted of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) were physically defined by four ArUco markers fixed at the corners. These markers served as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference were performed on a dedicated laptop or desktop computer equipped with a GPU. This workstation ran the Python-based control software, processed the camera feed via USB, and broadcasted control commands to the robot over the local wireless network.
 
 \section{Software Framework}
 \subsection{Core Libraries}
 
 \begin{itemize}
-    \item \textbf{Python}: The system is designed as a modular, monolithic application that is primarily implemented in the Python programming language.
-    \item \textbf{OpenCV}: This library is utilized extensively for the computer vision and perception modules. Specific applications of OpenCV in the system include:
+    \item \textbf{Python}: The system was designed as a modular, monolithic application that was primarily implemented in the Python programming language.
+    \item \textbf{OpenCV}: This library was utilized extensively for the computer vision and perception modules. Specific applications of OpenCV in the system include:
     \begin{itemize}
         \item Estimating the intrinsic camera parameters using standard checkerboard calibration methods (e.g., the \texttt{calibrateCamera} function).
         \item Extracting, decoding, and filtering ArUco markers, as well as refining corner coordinates to sub-pixel accuracy using the \texttt{cornerSubPix} algorithm.
         \item Computing the analytic $3 \times 3$ transformation matrix using the \texttt{getPerspectiveTransform} function and applying the top-down perspective warp to the raw camera feed via the \texttt{warpPerspective} function.
     \end{itemize}
-    \item \textbf{PyTorch}: This deep learning library is utilized to construct and execute the Inference Engine (the CNN policy). They are responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
+    \item \textbf{PyTorch}: This deep learning library is utilized to construct and execute the Inference Engine (the CNN policy). They were responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
 \end{itemize}
 
 \subsection{Camera and System Calibration}
-To ensure the visual input accurately represents the physical world, the system undergoes
+To ensure the visual input accurately represents the physical world, the system underwent
 a two-step calibration process that separates intrinsic camera properties (lens distortion)
 from the geometric relationship between the camera and the arena (homography).
 
@@ -81,9 +82,9 @@ distortion \citep{Brown1966DecenteringDistortion}. These are modelled by the fol
     \item \(r^2 = x^2 + y^2\)
 \end{itemize}
 
-In OpenCV \citep{Bradski2000OpenCV}, these coefficients are estimated once using the
+In OpenCV \citep{Bradski2000OpenCV}, these coefficients were estimated once using the
 \texttt{calibrateCamera} function via standard checkerboard calibration
-\citep{Zhang2000CameraCalibration}, and stored for all subsequent image correction
+\citep{Zhang2000CameraCalibration}, and were stored for all subsequent image correction
 operations. The Levenberg--Marquardt algorithm \citep{Levenberg1944LeastSquares}
 minimizes the reprojection error between detected and projected checkerboard corners
 to produce the optimal intrinsic matrix $K$ and distortion vector.
@@ -96,7 +97,7 @@ for the control policy. These phases are formalized in Algorithm~\ref{alg:homogr
 
 \subsection{ArUco Marker Detection}
 \label{sec:3.4.1}
-The localization pipeline begins with the detection of ArUco markers (Garrido-Jurado et al., 2014),  to define the Area of Interest (AOI). We utilize the \verb|DICT_5X5_100 |dictionary (5x5 bit grid, 100 unique IDs), which offers a balance between decoding speed and false-positive rejection.
+The localization pipeline began with the detection of ArUco markers (Garrido-Jurado et al., 2014),  to define the Area of Interest (AOI). We utilized the \verb|DICT_5X5_100 |dictionary (5x5 bit grid, 100 unique IDs), which offers a balance between decoding speed and false-positive rejection.
 
 \noindent\textbf{Marker Configuration and Corner Assignment}
 
@@ -108,17 +109,17 @@ To resolve the ambiguity of the arena’s orientation and prevent the coordinate
     \item Bottom-Left (BL): Marker ID 3
 \end{enumerate}
 
-Detection is performed on the undistorted frame — not the raw frame — to ensure that
+Detection was performed on the undistorted frame, not the raw frame — to ensure that
 the resulting homography matrix is free of lens distortion artifacts. The detection pipeline
-proceeds as follows:
+proceeded as follows:
 
 \begin{enumerate}
-    \item \textbf{Preprocessing:} The RGB frame is converted to grayscale.
+    \item \textbf{Preprocessing:} The RGB frame was converted to grayscale.
     \item \textbf{Candidate Extraction:} Adaptive thresholding segments black borders;
-          contours are filtered by convexity and square geometry.
-    \item \textbf{Bit Decoding:} The inner region of each candidate is divided into a
-          grid and its binary pattern is decoded to recover the marker ID.
-    \item \textbf{Corner Refinement:} Corner positions are refined to sub-pixel accuracy
+          contours were filtered by convexity and square geometry.
+    \item \textbf{Bit Decoding:} The inner region of each candidate was divided into a
+          grid and its binary pattern was decoded to recover the marker ID.
+    \item \textbf{Corner Refinement:} Corner positions were refined to sub-pixel accuracy
           using \texttt{cornerSubPix}.
 \end{enumerate}
 
@@ -154,8 +155,8 @@ with the image boundaries, giving the CNN a geometrically stable input that is i
 to minor shifts in camera placement or angle.
 
 \section{System Integration and Control Flow}
-The proposed system implements a centralized, vision-based autonomous navigation
-architecture that offloads all image processing and CNN inference to a remote workstation,
+The proposed system implemented a centralized, vision-based autonomous navigation
+architecture that offloaded all image processing and CNN inference to a remote workstation,
 communicating control commands to the robot over a local wireless link. The full
 architectural data flow is illustrated in Figure~\ref{fig:3.1}.
 
@@ -167,53 +168,53 @@ architectural data flow is illustrated in Figure~\ref{fig:3.1}.
 \end{figure}
 
 
-As depicted in Figure~\ref{fig:3.1}, the system architecture is divided into three functional subsystems: sensing, processing, and actuation. Together, these components form a closed-loop control pipeline for autonomous navigation.
+As depicted in Figure~\ref{fig:3.1}, the system architecture was divided into three functional subsystems: sensing, processing, and actuation. Together, these components formed a closed-loop control pipeline for autonomous navigation.
 
 \begin{itemize}
     \item \textbf{Sensing Subsystem (Arena):}  
-    Located in the physical environment, this block consists of an overhead camera and fixed ArUco markers. The camera captures the entire operational arena and provides the raw visual input used by the system. The ArUco markers act as reference points for geometric correction and spatial alignment.
+    Located in the physical environment, this block consisted of an overhead camera and fixed ArUco markers. The camera captured the entire operational arena and provided the raw visual input used by the system. The ArUco markers acted as reference points for geometric correction and spatial alignment.
 
     \item \textbf{Processing Subsystem (Workstation):}  
-    This block contains the core intelligence of the system and executes a two-stage processing pipeline:
+    This block contained the core intelligence of the system and executed a two-stage processing pipeline:
     \begin{itemize}
         \item \textbf{Localization and State Preparation:}  
-        The system detects ArUco markers to compute a homography matrix, which warps the angled camera feed into a standardized top-down bird’s-eye view using inverse perspective mapping (IPM). The transformed image is cropped and augmented with the target navigation path to form the system state.
+        The system detected ArUco markers to compute a homography matrix, which warped the angled camera feed into a standardized top-down bird’s-eye view using inverse perspective mapping (IPM). The transformed image was cropped and augmented with the target navigation path to form the system state.
         
         \item \textbf{CNN-Based Policy Inference:}  
-        The pre-processed visual state is fed directly into a convolutional neural network (CNN), which serves as an end-to-end behavioral policy mapping visual observations directly to low-level motor control commands.
+        The pre-processed visual state was fed directly into a convolutional neural network (CNN), which served as an end-to-end behavioral policy mapping visual observations directly to low-level motor control commands.
     \end{itemize}
 
     \item \textbf{Actuation Subsystem (Robot):}  
-    The inferred control commands, including steering and throttle signals, are transmitted wirelessly via Wi-Fi or Bluetooth to the mobile robot. The robot’s onboard microcontroller receives these commands and drives the motors, completing the closed-loop control cycle.
+    The inferred control commands, including steering and throttle signals, were transmitted wirelessly via Wi-Fi to the mobile robot. The robot’s onboard microcontroller received these commands and drived the motors, completing the closed-loop control cycle.
 \end{itemize}
 
 \subsection{Module Integration}
 \label{sec:module_integration}
 
-The software is organized into four distinct functional modules, ensuring separation of
+The software was organized into four distinct functional modules, ensuring separation of
 concerns and allowing independent testing of subsystems.
 
 \begin{enumerate}
-    \item \textbf{Perception Interface (\textit{CameraStream}):} Interfaces with the
-    hardware camera driver and manages the frame buffer to ensure the processing pipeline
-    always retrieves the most recent frame, minimizing input lag.
+    \item \textbf{Perception Interface (\textit{CameraStream}):} Interfaced with the
+    hardware camera driver and managed the frame buffer to ensure the processing pipeline
+    always retrieved the most recent frame, minimizing input lag.
 
-    \item \textbf{State Estimator (\textit{Preprocessor}):} Encapsulates the pre-computed
-    homography matrix $H$ from Section~\ref{sec:3.4.2} and executes the full state
+    \item \textbf{State Estimator (\textit{Preprocessor}):} Encapsulated the pre-computed
+    homography matrix $H$ from Section~\ref{sec:3.4.2} and executed the full state
     representation pipeline — perspective warp, semantic extraction, path injection,
     egocentric crop, and normalization.
 
-    \item \textbf{Inference Engine (\textit{PilotModel}):} Loads the pre-trained CNN
-    weights into memory on startup and exposes a \texttt{predict()} method that accepts
-    a processed image tensor and returns a normalized steering command.
+    \item \textbf{Inference Engine (\textit{PilotModel}):} Loaded the pre-trained CNN
+    weights into memory on startup and exposes a \texttt{predict()} method that accepted
+    a processed image tensor and returned the raw normalized steering command.
 
     \item \textbf{Actuation Interface (\textit{MotorDriver}):}
     \begin{itemize}
-        \item Abstracts low-level GPIO commands from the rest of the pipeline.
-        \item Converts the normalized CNN output into a raw steering command using a
+        \item Abstracted low-level GPIO commands from the rest of the pipeline.
+        \item Converted the normalized CNN output into a raw steering command using a
               fixed gain and saturation, then maps it to hardware-specific PWM duty cycles
               transmitted to the L298N motor driver.
-        \item Triggers a safety stop, defaulting all motors to zero velocity if the
+        \item Triggered a safety stop, defaulting all motors to zero velocity if the
               control loop is interrupted or the watchdog timer expires.
         \end{itemize}
 \end{enumerate}
@@ -238,7 +239,7 @@ concerns and allowing independent testing of subsystems.
 
 \Statex
 \State \textbf{// Phase 2: Marker Detection}
-\State $dictionary \gets \textsc{GetDictionary}(\texttt{DICT\_4X4\_50})$
+\State $dictionary \gets \textsc{GetDictionary}(\texttt{DICT\_5X5\_100})$
 \State $(corners, ids) \gets \textsc{DetectMarkers}(gray\_frame, dictionary)$
 
 \Statex
@@ -347,25 +348,25 @@ concerns and allowing independent testing of subsystems.
 \subsection{Real-Time Execution and Middleware}
 \label{sec:realtime_execution}
 
-The system operates using a synchronous main control loop. Unlike asynchronous systems that rely on complex middleware (e.g., ROS) for message passing, this study utilizes a direct memory access approach to minimize overhead and latency. This design choice is critical for achieving stable end-to-end controller without PID dampening.
+The system operates using a synchronous main control loop. Unlike asynchronous systems that rely on complex middleware (e.g., ROS) for message passing, this study utilized a direct memory access approach to minimize overhead and latency. This design choice is critical for achieving stable end-to-end controller without PID dampening.
 
 \paragraph{Execution Flow}
 The main execution pipeline follows a ``Sense-Think-Act'' cycle:
 
 \begin{enumerate}
-    \item \textbf{Initialization Phase:} On startup, the system verifies hardware connections, warms up the camera sensor (allowing auto-exposure to settle), and loads the CNN model into RAM.
-    \item \textbf{The Control Loop:} The system enters a \texttt{while(true)} loop that executes the following sequence:
+    \item \textbf{Initialization Phase:} On startup, the system verified hardware connections, warmed up the camera sensor (allowing auto-exposure to settle), and loads the CNN model into RAM.
+    \item \textbf{The Control Loop:} The system enter a \texttt{while(true)} loop that executes the following sequence:
     \begin{itemize}
-        \item Acquire: The \texttt{CameraStream} fetches the latest frame.
-        \item Process: The \texttt{Preprocessor} warps and crops the image.
-        \item Infer: The \texttt{PilotModel} computes the control vector.
-        \item Drive: The \texttt{MotorDriver} executes the command.
-        \item Log: (Optional) Data is saved for debugging or further training.
+        \item Acquire: The \texttt{CameraStream} fetched the latest frame.
+        \item Process: The \texttt{Preprocessor} warped and crops the image.
+        \item Infer: The \texttt{PilotModel} computed the control vector.
+        \item Drive: The \texttt{MotorDriver} executed the command.
+        \item Log: (Optional) Data was saved for debugging or further training.
     \end{itemize}
 \end{enumerate}
 
 \paragraph{Timing and Latency}
-To maintain smooth motion, the software is designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution is kept minimal to mitigate latency. During physical deployment the recorded telemetry timestamps indicate an effective sampling/inference frequency of approximately 60~Hz; Chapter~4 reports per-frame durations using this observed rate where relevant. A software watchdog is implemented to monitor the loop time; if the camera disconnects or the loop hangs, the actuation interface triggers a safety stop to prevent runaway behavior.
+To maintain smooth motion, the software was designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution was kept minimal to mitigate latency. During physical deployment the recorded telemetry timestamps indicate an effective sampling/inference frequency of approximately 60~Hz; Chapter~4 reports per-frame durations using this observed rate where relevant. A software watchdog was implemented to monitor the loop time; if the camera disconnected or the loop hanged, the actuation interface triggered a safety stop to prevent runaway behavior.
 
 
 \section{Data Acquisition and Processing}
@@ -380,9 +381,9 @@ human-demonstrated steering command. Telemetry frames are recorded frame-by-fram
 
 \subsection{Dataset Collection}
 
-The dataset $D = \{(s_i, a_i)\}_{i=1}^{n}$ is generated through a series of manual driving
-sessions in which a human operator controls the differential-drive robot using a gamepad
-controller while the overhead camera system and data logger run concurrently in real time.
+A dataset of approximately 9,000 images was generated through a series of manual driving
+sessions in which a human operator controlled the differential-drive robot using a gamepad
+controller while the overhead camera system and data logger ran concurrently in real time.
 
 \subsubsection{Teleoperation Setup}
 
@@ -430,14 +431,14 @@ degenerate policy that performs poorly on turns and recovery scenarios. To count
 the dataset is deliberately structured across three driving modes:
 
 \begin{itemize}
-    \item \textbf{Nominal Laps:} The operator drives the robot smoothly along the digitally
+    \item \textbf{Nominal Laps:} The operator drove the robot smoothly along the digitally
           injected reference path, covering straight segments, left turns, right turns, and the
           transitions between them.
-    \item \textbf{Aggressive Turn Demonstrations:} Additional dedicated runs are recorded in
-          which the operator repeatedly navigates sharp 90-degree and U-turn topologies at
+    \item \textbf{Aggressive Turn Demonstrations:} Additional dedicated runs were recorded in
+          which the operator repeatedly navigated sharp 90-degree and U-turn topologies at
           the boundary of the robot's turning radius, increasing the representation of
           high-magnitude steering commands.
-    \item \textbf{Recovery Maneuvers:} The robot is intentionally displaced laterally from
+    \item \textbf{Recovery Maneuvers:} The robot was intentionally displaced laterally from
           the center of the reference path and then corrected back by the operator. These
           samples are critical for generalization: they teach the network the corrective
           steering behavior required to recover from covariate shift during autonomous
@@ -445,15 +446,15 @@ the dataset is deliberately structured across three driving modes:
           \cite{Codevilla2019BehaviorCloningLimits}.
 \end{itemize}
 
-After collection, the dataset is post-processed to enforce approximate class balance across
-steering angle bins. Frames corresponding to near-zero steering ($|a_t| < 0.05$) are
+After collection, the dataset was post-processed to enforce approximate class balance across
+steering angle bins. Frames corresponding to near-zero steering ($|a_t| < 0.05$) were
 subsampled to ensure they do not dominate the training distribution, while recovery and
 high-curvature samples are retained in full.
 
 \subsection{State Representation}
 
-Before any recorded frame is passed to the neural network, either during training or inference, it has to
-go through a deterministic, multi-stage preprocessing pipeline that transforms the raw overhead
+Before any recorded frame was passed to the neural network, either during training or inference, it had to
+go through a deterministic, multi-stage preprocessing pipeline that transformed the raw overhead
 camera output into a compact, geometrically meaningful state representation. The goal of this
 pipeline is to enforce a strict information bottleneck: the network must receive only the visual
 features that are causally relevant to the steering decision, with all spurious environmental
@@ -464,7 +465,7 @@ The complete pipeline proceeds through the following stages.
 
 \subsubsection{Stage 1 — Homography Warp (Bird's-Eye View Rectification)}
 
-The raw, undistorted frame from the overhead camera is transformed using the pre-computed
+The raw, undistorted frame from the overhead camera was transformed using the pre-computed
 homography matrix $H$ (computed during the initialization phase described in Section 3.4.2)
 via OpenCV's \texttt{warpPerspective} function:
 
@@ -472,38 +473,38 @@ via OpenCV's \texttt{warpPerspective} function:
     \text{Img}_{world} = \texttt{warpPerspective}(\text{Img}_{raw},\ H,\ \text{arena\_dims})
 \end{equation}
 
-This produces a geometrically rectified, orthographic top-down view of the arena in which
+This produced a geometrically rectified, orthographic top-down view of the arena in which
 pixel distances correspond to fixed metric distances on the floor, and the four ArUco corner
-markers align exactly with the image boundaries. The output is a standardized
+markers aligned exactly with the image boundaries. The output is a standardized
 $W \times H$ pixel canvas representing the full area of interest.
 
 \subsubsection{Stage 2 — Semantic Polygon Extraction (Black Canvas Rendering)}
 
 To decouple the network from the physical appearance of the arena floor, the drivable track
-boundaries within the warped image are isolated and re-rendered as discrete geometric polygons
-on a pure black canvas. The track boundaries are detected as contiguous regions of a known
+boundaries within the warped image were isolated and re-rendered as discrete geometric polygons
+on a pure black canvas. The track boundaries were detected as contiguous regions of a known
 color or intensity within the warped frame and extracted using OpenCV's contour detection
-pipeline. The resulting polygons are drawn in white onto a zero-valued (black) background
-image of identical dimensions. This semantic abstraction ensures the following:
+pipeline. The resulting polygons were drawn in white onto a zero-valued (black) background
+image of identical dimensions. This semantic abstraction ensured the following:
 
 \begin{itemize}
-    \item All RGB texture, floor reflections, and lighting variation are discarded.
+    \item All RGB texture, floor reflections, and lighting variation were discarded.
     \item The network receives only the binary geometry of the drivable surface — the
-          features that are invariant across sessions, lighting conditions, and track
+          features that were invariant across sessions, lighting conditions, and track
           configurations.
-    \item The model no longer processes an image of ``a robot on a floor'' but rather a
+    \item The model no longer processed an image of ``a robot on a floor'' but rather a
           normalized geometric representation of path curvature relative to the robot's
           position.
 \end{itemize}
 
 \subsubsection{Stage 3 — Path Injection (State Augmentation)}
 
-The semantic black canvas alone conveys the shape of the drivable area but does not
+The semantic black canvas alone conveyed the shape of the drivable area but does not
 communicate the robot's navigation objective — the specific trajectory it is expected to follow
-within that area. To give the network directional intent, the target reference path is digitally
-rendered onto the black canvas as a second visual channel. The path is represented as a
-polyline or filled polygon, drawn in a distinct intensity value, that traces the desired centerline
-through the current track topology. The resulting composite image contains exactly two classes
+within that area. To give the network directional intent, the target reference path was digitally
+rendered onto the black canvas as a second visual channel. The path was represented as a
+polyline or filled polygon, drawn in a distinct intensity value, that traced the desired centerline
+through the current track topology. The resulting composite image contained exactly two classes
 of information: the track boundaries (giving the network the constraint space) and the reference
 path (giving it the optimization target).
 
@@ -511,10 +512,10 @@ path (giving it the optimization target).
 
 As established in the preliminary evaluation (Section 4.2), feeding the full warped arena into
 the CNN causes the network to overfit to the robot's absolute pixel coordinates rather than
-learning generalizable path geometry. The definitive solution is the egocentric dynamic crop:
-at every time step, the robot's current pixel centroid $(c_x,\ c_y)$ is detected from the
+learning generalizable path geometry. The definitive solution was the egocentric dynamic crop:
+at every time step, the robot's current pixel centroid $(c_x,\ c_y)$ was detected from the
 chassis-mounted ArUco marker within the warped frame, and a fixed-dimension bounding
-window of size $W_{crop} \times H_{crop}$ (e.g., $200 \times 200$ pixels) is extracted
+window of size $W_{crop} \times H_{crop}$ (e.g., $200 \times 200$ pixels) was extracted
 centered on that coordinate:
 
 \begin{equation}
@@ -553,9 +554,9 @@ CNN's input layer during both training and deployment inference.
 This section details the implementation of the deep learning pipeline, translating the theoretical framework of Behavioral Cloning and CNNs (discussed in Section 2.7) into a functional navigation system. The pipeline is divided into model architecture design, data preprocessing, acquisition, training, and final deployment.
 \subsection{Model Architecture}
 
-The study employs a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts the preprocessed image tensors (dimensions defined in Section 3.6.2). 
+The study employed a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model \citep{Bojarski2016PilotNet}, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts the preprocessed image tensors (dimensions defined in Section 3.6.2). 
 
-The core processing begins with the Convolutional Feature Extractor, which utilizes five sequential convolutional layers to extract spatial features from the homography-transformed overhead view. The first three layers utilize 5x5 kernels with a stride of 2 to rapidly reduce spatial dimensions and capture broad geometric structures, such as the path boundaries. The subsequent two layers employ 3x3 kernels with a stride of 1 to capture finer, higher-level spatial hierarchies. To mitigate the vanishing gradient problem and accelerate convergence, every convolutional layer is followed by Batch Normalization and an Exponential Linear Unit (ELU) activation function, which pushes mean activations closer to zero compared to standard ReLU.
+The core processing begins with the Convolutional Feature Extractor, which utilizes five sequential convolutional layers to extract spatial features from the homography-transformed overhead view. The first three layers utilize 5x5 kernels with a stride of 2 to rapidly reduce spatial dimensions and capture broad geometric structures, such as the path boundaries. The subsequent two layers employ 3x3 kernels with a stride of 1 to capture finer, higher-level spatial hierarchies. To mitigate the vanishing gradient problem and accelerate convergence, every convolutional layer is followed by Batch Normalization \citep{Ioffe2015BatchNorm} and an Exponential Linear Unit (ELU) \citep{Clevert2016ELU} activation function, which pushes mean activations closer to zero compared to standard ReLU.
 
 Following feature extraction, a flattening operation converts the multidimensional feature maps into a 1D vector (containing 20,736 elements for a 200x200 input), preparing the data for high-level reasoning.
 
@@ -567,7 +568,13 @@ Following feature extraction, a flattening operation converts the multidimension
 \end{figure}
 
 Once flattened, the data passes through the Fully Connected (Dense) Layers. Three hidden dense layers (containing 100, 50, and 10 neurons, respectively) interpret the extracted spatial features to serve as the decision-making bottleneck.These layers also utilize Batch Normalization and ELU activations. 
-Furthermore, a mild Dropout rate of 10\% (0.1) is applied to the first two dense layers to provide regularization and prevent overfitting, specifically tuned to avoid variance shifts when combined with Batch Normalization. The pipeline concludes with the Output Layer, consisting of a single neuron utilizing a Hyperbolic Tangent (Tanh) activation function. This bounds the normalized steering output to $[-1.0,\ 1.0]$, which is then scaled to the raw steering command for actuation and logging.
+Furthermore, a mild Dropout rate of 10\% (0.1) is applied to the first two dense layers to provide regularization and prevent overfitting, specifically tuned to avoid variance shifts when combined with Batch Normalization. The pipeline concludes with the Output Layer, consisting of a single neuron utilizing a Hyperbolic Tangent (Tanh) activation function. This function strictly binds the output to a [-1.0, 1.0] range, corresponding directly to a normalized turn-rate command that is
+converted to differential left and right wheel velocity targets
+by the \textit{MotorDriver} module.
+
+The total number of trainable parameters in the network is approximately
+2{,}211{,}175, the majority of which reside in the first fully connected
+layer that maps the 20{,}736-element flattened vector to 100 neurons.
 
 \begin{table}[h!]
 \centering
@@ -601,16 +608,17 @@ Furthermore, a mild Dropout rate of 10\% (0.1) is applied to the first two dense
 \hline
 \end{tabular}%
 }
-\caption{Neural Network Architecture}
+\caption{Table 3.1 Modified DAVE-2 Convolutional Neural Network Architecture}
 \label{tab:architecture}
 \end{table}
 
 \subsection{Training Configuration}
 \label{sec:training_config}
 
-The network is trained as a supervised regression task using the behavioral cloning dataset
-constructed in Section~4 (Data Acquisition and Processing). The training pipeline is
-structured in two phases.
+The network is trained as a single-output regression task, predicting
+only the normalized steering command $a_t \in [-1.0,\ 1.0]$. Throttle
+is excluded as a predicted output for reasons of training stability
+discussed at the end of this section.
 
 \subsubsection*{Phase 1: Dataset Preparation}
 
@@ -639,7 +647,7 @@ samples in each batch:
     \label{eq:training_mse}
 \end{equation}
 
-The Adam optimizer is selected for its adaptive learning rate capabilities, ensuring stable
+The Adam optimizer \citep{Kingma2015Adam} is selected for its adaptive learning rate capabilities, ensuring stable
 convergence despite the non-convex nature of the loss landscape. Training proceeds until
 the validation loss plateaus, at which point Early Stopping is triggered to prevent
 overfitting and to restore the weights from the best-performing epoch.
@@ -659,7 +667,7 @@ throttle managed as an independent system.
 The trained model is exported and optimized for the target hardware. The deployment process operates in a continuous control loop.
 
 \begin{enumerate}
-    \item \textbf{Model Serialization:} The trained network architecture and weights are saved in a portable format (e.g., \texttt{.h5} or \texttt{.tflite}).
+    \item \textbf{Model Serialization:} The trained network architecture and weights are saved in a portable format (e.g., \texttt{.pth} for PyTorch or \texttt{.pt} for TorchScript deployment).
 
     \item \textbf{Inference Loop:} The deployment script runs on the central processing unit (CPU) or the robot’s onboard computer in a continuous loop:
     \begin{enumerate}[\alph*.]
@@ -744,7 +752,7 @@ The system was tested across three track configurations of increasing B{\'e}zier
 \subsection{Ground-Truth Tracking System}
 
 To accurately measure the real-world kinematic performance of the robot without relying
-on manual estimation, the system utilizes an automated error-logging script during physical
+on manual estimation, the system utilized an automated error-logging script during physical
 deployment. By tracking the robot's chassis-mounted ArUco marker relative to the digitally
     injected reference path, the script directly computes instantaneous error metrics
     frame-by-frame; the recorded timestamps show an effective sampling frequency of approximately 60\,Hz during deployment.
