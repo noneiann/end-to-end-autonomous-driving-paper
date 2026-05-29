@@ -722,41 +722,23 @@ The system was deployed following the environment setup as defined in Section~\r
 \subsection{Evaluation Scenarios}
 \label{sec:eval_scenarios}
 
-The system was tested across three track configurations, each designed to isolate specific
-driving behaviors and failure modes. All tests were conducted in a controlled indoor
-environment with constant artificial lighting to minimize perception noise.
+The system was tested across three track configurations of increasing B{\'e}zier curve complexity, each designed to isolate specific kinematic behaviors and evaluate the CNN policy's adaptability. All tests were conducted in a controlled indoor environment with constant artificial lighting to minimize perception noise.
 
 \begin{enumerate}
-    \item \textbf{Straight Path:} This topology features a linear path with no curvature.
-    The primary goal of this test is to evaluate the model's baseline stability — specifically,
-    whether the CNN can maintain a straight heading without exhibiting the oscillatory
-    steering behavior (fishtailing) commonly observed in poorly trained behavioral cloning
-    models that lack a derivative damping term.
+    \item \textbf{Scenario 1 (45-Degree B{\'e}zier Curves):} This topology features mild, continuous curvature to assess the model's baseline tracking stability. The primary goal of this test is to evaluate whether the CNN can generate smooth, continuous steering adjustments under gradual geometric changes without exhibiting oscillatory steering behavior (fishtailing) or overreacting to shallow curves.
 
-    \item \textbf{90-Degree Turn and U-Turn:} This scenario introduces both a sharp,
-    orthogonal change in path direction and a sustained 180-degree curve. The 90-degree
-    segment tests the network's ability to map sharp, sudden geometric changes to
-    correspondingly aggressive steering outputs. The U-turn segment evaluates the system's
-    ability to maintain a sustained, high-angle steering command over an extended period,
-    as well as its capacity to smoothly transition out of the curve and re-stabilize on the
-    following straight segment.
+    \item \textbf{Scenario 2 (90-Degree B{\'e}zier Corners/Square Path):} This scenario tests the model's response to rapid, orthogonal geometric transitions. Navigating a square path with rounded corners evaluates the network's ability to map sudden geometric shifts to aggressive, high-magnitude steering commands and rapidly recover heading and straight-line stability upon corner exit.
 
-    \item \textbf{Off-Center Recovery:} The robot is intentionally initialized at a lateral
-    offset from the path center and with a misaligned heading. This scenario evaluates the
-    generalization capability of the egocentric model — specifically, whether the learned
-    policy can generate immediate corrective steering to return to the path center from
-    an out-of-distribution starting state not encountered during nominal training laps.
+    \item \textbf{Scenario 3 (180-Degree Sustained U-Turns):} This loop features extreme, continuous curvature to test the system's kinematic endurance under prolonged geometric distortion. The scenario evaluates the network's ability to scale and sustain near-maximum steering angles for extended durations, and smoothly transition through extreme curve sections.
 \end{enumerate}
 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1\linewidth]{figure_Eval_Scenarios.png}
     \caption{Schematic representation of the three experimental track configurations.
-    (a) Scenario 1 tests straight-line stability on a straightforward path.
-    (b) Scenario 2 evaluates the system's ability to handle sharp curvatures using
-    90-degree turns and a U-turn.
-    (c) Scenario 3 tests generalization capability by initializing the robot with an
-    offset position and misaligned heading, requiring it to recover to the path center.}
+    (a) Scenario 1 tests tracking stability on a path with mild 45-degree Bézier curves.
+    (b) Scenario 2 evaluates rapid cornering and heading recovery on a square path with 90-degree corners.
+    (c) Scenario 3 tests kinematic endurance and sustained actuation under extreme 180-degree U-turn curvature.}
     \label{fig:testing_scenarios}
 \end{figure}
 
