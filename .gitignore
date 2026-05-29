@@ -10,6 +10,7 @@
 *.out
 *.toc
 *.synctex.gz
+*.synctex(busy)
 
 # Python build and cache files
 __pycache__/
@@ -28,4 +29,3 @@ desktop.ini
 *.swp
 *.swo
 *~
-*.pdf

@@ -29,13 +29,13 @@ The experimental environment was a controlled, structured arena designed to impl
 
 \begin{itemize}
     \item \textbf{Python}: The system was designed as a modular, monolithic application that was primarily implemented in the Python programming language.
-    \item \textbf{OpenCV}: This library was utilized extensively for the computer vision and perception modules. Specific applications of OpenCV in the system include:
+    \item \textbf{OpenCV}: This library was utilized extensively for the computer vision and perception modules. Specific applications of OpenCV in the system included:
     \begin{itemize}
         \item Estimating the intrinsic camera parameters using standard checkerboard calibration methods (e.g., the \texttt{calibrateCamera} function).
         \item Extracting, decoding, and filtering ArUco markers, as well as refining corner coordinates to sub-pixel accuracy using the \texttt{cornerSubPix} algorithm.
         \item Computing the analytic $3 \times 3$ transformation matrix using the \texttt{getPerspectiveTransform} function and applying the top-down perspective warp to the raw camera feed via the \texttt{warpPerspective} function.
     \end{itemize}
-    \item \textbf{PyTorch}: This deep learning library is utilized to construct and execute the Inference Engine (the CNN policy). They were responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
+    \item \textbf{PyTorch}: This deep learning library was utilized to construct and execute the Inference Engine (the CNN policy). They were responsible for handling the continuous regression tasks of the modified NVIDIA DAVE-2 Convolutional Neural Network architecture.
 \end{itemize}
 
 \subsection{Camera and System Calibration}
@@ -90,9 +90,9 @@ minimizes the reprojection error between detected and projected checkerboard cor
 to produce the optimal intrinsic matrix $K$ and distortion vector.
 
 \subsection{Perception and Localization Module}
-The localization module operates in two phases: a one-time \textbf{Initialization Phase}
-that detects the static arena boundaries and computes the homography matrix, and a
-continuous \textbf{Runtime Phase} that applies this mapping to warp each incoming frame
+The localization module operated in two phases: a one-time \textbf{Initialization Phase}
+that detected the static arena boundaries and computed the homography matrix, and a
+continuous \textbf{Runtime Phase} that applied this mapping to warp each incoming frame
 for the control policy. These phases are formalized in Algorithm~\ref{alg:homography_warping}.
 
 \subsection{ArUco Marker Detection}
@@ -101,7 +101,7 @@ The localization pipeline began with the detection of ArUco markers (Garrido-Jur
 
 \noindent\textbf{Marker Configuration and Corner Assignment}
 
-To resolve the ambiguity of the arena’s orientation and prevent the coordinate system from mirroring or rotating if the camera placement changes, specific unique IDs are assigned to the four physical corners of the operational area. This fixed assignment acts as a ground truth for the homography estimation. The configuration is explicitly defined as follows:
+To resolve the ambiguity of the arena’s orientation and prevent the coordinate system from mirroring or rotating if the camera placement changes, specific unique IDs were assigned to the four physical corners of the operational area. This fixed assignment acted as a ground truth for the homography estimation. The configuration was explicitly defined as follows:
 \begin{enumerate}
     \item Top-Left (TL): Marker ID 0
     \item Top-Right (TR): Marker ID 1
@@ -115,7 +115,7 @@ proceeded as follows:
 
 \begin{enumerate}
     \item \textbf{Preprocessing:} The RGB frame was converted to grayscale.
-    \item \textbf{Candidate Extraction:} Adaptive thresholding segments black borders;
+    \item \textbf{Candidate Extraction:} Adaptive thresholding segmented black borders;
           contours were filtered by convexity and square geometry.
     \item \textbf{Bit Decoding:} The inner region of each candidate was divided into a
           grid and its binary pattern was decoded to recover the marker ID.
@@ -123,7 +123,7 @@ proceeded as follows:
           using \texttt{cornerSubPix}.
 \end{enumerate}
 
-The output is a set of four ordered corner coordinates from the undistorted image. It should be noted that these markers are not attached to the robot, they serve only to anchor the global coordinate system of the arena for the homography calculation.
+The output was a set of four ordered corner coordinates from the undistorted image. It should be noted that one ArUco marker was attached on top of the robot to provide the geometric representation of the robot.
 
 \subsection{Planar Homography Estimation}
 \label{sec:3.4.2}
@@ -138,20 +138,20 @@ $p = [u, v, 1]^T$ to world coordinates $P_w = [x, y, 1]^T$:
 \end{equation}
 
 where $H$ is a $3 \times 3$ matrix with 8 degrees of freedom. Given the four
-sorted ArUco corner correspondences from Section~\ref{sec:3.4.1}, $H$ is solved
+sorted ArUco corner correspondences from Section~\ref{sec:3.4.1}, $H$ was solved
 analytically via the Direct Linear Transformation (DLT) algorithm
 \citep{AbdelAziz2015DLT} using OpenCV's \texttt{getPerspectiveTransform} function.
 
 \noindent\textbf{Perspective Warping (Runtime Application).}
-During runtime, the pre-computed $H$ is applied to every incoming frame via
+During runtime, the pre-computed $H$ was applied to every incoming frame via
 \texttt{warpPerspective}:
 
 \begin{equation}
     \text{Img}_{world} = \texttt{warpPerspective}(\text{Img}_{raw},\ H)
 \end{equation}
 
-This produces a rectified Bird's-Eye View in which the four corner markers align exactly
-with the image boundaries, giving the CNN a geometrically stable input that is invariant
+This produced a rectified Bird's-Eye View in which the four corner markers aligned exactly
+with the image boundaries, giving the CNN a geometrically stable input that was invariant
 to minor shifts in camera placement or angle.
 
 \section{System Integration and Control Flow}
@@ -185,7 +185,7 @@ As depicted in Figure~\ref{fig:3.1}, the system architecture was divided into th
     \end{itemize}
 
     \item \textbf{Actuation Subsystem (Robot):}  
-    The inferred control commands, including steering and throttle signals, were transmitted wirelessly via Wi-Fi to the mobile robot. The robot’s onboard microcontroller received these commands and drived the motors, completing the closed-loop control cycle.
+    The inferred control commands, including steering and throttle signals, were transmitted wirelessly via Wi-Fi to the mobile robot. The robot’s onboard microcontroller received these commands and drove the motors, completing the closed-loop control cycle.
 \end{itemize}
 
 \subsection{Module Integration}
@@ -205,17 +205,17 @@ concerns and allowing independent testing of subsystems.
     egocentric crop, and normalization.
 
     \item \textbf{Inference Engine (\textit{PilotModel}):} Loaded the pre-trained CNN
-    weights into memory on startup and exposes a \texttt{predict()} method that accepted
+    weights into memory on startup and exposed a \texttt{predict()} method that accepted
     a processed image tensor and returned the raw normalized steering command.
 
     \item \textbf{Actuation Interface (\textit{MotorDriver}):}
     \begin{itemize}
         \item Abstracted low-level GPIO commands from the rest of the pipeline.
         \item Converted the normalized CNN output into a raw steering command using a
-              fixed gain and saturation, then maps it to hardware-specific PWM duty cycles
+              fixed gain and saturation, then mapped it to hardware-specific PWM duty cycles
               transmitted to the L298N motor driver.
         \item Triggered a safety stop, defaulting all motors to zero velocity if the
-              control loop is interrupted or the watchdog timer expires.
+              control loop was interrupted or the watchdog timer expired.
         \end{itemize}
 \end{enumerate}
 
@@ -348,17 +348,17 @@ concerns and allowing independent testing of subsystems.
 \subsection{Real-Time Execution and Middleware}
 \label{sec:realtime_execution}
 
-The system operates using a synchronous main control loop. Unlike asynchronous systems that rely on complex middleware (e.g., ROS) for message passing, this study utilized a direct memory access approach to minimize overhead and latency. This design choice is critical for achieving stable end-to-end controller without PID dampening.
+The system operated using a synchronous main control loop. Unlike asynchronous systems that rely on complex middleware (e.g., ROS) for message passing, this study utilized a direct memory access approach to minimize overhead and latency. This design choice is critical for achieving stable end-to-end controller without PID dampening.
 
 \paragraph{Execution Flow}
-The main execution pipeline follows a ``Sense-Think-Act'' cycle:
+The main execution pipeline followed a ``Sense-Think-Act'' cycle:
 
 \begin{enumerate}
-    \item \textbf{Initialization Phase:} On startup, the system verified hardware connections, warmed up the camera sensor (allowing auto-exposure to settle), and loads the CNN model into RAM.
-    \item \textbf{The Control Loop:} The system enter a \texttt{while(true)} loop that executes the following sequence:
+    \item \textbf{Initialization Phase:} On startup, the system verified hardware connections, warmed up the camera sensor (allowing auto-exposure to settle), and loaded the CNN model into RAM.
+    \item \textbf{The Control Loop:} The system entered a \texttt{while(true)} loop that executed the following sequence:
     \begin{itemize}
         \item Acquire: The \texttt{CameraStream} fetched the latest frame.
-        \item Process: The \texttt{Preprocessor} warped and crops the image.
+        \item Process: The \texttt{Preprocessor} warped and cropped the image.
         \item Infer: The \texttt{PilotModel} computed the control vector.
         \item Drive: The \texttt{MotorDriver} executed the command.
         \item Log: (Optional) Data was saved for debugging or further training.
@@ -372,12 +372,12 @@ To maintain smooth motion, the software was designed to run at a target frequenc
 \section{Data Acquisition and Processing}
 
 With the perception and localization pipeline established in the preceding sections, the system
-transitions from passive environment sensing to active knowledge acquisition. This phase
-operationalizes the Behavioral Cloning paradigm described in Section 2.7.3, constructing the
-supervised dataset that will serve as the sole source of driving knowledge for the Convolutional
-Neural Network. The data acquisition pipeline is designed to ensure that every recorded sample
+transitioned from passive environment sensing to active knowledge acquisition. This phase
+operationalized the Behavioral Cloning paradigm described in Section 2.7.3, which constructed the
+supervised dataset that served as the sole source of driving knowledge for the Convolutional
+Neural Network. The data acquisition pipeline was designed to ensure that every recorded sample
 is a semantically meaningful, temporally synchronized pair of a preprocessed visual state and a
-human-demonstrated steering command. Telemetry frames are recorded frame-by-frame during deployment; the recorded timestamps show an effective sampling frequency of roughly 60~Hz.
+human-demonstrated steering command. Telemetry frames were recorded frame-by-frame during deployment; the recorded timestamps showed an effective sampling frequency of roughly 60~Hz.
 
 \subsection{Dataset Collection}
 
@@ -387,48 +387,47 @@ controller while the overhead camera system and data logger ran concurrently in 
 
 \subsubsection{Teleoperation Setup}
 
-During collection sessions, the robot is driven remotely via a gamepad (e.g., Xbox-compatible
-controller) interfaced with the workstation through Python's \texttt{pygame} library. The left
-analog stick's horizontal axis is mapped to a normalized steering command $\hat{u}_t \in [-1.0,\ 1.0]$
+During collection sessions, the robot was driven remotely via a gamepad interfaced with the workstation through Python's \texttt{pygame} library. The left
+analog stick's horizontal axis was mapped to a normalized steering command $\hat{u}_t \in [-1.0,\ 1.0]$
 and then scaled by a fixed steering gain to the raw command $a_t$ (we use $k_{steer}=50$, so
-$a_t = k_{steer}\cdot\hat{u}_t$, yielding raw command units in approximately $[-50,50]$). Negative
-values correspond to left turns, positive values to right turns, and $a_t \approx 0$ indicates
-straight-line motion. Throttle is held at a fixed, conservative value throughout data collection,
-consistent with the deployment strategy described in Section 3.5.4, so that the network is trained
+$a_t = k_{steer}\cdot\hat{u}_t$, yielded raw command units in approximately $[-50,50]$). Negative
+values corresponded to left turns, positive values to right turns, and $a_t \approx 0$ indicated
+straight-line motion. Throttle was held at a fixed, conservative value throughout data collection,
+consistent with the deployment strategy described in Section 3.5.4, so that the network was trained
 exclusively as a steering regressor.
 
 \subsubsection{Synchronization Protocol}
 
-Temporal alignment between the visual state and the control action is the most critical
+Temporal alignment between the visual state and the control action was the most critical
 requirement for producing a valid behavioral cloning dataset. A mismatch of even a single
 frame can corrupt the steering label associated with a given visual observation, introducing
 noise that degrades the learned policy. To eliminate this ambiguity, a dedicated data logger
-script executes within the same synchronous control loop described in Section 3.6.2. On every
-iteration of the loop, the following operations are performed atomically before any data is
+script executed within the same synchronous control loop described in Section 3.6.2. On every
+iteration of the loop, the following operations were performed atomically before any data was
 written to disk:
 
 \begin{enumerate}
-    \item The latest undistorted frame is fetched from the \texttt{CameraStream} buffer.
-    \item The \texttt{Preprocessor} module applies the full state representation pipeline
+    \item The latest undistorted frame was fetched from the \texttt{CameraStream} buffer.
+    \item The \texttt{Preprocessor} module applied the full state representation pipeline
           (detailed in Section 3.4.2) to produce the final input tensor $s_t$.
-    \item The current gamepad axis reading is polled via \texttt{pygame.event.pump()} to
+    \item The current gamepad axis reading was polled via \texttt{pygame.event.pump()} to
           obtain the instantaneous steering value $a_t$.
-    \item The pair $(s_t,\ a_t)$ is appended to a running log as a NumPy array and the
-          corresponding raw steering float is recorded to a paired CSV file, keyed by a
+    \item The pair $(s_t,\ a_t)$ was appended to a running log as a NumPy array and the
+          corresponding raw steering float was recorded to a paired \texttt{.catalog} file, keyed by a
           shared frame index.
 \end{enumerate}
 
-This within-loop atomicity guarantees that every saved image corresponds to the exact
+This within-loop atomicity guaranteed that every saved image corresponded to the exact
 steering command the operator applied at that moment, with no buffering delay between
 visual capture and control sampling.
 
 \subsubsection{Dataset Balancing}
 
-A naïve collection strategy produces a dataset heavily biased toward straight-line driving,
-since the majority of any track consists of straight segments. A model trained on such an
+A naïve collection strategy produced a dataset heavily biased toward straight-line driving,
+since the majority of any track consisted of straight segments. A model trained on such an
 imbalanced distribution will learn to output near-zero steering commands by default, a
 degenerate policy that performs poorly on turns and recovery scenarios. To counteract this,
-the dataset is deliberately structured across three driving modes:
+the dataset was deliberately structured across three driving modes:
 
 \begin{itemize}
     \item \textbf{Nominal Laps:} The operator drove the robot smoothly along the digitally
@@ -461,7 +460,7 @@ features that are causally relevant to the steering decision, with all spurious 
 correlates which include floor texture, ambient shadow, arena boundary color, and absolute spatial
 position. In this pipeline, it is then systematically eliminated.
 
-The complete pipeline proceeds through the following stages.
+The complete pipeline proceeded through the following stages.
 
 \subsubsection{Stage 1 — Homography Warp (Bird's-Eye View Rectification)}
 
@@ -475,7 +474,7 @@ via OpenCV's \texttt{warpPerspective} function:
 
 This produced a geometrically rectified, orthographic top-down view of the arena in which
 pixel distances correspond to fixed metric distances on the floor, and the four ArUco corner
-markers aligned exactly with the image boundaries. The output is a standardized
+markers aligned exactly with the image boundaries. The output was a standardized
 $W \times H$ pixel canvas representing the full area of interest.
 
 \subsubsection{Stage 2 — Semantic Polygon Extraction (Black Canvas Rendering)}
@@ -489,7 +488,7 @@ image of identical dimensions. This semantic abstraction ensured the following:
 
 \begin{itemize}
     \item All RGB texture, floor reflections, and lighting variation were discarded.
-    \item The network receives only the binary geometry of the drivable surface — the
+    \item The network received only the binary geometry of the drivable surface — the
           features that were invariant across sessions, lighting conditions, and track
           configurations.
     \item The model no longer processed an image of ``a robot on a floor'' but rather a
@@ -499,8 +498,8 @@ image of identical dimensions. This semantic abstraction ensured the following:
 
 \subsubsection{Stage 3 — Path Injection (State Augmentation)}
 
-The semantic black canvas alone conveyed the shape of the drivable area but does not
-communicate the robot's navigation objective — the specific trajectory it is expected to follow
+The semantic black canvas alone conveyed the shape of the drivable area but did not
+communicate the robot's navigation objective — the specific trajectory it was expected to follow
 within that area. To give the network directional intent, the target reference path was digitally
 rendered onto the black canvas as a second visual channel. The path was represented as a
 polyline or filled polygon, drawn in a distinct intensity value, that traced the desired centerline
@@ -511,7 +510,7 @@ path (giving it the optimization target).
 \subsubsection{Stage 4 — Egocentric Dynamic Cropping (ROI Extraction)}
 
 As established in the preliminary evaluation (Section 4.2), feeding the full warped arena into
-the CNN causes the network to overfit to the robot's absolute pixel coordinates rather than
+the CNN caused the network to overfit to the robot's absolute pixel coordinates rather than
 learning generalizable path geometry. The definitive solution was the egocentric dynamic crop:
 at every time step, the robot's current pixel centroid $(c_x,\ c_y)$ was detected from the
 chassis-mounted ArUco marker within the warped frame, and a fixed-dimension bounding
@@ -526,16 +525,16 @@ centered on that coordinate:
 \end{equation}
 
 By continuously re-centering the crop on the robot, its absolute position within the global
-arena is rendered invariant. From the network's perspective, the robot does not move; instead,
-the semantically extracted path geometry translates and rotates around the robot's fixed origin.
-The only dynamic variables passed to the convolutional feature extractor are the relative
+arena was rendered invariant. From the network's perspective, the robot does not move; instead,
+the semantically extracted path geometry translated and rotated around the robot's fixed origin.
+The only dynamic variables passed to the convolutional feature extractor were the relative
 orientation, curvature, and proximity of the approaching path boundaries — the precise features
 required to generate a geometrically correct steering command.
 
 \subsubsection{Stage 5 — Normalization}
 
-The cropped binary canvas is cast to a 32-bit float array and normalized to the range
-$[0.0,\ 1.0]$ by dividing by 255. This normalization is consistent with the input normalization
+The cropped binary canvas was cast to a 32-bit float array and normalized to the range
+$[0.0,\ 1.0]$ by dividing by 255. This normalization was consistent with the input normalization
 layer of the DAVE-2 architecture (Table 3.1), which further linearly scales pixel values to
 $[-1.0,\ 1.0]$ via the expression:
 
@@ -543,9 +542,9 @@ $[-1.0,\ 1.0]$ via the expression:
     x_{norm} = \frac{x}{127.5} - 1
 \end{equation}
 
-Normalizing prior to storage reduces numerical variance across the dataset and accelerates
-gradient descent convergence during training. The output of Stage 5 is the final state tensor
-$s_t$ — a $W_{crop} \times H_{crop} \times 1$ grayscale array — that is saved to disk paired
+Normalizing prior to storage reduced numerical variance across the dataset and accelerated
+gradient descent convergence during training. The output of Stage 5 was the final state tensor
+$s_t$ — a $W_{crop} \times H_{crop} \times 1$ grayscale array — that was saved to disk paired
 with its corresponding steering label $a_t$ during data collection, and fed directly into the
 CNN's input layer during both training and deployment inference.
 
@@ -615,18 +614,18 @@ layer that maps the 20{,}736-element flattened vector to 100 neurons.
 \subsection{Training Configuration}
 \label{sec:training_config}
 
-The network is trained as a single-output regression task, predicting
+The network was trained as a single-output regression task, predicting
 only the normalized steering command $a_t \in [-1.0,\ 1.0]$. Throttle
-is excluded as a predicted output for reasons of training stability
+was excluded as a predicted output for reasons of training stability
 discussed at the end of this section.
 
 \subsubsection*{Phase 1: Dataset Preparation}
 
-Prior to training, the collected dataset undergoes a final preparation step. The full dataset
-is partitioned using an 80:20 split, with 80\% of samples reserved for training and 20\%
+Prior to training, the collected dataset underwent a final preparation step. The full dataset
+was partitioned using an 80:20 split, with 80\% of samples reserved for training and 20\%
 held out for validation. To prevent the training loop from processing samples in a fixed
 sequence, which could introduce temporal autocorrelation artifacts, the training split
-is shuffled before each epoch. A batch size of 32 is used throughout training.
+was shuffled before each epoch. A batch size of 32 was used throughout training.
 
 \begin{figure}[!ht]
         \centering
@@ -637,7 +636,7 @@ is shuffled before each epoch. A batch size of 32 is used throughout training.
 
 \subsubsection*{Phase 2: Network Optimization}
 
-The optimization objective is to minimize the Mean Squared Error (MSE) between the
+The optimization objective was to minimize the Mean Squared Error (MSE) between the
 predicted steering command and the human demonstrator's recorded command across all
 samples in each batch:
 
@@ -647,35 +646,35 @@ samples in each batch:
     \label{eq:training_mse}
 \end{equation}
 
-The Adam optimizer \citep{Kingma2015Adam} is selected for its adaptive learning rate capabilities, ensuring stable
-convergence despite the non-convex nature of the loss landscape. Training proceeds until
-the validation loss plateaus, at which point Early Stopping is triggered to prevent
+The Adam optimizer \citep{Kingma2015Adam} was selected for its adaptive learning rate capabilities, ensuring stable
+convergence despite the non-convex nature of the loss landscape. Training proceeded until
+the validation loss plateaued, at which point Early Stopping was triggered to prevent
 overfitting and to restore the weights from the best-performing epoch.
 
-The throttle command is held at a fixed, conservative value during both data collection
+The throttle command was held at a fixed, conservative value during both data collection
 and inference rather than being predicted as a second CNN output. This design decision
-ensures training stability: in behavioral cloning, predicting two continuous outputs
-requires the MSE loss to simultaneously balance two potentially conflicting gradient
+ensured training stability: in behavioral cloning, predicting two continuous outputs
+required the MSE loss to simultaneously balance two potentially conflicting gradient
 signals during backpropagation. Restricting the network to steering-only prediction
-provides a cleaner, more interpretable loss signal and allows the model to converge more
-efficiently. This approach also follows the precedent established by NVIDIA's PilotNet
+provided a cleaner, more interpretable loss signal and allows the model to converge more
+efficiently. This approach also followed the precedent established by NVIDIA's PilotNet
 architecture, which originally focused exclusively on steering angle prediction with
 throttle managed as an independent system.
 \subsection{Deployment and Inference}
 \label{sec:deployment_inference}
 
-The trained model is exported and optimized for the target hardware. The deployment process operates in a continuous control loop.
+The trained model was exported and optimized for the target hardware. The deployment process operated in a continuous control loop.
 
 \begin{enumerate}
-    \item \textbf{Model Serialization:} The trained network architecture and weights are saved in a portable format (e.g., \texttt{.pth} for PyTorch or \texttt{.pt} for TorchScript deployment).
+    \item \textbf{Model Serialization:} The trained network architecture and weights were saved in a portable format (e.g., \texttt{.pth} for PyTorch or \texttt{.pt} for TorchScript deployment).
 
-    \item \textbf{Inference Loop:} The deployment script runs on the central processing unit (CPU) or the robot’s onboard computer in a continuous loop:
+    \item \textbf{Inference Loop:} The deployment script ran in a continuous loop on the dedicated offboard workstation, transmitting the resulting control commands to the robot's onboard microcontroller over a local Wi-Fi connection via UDP sockets:
     \begin{enumerate}[\alph*.]
-        \item Capture and warp the overhead camera image using the homography transformation.
-        \item Preprocess the image and extract the Region of Interest (ROI).
-        \item Feed the processed sensor input into the Convolutional Neural Network (CNN).
-        \item The CNN outputs raw regression values corresponding to control commands (e.g., steering = 0.3, throttle = 0.8).
-        \item The predicted values are scaled to the appropriate PWM range (0--255) and transmitted directly to the motor drivers via GPIO, bypassing any PID or additional error-correction logic.
+        \item Captured and warped the overhead camera image using the homography transformation.
+        \item Preprocessed the image and extracted the Region of Interest (ROI).
+        \item Fed the processed sensor input into the Convolutional Neural Network (CNN).
+        \item The CNN output raw regression values corresponding to control commands (e.g., steering = 0.3, throttle = 0.8).
+        \item The predicted values were formatted into a lightweight data payload and transmitted over Wi-Fi via UDP sockets to the robot's Raspberry Pi. The onboard microcontroller then unpacked this data, scaled it to the appropriate PWM range (0--255), and transmitted the electrical signals directly to the motor drivers via GPIO
     \end{enumerate}
 \end{enumerate}
 
@@ -714,7 +713,7 @@ The trained model is exported and optimized for the target hardware. The deploym
 \section{Evaluation and Testing}
 
 To rigorously assess the performance of the end-to-end CNN controller, a series of
-controlled experiments were designed. These tests aim to quantify the system's ability to
+controlled experiments were designed. These tests aimed to quantify the system's ability to
 track a digitally rendered path using only visual inputs, specifically evaluating whether the
 network has learned generalizable kinematic behaviors or merely memorized spatial
 coordinates. This section outlines the testing parameters, the track topologies, and the
@@ -722,8 +721,8 @@ mathematical metrics used to validate the system.
 
 \subsection{Physical Testing Environment and Setup}
 
-Because the preprocessing pipeline systematically eliminates
-ambient RGB textures, shadows, and background noise, the physical testing does not require
+Because the preprocessing pipeline systematically eliminated
+ambient RGB textures, shadows, and background noise, the physical testing did not require
 a visually isolated robotics arena. Testing was conducted on a standard, flat indoor surface with consistent artificial lighting.
 The system was deployed following the environment setup as defined in Section~\ref{sec:3.1.2}.
 
@@ -733,11 +732,11 @@ The system was deployed following the environment setup as defined in Section~\r
 The system was tested across three track configurations of increasing B{\'e}zier curve complexity, each designed to isolate specific kinematic behaviors and evaluate the CNN policy's adaptability. All tests were conducted in a controlled indoor environment with constant artificial lighting to minimize perception noise.
 
 \begin{enumerate}
-    \item \textbf{Scenario 1 (45-Degree B{\'e}zier Curves):} This topology features mild, continuous curvature to assess the model's baseline tracking stability. The primary goal of this test is to evaluate whether the CNN can generate smooth, continuous steering adjustments under gradual geometric changes without exhibiting oscillatory steering behavior (fishtailing) or overreacting to shallow curves.
+    \item \textbf{Scenario 1 (45-Degree B{\'e}zier Curves):} This topology featured mild, continuous curvature to assess the model's baseline tracking stability. The primary goal of this test was to evaluate whether the CNN can generate smooth, continuous steering adjustments under gradual geometric changes without exhibiting oscillatory steering behavior (fishtailing) or overreacting to shallow curves.
 
-    \item \textbf{Scenario 2 (90-Degree B{\'e}zier Corners/Square Path):} This scenario tests the model's response to rapid, orthogonal geometric transitions. Navigating a square path with rounded corners evaluates the network's ability to map sudden geometric shifts to aggressive, high-magnitude steering commands and rapidly recover heading and straight-line stability upon corner exit.
+    \item \textbf{Scenario 2 (90-Degree B{\'e}zier Corners/Square Path):} This scenario tested the model's response to rapid, orthogonal geometric transitions. Navigating a square path with rounded corners evaluated the network's ability to map sudden geometric shifts to aggressive, high-magnitude steering commands and rapidly recover heading and straight-line stability upon corner exit.
 
-    \item \textbf{Scenario 3 (180-Degree Sustained U-Turns):} This loop features extreme, continuous curvature to test the system's kinematic endurance under prolonged geometric distortion. The scenario evaluates the network's ability to scale and sustain near-maximum steering angles for extended durations, and smoothly transition through extreme curve sections.
+    \item \textbf{Scenario 3 (180-Degree Sustained U-Turns):} This loop featured extreme, continuous curvature to test the system's kinematic endurance under prolonged geometric distortion. The scenario evaluated the network's ability to scale and sustain near-maximum steering angles for extended durations, and smoothly transition through extreme curve sections.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -754,30 +753,30 @@ The system was tested across three track configurations of increasing B{\'e}zier
 To accurately measure the real-world kinematic performance of the robot without relying
 on manual estimation, the system utilized an automated error-logging script during physical
 deployment. By tracking the robot's chassis-mounted ArUco marker relative to the digitally
-    injected reference path, the script directly computes instantaneous error metrics
-    frame-by-frame; the recorded timestamps show an effective sampling frequency of approximately 60\,Hz during deployment.
+    injected reference path, the script directly computed instantaneous error metrics
+    frame-by-frame; the recorded timestamps showed an effective sampling frequency of approximately 60\,Hz during deployment.
 
 Unlike traditional SLAM-based evaluations that require logging global $(X, Y)$ spatial
-coordinates and absolute yaw angles, this lightweight evaluation pipeline records only the
-direct relative deviations between the robot and the reference path. This approach minimizes
+coordinates and absolute yaw angles, this lightweight evaluation pipeline recorded only the
+direct relative deviations between the robot and the reference path. This approach minimized
 data overhead while providing a precise, continuous measurement of the controller's tracking
 accuracy throughout each trial.
 
 \subsection{Performance Metrics}
 \label{sec:performance_metrics}
 
-The evaluation metrics are divided into two distinct categories: theoretical metrics utilized
+The evaluation metrics were divided into two distinct categories: theoretical metrics utilized
 during the offline supervised learning phase, and real-world kinematic metrics utilized during
 physical deployment.
 
 \subsubsection{Theoretical Metrics}
 
-These metrics are calculated exclusively during the offline training phase of the CNN. They
-measure the mathematical variance between the human-provided steering angles from the
+These metrics were calculated exclusively during the offline training phase of the CNN. They
+measured the mathematical variance between the human-provided steering angles from the
 behavioral cloning dataset and the model's predicted steering angles.
 
-The \textbf{Mean Squared Error (MSE)} serves as the primary loss function during
-backpropagation. It heavily penalizes large deviations between predicted and actual steering
+The \textbf{Mean Squared Error (MSE)} served as the primary loss function during
+backpropagation. It heavily penalized large deviations between predicted and actual steering
 values:
 
 \begin{equation}
@@ -786,7 +785,7 @@ values:
     \label{eq:mse}
 \end{equation}
 
-The \textbf{Mean Absolute Error (MAE)} provides a linear, easily interpretable measure of
+The \textbf{Mean Absolute Error (MAE)} provided a linear, easily interpretable measure of
 the average steering angle error in normalized units during the validation phase:
 
 \begin{equation}
@@ -798,8 +797,8 @@ the average steering angle error in normalized units during the validation phase
 \subsubsection{Real-World Kinematic Metrics}
 
 Because theoretical metrics can be deceptive due to factors such as covariate shift or
-spurious background correlations, the ultimate validation of the system relies on physical
-deployment metrics. These measure the actual spatial performance of the differential-drive
+spurious background correlations, the ultimate validation of the system relied on physical
+deployment metrics. These measured the actual spatial performance of the differential-drive
 robot on the floor across all three evaluation scenarios defined in
 Section~\ref{sec:eval_scenarios}.
 
@@ -831,14 +830,14 @@ Root Mean Square Error (RMSE) of the per-frame CTE deviations is calculated as:
     \label{eq:rmse}
 \end{equation}
 
-A lower RMSE indicates tighter adherence to the reference path. CTE is measured in
-warped-frame pixel units, which are geometrically consistent across all arena configurations
-since the homography transformation always maps the arena to a fixed output resolution
+A lower RMSE indicates tighter adherence to the reference path. CTE was measured in
+warped-frame pixel units, which were geometrically consistent across all arena configurations
+since the homography transformation always mapped the arena to a fixed output resolution
 regardless of physical area dimensions.
 
 \paragraph{Heading Error.}
-Complementing the position error is the Heading Error, which evaluates the robot's
-orientation accuracy. This metric measures the angular difference between the robot's current
+Complementing the position error was the Heading Error, which evaluated the robot's
+orientation accuracy. This metric measured the angular difference between the robot's current
 yaw angle $\theta_{robot}$, derived from the ArUco marker's top-edge midpoint vector, and
 the tangent angle of the path $\theta_{path}$ at the nearest projected point:
 
@@ -847,7 +846,7 @@ the tangent angle of the path $\theta_{path}$ at the nearest projected point:
     \label{eq:heading_error}
 \end{equation}
 
-The result is wrapped to the range $[-\pi, \pi]$ to ensure sign consistency, and is reported
+The result was wrapped to the range $[-\pi, \pi]$ to ensure sign consistency, and was reported
 in degrees for interpretability. Monitoring heading error is critical for predictive analysis,
 as high angular deviations often precede a complete departure from the lane even when
 the instantaneous CTE remains low.
@@ -860,7 +859,7 @@ the instantaneous CTE remains low.
 \end{figure}
 
 \paragraph{Success Rate.}
-Finally, the overall reliability of the system is measured by the \textbf{Success Rate}, defined
+Finally, the overall reliability of the system was measured by the \textbf{Success Rate}, defined
 as the percentage of total attempts in which the robot completed the entire course without
 any part of its chassis crossing the lane boundaries:
 
@@ -870,6 +869,6 @@ any part of its chassis crossing the lane boundaries:
     \label{eq:success_rate}
 \end{equation}
 
-A lap is considered failed when the chassis-mounted ArUco marker is no longer detected
+A lap was considered failed when the chassis-mounted ArUco marker was no longer detected
 within the drivable region for more than 30 consecutive frames, corresponding to
 approximately 1.5 seconds at the system's operating frequency of 15--20\,Hz.
