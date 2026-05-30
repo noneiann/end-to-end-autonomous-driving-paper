@@ -445,10 +445,9 @@ the dataset was deliberately structured across three driving modes:
           \cite{Codevilla2019BehaviorCloningLimits}.
 \end{itemize}
 
-After collection, the dataset was post-processed to enforce approximate class balance across
-steering angle bins. Frames corresponding to near-zero steering ($|a_t| < 0.05$) were
-subsampled to ensure they do not dominate the training distribution, while recovery and
-high-curvature samples are retained in full.
+The dataset distribution reflects the collected demonstrations without post-hoc resampling.
+Training data diversity is achieved primarily through the three driving modes described
+above: Nominal Laps, Aggressive Turn Demonstrations, and Recovery Maneuvers.
 
 \subsection{State Representation}
 
@@ -531,29 +530,28 @@ The only dynamic variables passed to the convolutional feature extractor were th
 orientation, curvature, and proximity of the approaching path boundaries — the precise features
 required to generate a geometrically correct steering command.
 
-\subsubsection{Stage 5 — Normalization}
+\subsubsection{Stage 5 — Storage and Normalization}
 
-The cropped binary canvas was cast to a 32-bit float array and normalized to the range
-$[0.0,\ 1.0]$ by dividing by 255. This normalization was consistent with the input normalization
-layer of the DAVE-2 architecture (Table 3.1), which further linearly scales pixel values to
-$[-1.0,\ 1.0]$ via the expression:
+The cropped RGB canvas was stored as raw 8-bit integer values in the range $[0,\ 255]$;
+no division or floating-point conversion was applied prior to saving frames to disk.
+The CNN's dedicated input normalization layer applies the transformation at inference and
+training time, linearly scaling pixel values to the range $[-1.0,\ 1.0]$ via the expression:
 
 \begin{equation}
     x_{norm} = \frac{x}{127.5} - 1
 \end{equation}
 
-Normalizing prior to storage reduced numerical variance across the dataset and accelerated
-gradient descent convergence during training. The output of Stage 5 was the final state tensor
-$s_t$ — a $W_{crop} \times H_{crop} \times 1$ grayscale array — that was saved to disk paired
-with its corresponding steering label $a_t$ during data collection, and fed directly into the
-CNN's input layer during both training and deployment inference.
+The output of Stage 5 is the final state tensor $s_t$ — a $W_{crop} \times H_{crop} \times 3$
+RGB array — that is saved to disk paired with its corresponding steering label $a_t$ during
+data collection, and fed directly into the CNN's input layer during both training and
+deployment inference.
 
 \section{Convolutional Neural Network Model and Training} 
 
 This section details the implementation of the deep learning pipeline, translating the theoretical framework of Behavioral Cloning and CNNs (discussed in Section 2.7) into a functional navigation system. The pipeline is divided into model architecture design, data preprocessing, acquisition, training, and final deployment.
 \subsection{Model Architecture}
 
-The study employed a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model \citep{Bojarski2016PilotNet}, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts the preprocessed image tensors (dimensions defined in Section 3.6.2). 
+The study employed a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model \citep{Bojarski2016PilotNet}, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts full-colour RGB tensors of size $W_{crop} \times H_{crop} \times 3$ — the preprocessed egocentric crop described in Section 3.4.2. 
 
 The core processing begins with the Convolutional Feature Extractor, which utilizes five sequential convolutional layers to extract spatial features from the homography-transformed overhead view. The first three layers utilize 5x5 kernels with a stride of 2 to rapidly reduce spatial dimensions and capture broad geometric structures, such as the path boundaries. The subsequent two layers employ 3x3 kernels with a stride of 1 to capture finer, higher-level spatial hierarchies. To mitigate the vanishing gradient problem and accelerate convergence, every convolutional layer is followed by Batch Normalization \citep{Ioffe2015BatchNorm} and an Exponential Linear Unit (ELU) \citep{Clevert2016ELU} activation function, which pushes mean activations closer to zero compared to standard ReLU.
 
@@ -622,10 +620,10 @@ discussed at the end of this section.
 \subsubsection*{Phase 1: Dataset Preparation}
 
 Prior to training, the collected dataset underwent a final preparation step. The full dataset
-was partitioned using an 80:20 split, with 80\% of samples reserved for training and 20\%
+was partitioned using an 85:15 split, with 85\% of samples reserved for training and 15\%
 held out for validation. To prevent the training loop from processing samples in a fixed
 sequence, which could introduce temporal autocorrelation artifacts, the training split
-was shuffled before each epoch. A batch size of 32 was used throughout training.
+was shuffled before each epoch. A batch size of 64 was used throughout training.
 
 \begin{figure}[!ht]
         \centering
@@ -647,9 +645,7 @@ samples in each batch:
 \end{equation}
 
 The Adam optimizer \citep{Kingma2015Adam} was selected for its adaptive learning rate capabilities, ensuring stable
-convergence despite the non-convex nature of the loss landscape. Training proceeded until
-the validation loss plateaued, at which point Early Stopping was triggered to prevent
-overfitting and to restore the weights from the best-performing epoch.
+convergence despite the non-convex nature of the loss landscape. A ReduceLROnPlateau scheduler is applied to the Adam optimizer; when the validation loss stagnates across successive epochs, the learning rate is reduced to assist convergence. Training proceeds for the full scheduled number of epochs without early termination.
 
 The throttle command was held at a fixed, conservative value during both data collection
 and inference rather than being predicted as a second CNN output. This design decision
@@ -659,14 +655,17 @@ signals during backpropagation. Restricting the network to steering-only predict
 provided a cleaner, more interpretable loss signal and allows the model to converge more
 efficiently. This approach also followed the precedent established by NVIDIA's PilotNet
 architecture, which originally focused exclusively on steering angle prediction with
-throttle managed as an independent system.
+throttle managed as an independent system. It should be noted that while the data
+collection script records both steering and throttle labels as a paired array for logging
+completeness, only the steering column is used during training; the throttle label is
+discarded prior to model optimization.
 \subsection{Deployment and Inference}
 \label{sec:deployment_inference}
 
 The trained model was exported and optimized for the target hardware. The deployment process operated in a continuous control loop.
 
 \begin{enumerate}
-    \item \textbf{Model Serialization:} The trained network architecture and weights were saved in a portable format (e.g., \texttt{.pth} for PyTorch or \texttt{.pt} for TorchScript deployment).
+    \item \textbf{Model Serialization:} The trained network architecture and weights are saved in PyTorch's native serialization format (\texttt{.pth}).
 
     \item \textbf{Inference Loop:} The deployment script ran in a continuous loop on the dedicated offboard workstation, transmitting the resulting control commands to the robot's onboard microcontroller over a local Wi-Fi connection via UDP sockets:
     \begin{enumerate}[\alph*.]
@@ -872,3 +871,7 @@ any part of its chassis crossing the lane boundaries:
 A lap was considered failed when the chassis-mounted ArUco marker was no longer detected
 within the drivable region for more than 30 consecutive frames, corresponding to
 approximately 1.5 seconds at the system's operating frequency of 15--20\,Hz.
+
+The CTE, heading error, and success rate metrics are recorded frame-by-frame by the
+runtime error-logging script within the robot controller during physical deployment; they
+are not computed during the offline training phase.
