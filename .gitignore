@@ -10,6 +10,7 @@
 *.out
 *.toc
 *.synctex.gz
+*.synctex(busy)
 
 # Python build and cache files
 __pycache__/

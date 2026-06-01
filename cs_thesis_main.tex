@@ -46,6 +46,7 @@
 \usepackage{tabularx}
 \usepackage{wrapfig}
 \usepackage{float}
+\usepackage{enumitem}
 
 %% ***************** (Your) Packages (End) *******************
 
@@ -135,7 +136,7 @@ Autonomous Navigation using Homography-Based Overhead Localization
     \input{chap2/lit_overview_main}
     \input{chap3/materials_and_methods_main}
     \input{chap4/results_and_discussion_main}
-    \input{chap6/conclusions_main}
+    \input{chap5/conclusions_main}
     \appendix
         \input{appA/appendix_a_main}     % these are just test names as I didn't know what you'd
         \input{appB/appendix_b_main}
@@ -143,7 +144,7 @@ Autonomous Navigation using Homography-Based Overhead Localization
     % Bibliography
     \if@openright\cleardoublepage\else\clearpage\fi
     \bibliographystyle{um-plainnat} %% specific plainnat does not show url for articles
-    {\footnotesize\bibliography{chap1/introduction_biblio,chap2/lit_overview_biblio}}
+    {\footnotesize\bibliography{chap1/introduction_biblio,chap2/lit_overview_biblio, chap3/materials_and_methods_biblio}}
 	\printindex
 }
 

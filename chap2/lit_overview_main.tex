@@ -1,5 +1,14 @@
+% ISSUE #1 — DOI / cite-key mismatches (fix in chap2/lit_overview_biblio.bib):
+% Several \cite{} keys in this file resolve as "?" at compile time, indicating that the
+% \bibitem / BibTeX entry key does not exactly match the \cite{} key used in the body text.
+% To fix: (1) ensure every \cite{key} has an exactly matching entry key in lit_overview_biblio.bib;
+% (2) check that no DOI strings contain unescaped underscores — wrap them in braces, e.g.
+%     doi = {10.1000/some\_doi} should be doi = {10.1000/some_doi} (no backslash needed in BibTeX values,
+%     or use \url{} if the style requires it); (3) recompile twice (pdflatex → bibtex → pdflatex → pdflatex)
+%     and confirm no "?" remains in the PDF.
+
 \chapter{Literature Review}
-\textbf{This chapter reviews the existing literature on autonomous mobile recognition systems, with a focus on sensor technologies, marker based localization, and robot control strategies. It analyzes the advantages and limitations of current methodologies to establish the theoretical framework for the proposed low-cost navigation system. Additionally, the Preferred Reporting Items for Systematic Reviews and Meta-Analysis (PRISMA) guidelines was done to ensure a systematic and transparent process of searching, screening, and inclusion of literature.}
+This chapter reviews the existing literature on autonomous mobile recognition systems, with a focus on sensor technologies, marker based localization, and robot control strategies. It analyzes the advantages and limitations of current methodologies to establish the theoretical framework for the proposed low-cost navigation system. Additionally, the Preferred Reporting Items for Systematic Reviews and Meta-Analysis (PRISMA) guidelines was done to ensure a systematic and transparent process of searching, screening, and inclusion of literature.
 \section{Search Strategy}
 \index{Search Strategy|(}
 To begin the literature review process and identify relevant studies, the researchers conducted a literature search across Google Scholar, IEEE Xplore, and arXiv. The search was done specifically with the query strings shown in Table 2.1 below. Query strings were varied for each database to ensure that the strings were syntactically correct with each database’s unique search syntax.
@@ -335,6 +344,3 @@ D = \{(s_i, a_i)\}_{i=1}^{N}
 \]
 where $s_i$ represents the state observation (input) at time step $i$,
 and $a_i$ represents the expert action (output) at time step $i$.
-
-
-
