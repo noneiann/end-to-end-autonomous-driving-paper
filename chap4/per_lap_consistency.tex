@@ -1,67 +1,33 @@
 % chap4/per_lap_consistency.tex
-% Per-lap windowed CTE RMSE analysis. Replaces the non-overlapping 500-frame
-% windowing for tracking-consistency reporting. \input this into Chapter 4.
+% Trial-to-trial CTE RMSE consistency over N=10 independent randomized-start trials per scenario.
+% Replaces the old per-lap (within-one-run) analysis. \input this into Chapter 4.
 
-\subsection{Per-Lap Tracking Consistency}
+\subsection{Trial-to-Trial Tracking Consistency}
 \label{sec:per_lap_consistency}
-Because each evaluation run is a continuous, multi-lap circuit, tracking
-consistency is reported per \emph{lap} rather than over arbitrary fixed-length
-frame windows. A lap is one complete circuit of the track, so a per-lap window
-aligns each consistency sample with a physically meaningful unit of the course
-instead of an $8.3$~s slice that spans a variable fraction of a lap. The
-$45^\circ$ and $90^\circ$ runs each comprise 10 laps (lap periods of
-$\approx 4.9$~s and $\approx 2.9$~s respectively); the $180^\circ$ endurance run
-comprises 8 complete laps, its two $180^\circ$ turns per lap yielding a lap
-period of $\approx 26$~s. Mirroring the earlier policy of discarding partial
-trailing windows, the $180^\circ$ run's final partial lap ($14.3$~s) is excluded
-so that only complete laps contribute. Per-lap RMSE summaries are given in
-Table~\ref{tab:per_lap_consistency}, with the lap-by-lap values in
-Table~\ref{tab:per_lap_detail}.
+Because each evaluation trial is exactly one circuit of the track, the repeated unit is the
+\emph{independent trial} rather than a lap within a continuous run. Tracking consistency is therefore
+reported as the distribution of per-trial CTE RMSE across the $N=10$ randomized-start trials of each
+scenario (Table~\ref{tab:per_lap_consistency}).
 
 \begin{table}[H]
 \centering
-\caption{Per-Lap CTE RMSE Consistency (Complete Laps)}
+\caption{Trial-to-trial CTE RMSE consistency ($N=10$ independent randomized-start trials per scenario).}
 \label{tab:per_lap_consistency}
 \footnotesize
-\begin{tabular}{@{}l r r r r r r@{}}
+\begin{tabular}{@{}l r r r@{}}
 \toprule
- & & & \multicolumn{4}{c}{\textbf{Per-Lap CTE RMSE (px)}} \\
-\cmidrule(lr){4-7}
-\textbf{Scenario} & \textbf{Laps ($n$)} & \textbf{Lap dur.\ (s)} & \textbf{Mean} & \textbf{SD} & \textbf{Min} & \textbf{Max} \\
+\textbf{Scenario} & \textbf{Trials ($n$)} & \textbf{Per-trial RMSE mean $\pm$ SD (cm)} & \textbf{Range (cm)} \\
 \midrule
-1 (45$^\circ$)  & 10 & $\approx 4.9$  & 2.28 & 1.37 & 0.93 & 4.73 \\
-2 (90$^\circ$)  & 10 & $\approx 2.9$  & 3.01 & 1.86 & 1.21 & 7.02 \\
-3 (180$^\circ$) & 8  & $\approx 26.0$ & 6.56 & 2.08 & 4.43 & 10.14 \\
+1 (45$^\circ$)   & 10 & 0.98 $\pm$ 0.11 & 0.76--1.15 \\
+2 (90$^\circ$)   & 10 & 1.49 $\pm$ 0.14 & 1.26--1.69 \\
+3 (180$^\circ$)  & 10 & 0.91 $\pm$ 0.04 & 0.86--0.96 \\
+4 (held-out)     & 10 & 2.04 $\pm$ 0.16 & 1.77--2.44 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[H]
-\centering
-\caption{Lap-by-Lap CTE RMSE (px)}
-\label{tab:per_lap_detail}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l r r r r r r r r r r@{}}
-\toprule
-\textbf{Scenario} & \textbf{L1} & \textbf{L2} & \textbf{L3} & \textbf{L4} & \textbf{L5} & \textbf{L6} & \textbf{L7} & \textbf{L8} & \textbf{L9} & \textbf{L10} \\
-\midrule
-1 (45$^\circ$)  & 4.56 & 3.59 & 1.23 & 1.61 & 1.34 & 0.93 & 1.79 & 1.65 & 1.35 & 4.73 \\
-2 (90$^\circ$)  & 1.58 & 1.23 & 1.62 & 1.21 & 4.49 & 7.02 & 4.55 & 3.96 & 2.99 & 1.43 \\
-3 (180$^\circ$) & 4.65 & 4.43 & 5.03 & 6.29 & 10.14 & 9.75 & 6.65 & 5.50 & -- & -- \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The lap-resolved view exposes structure that the run-level averages obscure.
-The $45^\circ$ run shows an initial settling transient: the vehicle begins
-displaced from the path (laps 1--2, RMSE $4.56$ and $3.59$~px) and converges
-within two laps to tight tracking (laps 3--9 all below $1.8$~px), with a single
-elevated final lap. Both the $90^\circ$ and $180^\circ$ runs exhibit a
-mid-run excursion followed by recovery rather than monotonic drift: error peaks
-near the middle of each run ($90^\circ$ laps 5--6, up to $7.02$~px;
-$180^\circ$ laps 5--6, up to $10.14$~px) and then progressively returns to its
-earlier level by the final laps. This bounded, self-correcting behaviour
-indicates the controller does not diverge under sustained operation. Mean
-per-lap RMSE still scales with curvature severity ($2.28 < 3.01 < 6.56$~px for
-the $45^\circ$, $90^\circ$, and $180^\circ$ courses).
+The small standard deviations (0.04--0.17~cm) are the central result: the controller produces
+near-identical tracking error across independent trials that each start from a different randomized
+pose, indicating high repeatability rather than a single lucky run. The trained-track scenarios
+(1--3) cluster tightly, while the held-out track (Scenario~4) shows both a higher mean and a wider
+spread, consistent with the generalization gap reported in Section~\ref{sec:generalization}.

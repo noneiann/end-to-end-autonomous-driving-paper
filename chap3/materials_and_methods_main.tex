@@ -21,6 +21,7 @@ A Logitech Gamepad F710 Joystick Controller with a USB Dongle is utilized for ma
 The system is powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 configuration) to provide stable voltage to the microcontroller and raw power to the motor driver.
 
 \subsection{Environment Setup}
+\label{sec:3.1.2}
 The experimental environment is a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) is mounted at a fixed height above the area. The camera is positioned at an angle to cover the entire operational area. While the camera is angled, the software pipeline corrects this perspective distortion mathematically. The arena consists of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) are physically defined by four ArUco markers fixed at the corners. These markers serve as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference are performed on a dedicated laptop or desktop computer equipped with a GPU. This workstation runs the Python-based control software, processes the camera feed via USB, and broadcasts control commands to the robot over the local wireless network.
 
 \section{Software Framework}
@@ -365,7 +366,7 @@ The main execution pipeline follows a ``Sense-Think-Act'' cycle:
 \end{enumerate}
 
 \paragraph{Timing and Latency}
-To maintain smooth motion, the software is designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution is kept minimal to mitigate latency. During physical deployment the recorded telemetry timestamps indicate an effective sampling/inference frequency of approximately 60~Hz; Chapter~4 reports per-frame durations using this observed rate where relevant. A software watchdog is implemented to monitor the loop time; if the camera disconnects or the loop hangs, the actuation interface triggers a safety stop to prevent runaway behavior.
+To maintain smooth motion, the software is designed to run at a target frequency of 15Hz to 20Hz. The most computationally expensive step is the CNN inference; therefore, the input image resolution is kept minimal to mitigate latency. During physical deployment the recorded telemetry timestamps indicate an effective control-loop rate of approximately 30~Hz (mean 29.7~Hz, SD 1.6~Hz across 40 trials). The redo telemetry logger writes one row per new camera frame; the earlier $\approx 60$~Hz figure reflected an oversampled log that appended a row on every render tick. Chapter~4 reports per-frame durations using this corrected $\approx 30$~Hz rate. Pixel-to-cm conversions throughout the thesis use the confirmed arena scale of 0.25~cm/px ($800$~px canvas $\approx 200$~cm). A software watchdog is implemented to monitor the loop time; if the camera disconnects or the loop hangs, the actuation interface triggers a safety stop to prevent runaway behavior.
 
 
 \section{Data Acquisition and Processing}
@@ -376,7 +377,7 @@ operationalizes the Behavioral Cloning paradigm described in Section 2.7.3, cons
 supervised dataset that will serve as the sole source of driving knowledge for the Convolutional
 Neural Network. The data acquisition pipeline is designed to ensure that every recorded sample
 is a semantically meaningful, temporally synchronized pair of a preprocessed visual state and a
-human-demonstrated steering command. Telemetry frames are recorded frame-by-frame during deployment; the recorded timestamps show an effective sampling frequency of roughly 60~Hz.
+human-demonstrated steering command. Telemetry frames are recorded frame-by-frame during deployment; the recorded timestamps show an effective sampling frequency of roughly 30~Hz.
 
 \subsection{Dataset Collection}
 
@@ -730,15 +731,30 @@ The system was tested across three track configurations of increasing B{\'e}zier
     \item \textbf{Scenario 2 (90-Degree B{\'e}zier Corners/Square Path):} This scenario tests the model's response to rapid, orthogonal geometric transitions. Navigating a square path with rounded corners evaluates the network's ability to map sudden geometric shifts to aggressive, high-magnitude steering commands and rapidly recover heading and straight-line stability upon corner exit.
 
     \item \textbf{Scenario 3 (180-Degree Sustained U-Turns):} This loop features extreme, continuous curvature to test the system's kinematic endurance under prolonged geometric distortion. The scenario evaluates the network's ability to scale and sustain near-maximum steering angles for extended durations, and smoothly transition through extreme curve sections.
+
+    \item \textbf{Scenario 4 (Held-Out Track):} A fourth track topology (\texttt{path-new}; Figure~\ref{fig:heldout_track}) that was \emph{not} present in the training set is evaluated to test generalization to unseen path geometry within the same marker arena. This scenario isolates whether the policy learned transferable relative path geometry rather than memorizing track-specific coordinates.
 \end{enumerate}
+
+Each scenario is evaluated over $N=10$ independent trials. Every trial begins from a randomized
+start pose within the lane and constitutes a single discrete circuit, in contrast to the earlier
+single continuous multi-lap recordings. This randomized-start, discrete-trial protocol yields
+independent samples of tracking performance per scenario, enabling trial-to-trial repeatability
+analysis and confidence-interval reporting in Chapter~4.
 
 \begin{figure}[!ht]
     \centering
     \subbottom[Scenario 1: 45-Degree Curves.]{\includegraphics[width=0.31\textwidth]{chap4/images/45-degree.jpg}}\hfill
     \subbottom[Scenario 2: 90-Degree Corners.]{\includegraphics[width=0.31\textwidth]{chap4/images/90-degree.jpg}}\hfill
     \subbottom[Scenario 3: 180-Degree U-Turns.]{\includegraphics[width=0.31\textwidth]{chap4/images/u-turn.jpg}}
-    \caption{Visual representation of the three experimental track configurations used for physical testing.}
+    \caption{Visual representation of the three trained experimental track configurations used for physical testing.}
     \label{fig:testing_scenarios}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.45\textwidth]{chap3/path-new.jpg}
+    \caption{The held-out track (\texttt{path-new}) used for the Scenario~4 generalization test. This topology was \emph{not} present in the training set and is evaluated under the same randomized-start protocol as the trained tracks.}
+    \label{fig:heldout_track}
 \end{figure}
 
 \subsection{Ground-Truth Tracking System}
@@ -747,7 +763,7 @@ To accurately measure the real-world kinematic performance of the robot without 
 on manual estimation, the system utilizes an automated error-logging script during physical
 deployment. By tracking the robot's chassis-mounted ArUco marker relative to the digitally
     injected reference path, the script directly computes instantaneous error metrics
-    frame-by-frame; the recorded timestamps show an effective sampling frequency of approximately 60\,Hz during deployment.
+    frame-by-frame; the recorded timestamps show an effective sampling frequency of approximately 30\,Hz during deployment.
 
 Unlike traditional SLAM-based evaluations that require logging global $(X, Y)$ spatial
 coordinates and absolute yaw angles, this lightweight evaluation pipeline records only the
@@ -792,7 +808,7 @@ the average steering angle error in normalized units during the validation phase
 Because theoretical metrics can be deceptive due to factors such as covariate shift or
 spurious background correlations, the ultimate validation of the system relies on physical
 deployment metrics. These measure the actual spatial performance of the differential-drive
-robot on the floor across all three evaluation scenarios defined in
+robot on the floor across all four evaluation scenarios defined in
 Section~\ref{sec:eval_scenarios}.
 
 \paragraph{Cross-Track Error (CTE) and RMSE.}
@@ -862,6 +878,10 @@ any part of its chassis crossing the lane boundaries:
     \label{eq:success_rate}
 \end{equation}
 
-A lap is considered failed when the chassis-mounted ArUco marker is no longer detected
+A trial is considered failed when the chassis-mounted ArUco marker is no longer detected
 within the drivable region for more than 30 consecutive frames, corresponding to
-approximately 1.5 seconds at the system's operating frequency of 15--20\,Hz.
+approximately 1.0 second at the system's measured operating rate of $\approx 30$\,Hz.
+
+The success rate is reported per scenario over the $N=10$ trials. For any trial that does not
+complete, the \textbf{completion fraction} is also reported, defined as the maximum path-segment
+index reached divided by the number of path points minus one.

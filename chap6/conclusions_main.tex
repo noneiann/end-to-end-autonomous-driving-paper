@@ -6,7 +6,7 @@ This study developed and evaluated a lightweight, end-to-end autonomous navigati
 
 Physical deployment initially revealed a critical failure mode: the allocentric (full-AOI) state representation caused the network to overfit to the robot's absolute pixel position rather than learn generalizable path-following features, a manifestation of the ``Clever Hans'' effect in machine learning. This issue was resolved through an architectural pivot to an egocentric perception model, wherein the CNN received only a robot-centered crop drawn on a semantically abstracted black canvas. This information bottleneck forced the convolutional layers to learn translation-invariant relative geometric features.
 
-The resulting egocentric model successfully navigated straight paths, 90-degree turns, U-turns, and off-center recovery scenarios, demonstrating that homography-based preprocessing combined with a strict visual information bottleneck can substantially bridge the gap between offline training loss and real-world kinematic performance.
+The resulting egocentric model successfully navigated the 45-degree B\'ezier, 90-degree square, and 180-degree U-turn topologies, as well as a held-out track never seen during training, demonstrating that homography-based preprocessing combined with a strict visual information bottleneck can substantially bridge the gap between offline training loss and real-world kinematic performance.
 
 \section{Conclusion}
 
@@ -14,7 +14,7 @@ This study conclusively demonstrates that a lightweight end-to-end autonomous na
 
 The proposed system fulfilled this requirement without resorting to expensive range sensors, probabilistic mapping pipelines, or high-end onboard computing hardware. A central achievement of this work was the successful elimination of classical PID feedback loops from the control architecture. The trained DAVE-2 CNN produced sufficiently smooth and accurate continuous steering outputs to maintain stable path following across all tested track topologies, including geometrically demanding 90-degree turns and hairpin U-turns.
 
-This validates the core hypothesis of end-to-end Behavioral Cloning: that a neural network, given a well-constructed visual state, can implicitly learn the non-linear control mapping that a PID controller approximates explicitly. The absence of derivative-term damping did not produce the oscillatory behavior commonly associated with proportional-only controllers, suggesting that the CNN learned a temporally coherent steering policy from the expert demonstrations.
+This validates the core hypothesis of end-to-end Behavioral Cloning: that a neural network, given a well-constructed visual state, can implicitly learn a non-linear control mapping in place of an explicit feedback controller. No classical PID or pure-pursuit comparator was implemented in this study, so this is an architectural rather than a comparative-performance claim. Notably, the learned policy tracked all topologies without the sustained oscillatory steering often anticipated from a feedback law lacking a derivative damping term, suggesting that the CNN learned a temporally coherent steering policy from the expert demonstrations.
 
 Perhaps the most significant and transferable finding of this study is the decisive role of the visual information bottleneck in bridging the sim-to-real gap inherent in Behavioral Cloning. The full-AOI allocentric model achieved low validation loss during training yet failed catastrophically in physical deployment, demonstrating a textbook manifestation of covariate shift exacerbated by misleading spatial memorization. By replacing this representation with a semantically abstracted robot-centered crop on a black canvas, the network's input distribution became invariant to the robot's absolute arena position.
 
@@ -22,7 +22,7 @@ This forced the convolutional feature extractor to operate exclusively on relati
 
 More broadly, this study demonstrates that the integration of classical geometric computer vision, specifically projective homography, with modern imitation learning is a viable and computationally efficient strategy for structured indoor robot navigation. By offloading the burden of 3D geometry interpretation from the neural network to a deterministic analytical transformation, the complexity of the learning task was substantially reduced.
 
-A standard CNN with fewer than 300,000 parameters was sufficient to learn reliable path-following behaviors that would otherwise require much deeper architectures when operating on raw perspective images. The system's successful operation on a laptop-class GPU, with real-time inference delivered over a local wireless link to a low-cost microcontroller-driven robot, further confirms the feasibility of this approach for educational and resource-constrained industrial applications.
+A compact DAVE-2 CNN with approximately 2.2 million parameters (2{,}211{,}175) was sufficient to learn reliable path-following behaviors that would otherwise require much deeper architectures when operating on raw perspective images. The system's successful operation on a laptop-class GPU, with real-time inference delivered over a local wireless link to a low-cost microcontroller-driven robot, further confirms the feasibility of this approach for educational and resource-constrained industrial applications.
 
 \section{Recommendations for Future Work}
 
@@ -30,7 +30,7 @@ A standard CNN with fewer than 300,000 parameters was sufficient to learn reliab
 
 The current architecture offloads all image processing and CNN inference to a remote workstation, with control commands transmitted to the robot over a local Wi-Fi link. This centralized design introduces network-dependent latency that may become problematic at higher robot velocities or in environments with wireless interference.
 
-Future work should explore migrating the inference pipeline directly onto an onboard edge computing platform. Deploying the trained DAVE-2 model on an NVIDIA Jetson Nano or a Google Coral Edge TPU would eliminate the round-trip network delay and increase the effective control loop frequency beyond the current target of 15--20 Hz.
+Future work should explore migrating the inference pipeline directly onto an onboard edge computing platform. Deploying the trained DAVE-2 model on an NVIDIA Jetson Nano or a Google Coral Edge TPU would eliminate the round-trip network delay and increase the effective control loop frequency beyond the measured operating rate of approximately 30~Hz.
 
 Model compression techniques such as post-training quantization (INT8) and structured pruning should also be evaluated, as the simplified BEV input representation suggests that the network may be substantially over-parameterized for the task.
 
