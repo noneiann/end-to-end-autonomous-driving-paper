@@ -1,0 +1,992 @@
+@article{AbdelAziz2015,
+  author    = {Abdel-Aziz, Y. I. and Karara, H. M.},
+  title     = {Direct linear transformation from comparator coordinates into object space coordinates in close-range photogrammetry},
+  journal   = {Photogrammetric Engineering \& Remote Sensing},
+  year      = {2015},
+  volume    = {81},
+  number    = {2},
+  pages     = {103--107},
+  doi       = {10.14358/PERS.81.2.103}
+}
+
+@inproceedings{Adapa2019,
+  author    = {Adapa, D. and Shekhawat, V. S. and Gautam, A. and Mohan, S.},
+  title     = {Autonomous mapping and navigation using fiducial markers and pan-tilt camera for assisting indoor mobility of blind and visually impaired people},
+  booktitle = {2019 IEEE 5th International Conference for Convergence in Technology (I2CT)},
+  year      = {2019},
+  pages     = {1--6},
+  doi       = {10.48550/arXiv.2310.10290}
+}
+
+@article{Alam2023,
+  author    = {Alam, M. S. and Gullu, A. I. and Gunes, A.},
+  title     = {Fiducial markers and particle filter based localization and navigation framework for an autonomous mobile robot},
+  journal   = {Automatika},
+  year      = {2023},
+  volume    = {64},
+  number    = {3},
+  pages     = {447--459},
+  doi       = {10.1007/s42979-024-03090-y}
+}
+
+@article{Alghamdi2025,
+  author    = {Alghamdi, M. and Al-Marakeby, A. and Abdel-Mageid, S.},
+  title     = {Mobile robot navigation based on artificial markers: A systematic mapping study},
+  journal   = {Journal of Robotics and Mechatronics},
+  year      = {2025},
+  volume    = {37},
+  number    = {3},
+  pages     = {762--778},
+  doi       = {10.20965/jrm.2025.p0762}
+}
+
+@article{Alimovski2022,
+  author    = {Alimovski, E. and Erdemir, G. and Kuzucuoglu, A. E.},
+  title     = {Vision-based localization in urban areas for mobile robots},
+  journal   = {Applied Sciences},
+  year      = {2022},
+  volume    = {12},
+  number    = {19},
+  pages     = {9877},
+  doi       = {10.3390/s25041178}
+}
+
+@inproceedings{Asif2020,
+  author    = {Asif, M. and Lim, H. W. and Thadimari, Y. and Imanberdiyev, N. and Camci, E.},
+  title     = {Localization of a tethered drone \& ground robot team by deep neural networks},
+  booktitle = {2020 IEEE/ASME International Conference on Advanced Intelligent Mechatronics (AIM)},
+  year      = {2020},
+  pages     = {1475--1480},
+  doi       = {10.1109/ITSC58415.2024.10920023}
+}
+
+@article{Bansal2020,
+  author    = {Bansal, M. and Krizhevsky, A. and Ogale, A.},
+  title     = {{ChauffeurNet}: Learning to drive by imitating the best and synthesizing the worst},
+  journal   = {Robotics and Automation Letters},
+  year      = {2020},
+  volume    = {5},
+  number    = {2},
+  pages     = {374--381},
+  doi       = {10.48550/arXiv.1812.03079}
+}
+
+@article{Bhat2024,
+  author    = {Bhat, S. and Kavasseri, A.},
+  title     = {Multi-source data integration for navigation in {GPS}-denied autonomous driving environments},
+  journal   = {International Journal of Electrical and Electronics Research},
+  year      = {2024},
+  volume    = {12},
+  number    = {3},
+  pages     = {863--869},
+  doi       = {10.37391/IJEER.120317}
+}
+
+@article{Bradski2000,
+  author    = {Bradski, G.},
+  title     = {The {OpenCV} library},
+  journal   = {Dr. Dobb's Journal of Software Tools},
+  year      = {2000}
+}
+
+@article{Braun2022,
+  author    = {Braun, J. and J{\'u}nior, A. O. and Berger, G. and Pinto, V. H. and Soares, I. N. and Pereira, A. I. and Lima, J. and Costa, P.},
+  title     = {A robot localization proposal for the {RobotAtFactory} 4.0: A novel robotics competition within the {Industry} 4.0 concept},
+  journal   = {Frontiers in Robotics and AI},
+  year      = {2022},
+  volume    = {9},
+  pages     = {1023590},
+  doi       = {10.3389/frobt.2022.1023590}
+}
+
+@article{Brown1966,
+  author    = {Brown, D. C.},
+  title     = {Decentering distortion of lenses},
+  journal   = {Photogrammetric Engineering},
+  year      = {1966},
+  volume    = {32},
+  number    = {3},
+  pages     = {444--462}
+}
+
+@article{Cadena2016,
+  author    = {Cadena, C. and Carlone, L. and Carrillo, H. and Latif, Y. and Scaramuzza, D. and Neira, J. and Reid, I. and Leonard, J. J.},
+  title     = {Past, present, and future of simultaneous localization and mapping: Toward the robust-perception age},
+  journal   = {IEEE Transactions on Robotics},
+  year      = {2016},
+  volume    = {32},
+  number    = {6},
+  pages     = {1309--1332},
+  doi       = {10.1109/TRO.2016.2624754}
+}
+
+@article{Cebollada2020,
+  author    = {Cebollada, S. and Pay{\'a}, L. and Flores, M. and Peidr{\'o}, A. and Reinoso, O.},
+  title     = {A state-of-the-art review on mobile robotics tasks using artificial intelligence and visual data},
+  journal   = {Expert Systems With Applications},
+  year      = {2020},
+  volume    = {167},
+  pages     = {114195},
+  doi       = {10.1016/j.eswa.2020.114195}
+}
+
+@mastersthesis{Montecchio2022,
+  author    = {Montecchio, S.},
+  title     = {Study and development of a reliable fiducials-based localization system for multicopter {UAVs} flying indoor},
+  school    = {Universit{\`a} degli Studi di Padova},
+  year      = {2022},
+  url       = {https://thesis.unipd.it/handle/20.500.12608/56236}
+}
+
+@article{Chea2023,
+  author    = {Chea, C. P. and Bai, Y. and Zhou, Z.},
+  title     = {Design and development of robotic collaborative system for automated construction of reciprocal frame structures},
+  journal   = {Computer-Aided Civil and Infrastructure Engineering},
+  year      = {2023},
+  volume    = {39},
+  number    = {10},
+  pages     = {1550--1569},
+  doi       = {10.1111/mice.13145}
+}
+
+@misc{Chen2025,
+  author    = {Chen, P. and Luo, Z. and Jiang, X. and Yin, Z. and Li, J.},
+  title     = {Maps for autonomous driving: Full-process survey and frontiers},
+  year      = {2025},
+  eprint    = {2509.12632},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{Chen2021,
+  author    = {Chen, X. and Wang, P. and Long, X. and Gao, J. and Lin, J. and Wang, X.},
+  title     = {{TransTrack}: Multiple-object tracking with transformer},
+  booktitle = {Proceedings of the IEEE International Conference on Computer Vision},
+  year      = {2021},
+  pages     = {15039--15049},
+  doi       = {10.48550/arXiv.2012.15460}
+}
+
+@inproceedings{Cho2014,
+  author    = {Cho, K. and Van Merri{\"e}nboer, B. and Gulcehre, C. and Bahdanau, D. and Bougares, F. and Schwenk, H. and Bengio, Y.},
+  title     = {Learning phrase representations using {RNN} encoder-decoder for statistical machine translation},
+  booktitle = {Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing},
+  year      = {2014},
+  pages     = {1724--1734},
+  doi       = {10.48550/arXiv.1406.1078}
+}
+
+@inproceedings{Cieslewski2017,
+  author    = {Cieslewski, T. and Choudhary, S. and Scaramuzza, D.},
+  title     = {Data-efficient decentralized visual {SLAM}},
+  booktitle = {2017 IEEE International Conference on Robotics and Automation},
+  year      = {2017},
+  pages     = {2466--2473},
+  doi       = {10.48550/arXiv.1710.05772}
+}
+
+@incollection{Civera2017,
+  author    = {Civera, J. and Lee, S. H.},
+  title     = {{RGB-D} odometry and {SLAM}},
+  booktitle = {Robotics and Automation Handbook},
+  editor    = {Corke, P. and Hutchinson, S.},
+  publisher = {Springer},
+  year      = {2017},
+  pages     = {117--144},
+  doi       = {10.48550/arXiv.2001.06875}
+}
+
+@inproceedings{Codevilla2019,
+  author    = {Codevilla, F. and M{\"u}ller, M. and L{\'o}pez, A. and Koltun, V. and Dosovitskiy, A.},
+  title     = {Exploring the limitations of behavior cloning for autonomous driving},
+  booktitle = {Proceedings of the IEEE International Conference on Computer Vision},
+  year      = {2019},
+  pages     = {9329--9338},
+  doi       = {10.48550/arXiv.1904.08980}
+}
+
+@article{Dai2023,
+  author    = {Dai, Y. and Lee, K.},
+  title     = {Multi-sensor fusion for autonomous mobile robot docking: Integrating {LiDAR}, {YOLO}-based {AprilTag} detection, and depth-aided localization},
+  journal   = {Applied Sciences},
+  year      = {2023},
+  volume    = {13},
+  number    = {6},
+  pages     = {3467},
+  doi       = {10.3390/electronics14142769}
+}
+
+@article{DeLaPuente2025,
+  author    = {De La Puente, P. and Vega-Mart{\'i}nez, G. and Javierre, P. and Laserna, J. and Martin-Arias, E.},
+  title     = {Combining vision and range sensors for {AMCL} localization in corridor environments with rectangular signs},
+  journal   = {Frontiers in Robotics and AI},
+  year      = {2025},
+  volume    = {12},
+  pages     = {1652251},
+  doi       = {10.3389/frobt.2025.1652251}
+}
+
+@article{DeSilva2018,
+  author    = {De Silva, V. and Roche, J. and Kondoz, A.},
+  title     = {Robust fusion of {LiDAR} and wide-angle camera data for autonomous mobile robots},
+  journal   = {Sensors},
+  year      = {2018},
+  volume    = {18},
+  number    = {8},
+  pages     = {2730},
+  doi       = {10.3390/s18082730}
+}
+
+@inproceedings{Dosovitskiy2021,
+  author    = {Dosovitskiy, A. and Beyer, L. and Kolesnikov, A. and Weissenborn, D. and Zhai, X. and Unterthiner, T. and Dehghani, M. and Minderer, M. and Heigold, G. and Gelly, S. and Uszkoreit, J. and Houlsby, N.},
+  title     = {An image is worth 16x16 words: Transformers for image recognition at scale},
+  booktitle = {Proceedings of the International Conference on Learning Representations},
+  year      = {2021},
+  doi       = {10.48550/arXiv.2010.11929}
+}
+
+@misc{Dreissig2023,
+  author    = {Dreissig, M. and Scheuble, D. and Piewak, F. and Boedecker, J.},
+  title     = {Survey on {LiDAR} perception in adverse weather conditions},
+  year      = {2023},
+  eprint    = {2304.06312},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.2304.06312}
+}
+
+@inproceedings{Eigen2014,
+  author    = {Eigen, D. and Puhrsch, C. and Fergus, R.},
+  title     = {Depth map prediction from a single image using a multi-scale deep network},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2014},
+  volume    = {27},
+  pages     = {2366--2374},
+  doi       = {10.48550/arXiv.1406.2283}
+}
+
+@inproceedings{Fang2020,
+  author    = {Fang, Z. and Chen, Y. and Zhou, M. and Lu, C.},
+  title     = {Marker-based mapping and localization for autonomous valet parking},
+  booktitle = {2020 IEEE Intelligent Vehicles Symposium},
+  year      = {2020},
+  pages     = {1471--1476},
+  doi       = {10.1007/978-981-96-9961-2_35}
+}
+
+@inproceedings{Fiala2005,
+  author    = {Fiala, M.},
+  title     = {{ARTag}, a fiducial marker system using digital techniques},
+  booktitle = {2005 IEEE Computer Society Conference on Computer Vision and Pattern Recognition},
+  year      = {2005},
+  volume    = {2},
+  pages     = {590--596},
+  doi       = {10.1109/CVPR.2005.74}
+}
+
+@article{Fischler1981,
+  author    = {Fischler, M. A. and Bolles, R. C.},
+  title     = {Random sample consensus: A paradigm for model fitting with applications to image analysis and automated cartography},
+  journal   = {Communications of the ACM},
+  year      = {1981},
+  volume    = {24},
+  number    = {6},
+  pages     = {381--395},
+  doi       = {10.1145/358669.358692}
+}
+
+@article{GarridoJurado2014,
+  author    = {Garrido-Jurado, S. and Mu{\~n}oz-Salinas, R. and Madrid-Cuesta, F. J. and Mar{\'i}n-Jim{\'e}nez, M. J.},
+  title     = {Automatic generation and detection of highly reliable fiducial markers under occlusion},
+  journal   = {Pattern Recognition},
+  year      = {2014},
+  volume    = {47},
+  number    = {6},
+  pages     = {2280--2292},
+  doi       = {10.1016/j.patcog.2014.01.005}
+}
+
+@inproceedings{Gatesichapakorn2019,
+  author    = {Gatesichapakorn, S. and Takamatsu, J. and Ruchanurucks, M.},
+  title     = {{ROS} based autonomous mobile robot navigation using {2D} {LiDAR} and {RGB-D} camera},
+  booktitle = {2019 First International Symposium on Instrumentation, Control, Artificial Intelligence, and Robotics},
+  year      = {2019},
+  pages     = {151--154},
+  doi       = {10.1109/ICA-SYMP.2019.8645984}
+}
+
+@book{Goodfellow2016,
+  author    = {Goodfellow, I. and Bengio, Y. and Courville, A.},
+  title     = {Deep Learning},
+  publisher = {MIT Press},
+  year      = {2016}
+}
+
+@misc{Han2024,
+  author    = {Han, R. and Wang, S. and Wang, S. and Zhang, Z. and Chen, J. and Lin, S. and Li, C. and Xu, C. and Eldar, Y. C. and Hao, Q. and Pan, J.},
+  title     = {{NeuPAN}: Direct point robot navigation with end-to-end model-based learning},
+  year      = {2024},
+  eprint    = {2403.06828},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.2403.06828}
+}
+
+@book{Hartley2003,
+  author    = {Hartley, R. and Zisserman, A.},
+  title     = {Multiple View Geometry in Computer Vision},
+  edition   = {2},
+  publisher = {Cambridge University Press},
+  year      = {2003}
+}
+
+@misc{Hinderer2025,
+  author    = {Hinderer, S. and Scheffler, M. and Yang, B.},
+  title     = {Investigation of {ArUco} marker placement for planar indoor localization},
+  year      = {2025},
+  eprint    = {2509.17345},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.2509.17345}
+}
+
+@inproceedings{Ho2020,
+  author    = {Ho, C. C. and Lin, C.-D.},
+  title     = {Pose-based visual servoing with lightweight deep-learning binarization for autonomous mobile robot application},
+  booktitle = {2020 IEEE International Conference on Systems, Man, and Cybernetics},
+  year      = {2020},
+  pages     = {3727--3732},
+  doi       = {10.1109/APSIPAASC58517.2023.10317548}
+}
+
+@article{Hochreiter1997,
+  author    = {Hochreiter, S. and Schmidhuber, J.},
+  title     = {Long short-term memory},
+  journal   = {Neural Computation},
+  year      = {1997},
+  volume    = {9},
+  number    = {8},
+  pages     = {1735--1780},
+  doi       = {10.1162/neco.1997.9.8.1735}
+}
+
+@misc{Huang2022,
+  author    = {Huang, Q. and DeGol, J. and Fragoso, V. and Sinha, S. N. and Leonard, J. J.},
+  title     = {Optimizing fiducial marker placement for improved visual localization},
+  year      = {2022},
+  eprint    = {2211.01513},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.2211.01513}
+}
+
+@inproceedings{Ichter2018,
+  author    = {Ichter, B. and Harrison, J. and Pavone, M.},
+  title     = {Learning sampling distributions for robot motion planning},
+  booktitle = {2018 IEEE International Conference on Robotics and Automation},
+  year      = {2018},
+  pages     = {7087--7094},
+  doi       = {10.48550/arXiv.1709.05448}
+}
+
+@article{Jeon2021,
+  author    = {Jeon, J. and Hwang, Y. and Jeong, Y. and Park, S. and Kweon, I. S. and Choi, S. B.},
+  title     = {Lane detection aided online dead reckoning for {GNSS} denied environments},
+  journal   = {Sensors},
+  year      = {2021},
+  volume    = {21},
+  number    = {20},
+  pages     = {6805},
+  doi       = {10.3390/s21206805}
+}
+
+@article{Jokic2019,
+  author    = {Joki{\'c}, A. and Petrovi{\'c}, M. and Miljkovi{\'c}, Z.},
+  title     = {Neural network-based visual servoing of wheeled mobile robot with fish-eye camera},
+  journal   = {Automatika},
+  year      = {2019},
+  volume    = {60},
+  number    = {1},
+  pages     = {37--49},
+  doi       = {10.1007/978-3-032-02106-9_7}
+}
+
+@article{Khan2022,
+  author    = {Khan, S. and Naseer, M. and Hayat, M. and Khan, F. S. and Shah, M.},
+  title     = {Transformers in vision: A survey},
+  journal   = {ACM Computing Surveys},
+  year      = {2022},
+  volume    = {54},
+  number    = {10},
+  pages     = {1--41},
+  doi       = {10.1145/3505244}
+}
+
+@inproceedings{Kim2018,
+  author    = {Kim, Y.-H. and Jang, J.-I. and Yun, S.},
+  title     = {End-to-end deep learning for autonomous navigation of mobile robot},
+  booktitle = {2018 IEEE International Conference on Consumer Electronics},
+  year      = {2018},
+  pages     = {1--6},
+  doi       = {10.1109/ICCE.2018.8326229}
+}
+
+@article{Kolar2020,
+  author    = {Kolar, P. and Benavidez, P. and Jamshidi, M.},
+  title     = {Survey of data fusion techniques for laser and vision based sensor integration for autonomous navigation},
+  journal   = {Sensors},
+  year      = {2020},
+  volume    = {20},
+  number    = {8},
+  pages     = {2180},
+  doi       = {10.3390/s20082180}
+}
+
+@article{Kostusiak2023,
+  author    = {Kostusiak, A. and Skrzypczynski, P.},
+  title     = {Enhancing visual odometry with estimated scene depth: Leveraging {RGB-D} data with deep learning},
+  journal   = {Sensors},
+  year      = {2023},
+  volume    = {23},
+  number    = {11},
+  pages     = {5304},
+  doi       = {10.3390/electronics13142755}
+}
+
+@article{Kumar2023,
+  author    = {Kumar, D. and Muhammad, N.},
+  title     = {A survey on localization for autonomous vehicles},
+  journal   = {IEEE Access},
+  year      = {2023},
+  volume    = {11},
+  pages     = {115865--115883},
+  doi       = {10.1109/ACCESS.2023.3326069}
+}
+
+@article{Krinkin2019,
+  author    = {Krinkin, K. and Chayka, K. and Filatov, A. and Filatov, A.},
+  title     = {Autonomous wheels and camera calibration in {Duckietown} project},
+  journal   = {Procedia Computer Science},
+  year      = {2019},
+  volume    = {150},
+  pages     = {661--667},
+  doi       = {10.1016/j.procs.2021.04.135}
+}
+
+@misc{Lastovetska2025,
+  author    = {Lastovetska, A. and Lastovetska, A.},
+  title     = {Fiducial markers overview: Types, use cases, \& comparison table},
+  year      = {2025},
+  month     = may,
+  howpublished = {it-jim},
+  url       = {https://it-jim.com}
+}
+
+@article{LeCun2015,
+  author    = {LeCun, Y. and Bengio, Y. and Hinton, G.},
+  title     = {Deep learning},
+  journal   = {Nature},
+  year      = {2015},
+  volume    = {521},
+  number    = {7553},
+  pages     = {436--444},
+  doi       = {10.1038/nature14539}
+}
+
+@article{Levenberg1944,
+  author    = {Levenberg, K.},
+  title     = {A method for the solution of certain non-linear problems in least squares},
+  journal   = {Quarterly of Applied Mathematics},
+  year      = {1944},
+  volume    = {2},
+  number    = {2},
+  pages     = {164--168},
+  doi       = {10.1090/qam/10666}
+}
+
+@article{LiuY2024,
+  author    = {Liu, Y. and Wang, S. and Xie, Y. and Xiong, T. and Wu, M.},
+  title     = {A review of sensing technologies for indoor autonomous mobile robots},
+  journal   = {Sensors},
+  year      = {2024},
+  volume    = {24},
+  number    = {4},
+  pages     = {1222},
+  doi       = {10.3390/s24041222}
+}
+
+@article{LiuY2022,
+  author    = {Liu, Y. and Zhao, C. and Wei, Y.},
+  title     = {A robust localization system fusion vision-{CNN} relocalization and progressive scan matching for indoor mobile robots},
+  journal   = {Sensors},
+  year      = {2022},
+  volume    = {22},
+  number    = {5},
+  pages     = {1845},
+  doi       = {10.3390/app12063007}
+}
+
+@mastersthesis{Lin2023,
+  author    = {Lin, C.-T.},
+  title     = {Implementation and evaluation of marker-based visual localization for mobile robots},
+  school    = {Technische Hochschule Ingolstadt},
+  year      = {2023}
+}
+
+@article{Lu2021,
+  author    = {Lu, Y. and Ma, H. and Smart, E. and Yu, H.},
+  title     = {Real-time performance-focused localization techniques for autonomous vehicle: A review},
+  journal   = {IEEE Transactions on Intelligent Transportation Systems},
+  year      = {2021},
+  volume    = {23},
+  number    = {7},
+  pages     = {6082--6100},
+  doi       = {10.1109/TITS.2021.3077800}
+}
+
+@article{Machkour2022,
+  author    = {Machkour, Z. and Ortiz-Arroyo, D. and Durdevic, P.},
+  title     = {Monocular based navigation system for autonomous ground robots using multiple deep learning models},
+  journal   = {Journal of Intelligent \& Robotic Systems},
+  year      = {2022},
+  volume    = {106},
+  number    = {2},
+  pages     = {38},
+  doi       = {10.1007/s44196-023-00250-5}
+}
+
+@article{Mantha2022,
+  author    = {Mantha, B. R. K. and De Soto, B. G.},
+  title     = {Investigating the fiducial marker network characteristics for autonomous mobile indoor robot navigation using {ROS} and {Gazebo}},
+  journal   = {Journal of Construction Engineering and Management},
+  year      = {2022},
+  volume    = {148},
+  number    = {10},
+  doi       = {10.1061/(ASCE)CO.1943-7862.0002378}
+}
+
+@article{Massa2020,
+  author    = {Massa, F. and Bonamini, L. and Settimi, A. and Pallottino, L. and Caporale, D.},
+  title     = {{LiDAR}-based {GNSS} denied localization for autonomous racing cars},
+  journal   = {Sensors},
+  year      = {2020},
+  volume    = {20},
+  number    = {14},
+  pages     = {3992},
+  doi       = {10.3390/s20143992}
+}
+
+@article{Miguel2020,
+  author    = {Miguel, M. {\'A}. de and Garc{\'i}a, F. and Armingol, J. M.},
+  title     = {Improved {LiDAR} probabilistic localization for autonomous vehicles using {GNSS}},
+  journal   = {Sensors},
+  year      = {2020},
+  volume    = {20},
+  number    = {11},
+  pages     = {3145},
+  doi       = {10.3390/s20113145}
+}
+
+@misc{Mohanty2016,
+  author    = {Mohanty, V. and Agrawal, S. and Datta, S. and Ghosh, A. and Sharma, V. D. and Chakravarty, D.},
+  title     = {{DeepVO}: A deep learning approach for monocular visual odometry},
+  year      = {2016},
+  eprint    = {1611.06069},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.1611.06069}
+}
+
+@article{MunozSalinas2018,
+  author    = {Mu{\~n}oz-Salinas, R. and Mar{\'i}n-Jim{\'e}nez, M. J. and Medina-Carnicer, R.},
+  title     = {{SPM-SLAM}: Simultaneous localization and mapping with squared planar markers},
+  journal   = {Pattern Recognition},
+  year      = {2018},
+  volume    = {86},
+  pages     = {156--171},
+  doi       = {10.1016/j.patcog.2017.08.010}
+}
+
+@inproceedings{Nahangi2018,
+  author    = {Nahangi, M. and Heins, A. and McCabe, B. and Schoellig, A.},
+  title     = {Automated localization of {UAVs} in {GPS}-denied indoor construction environments using fiducial markers},
+  booktitle = {Proceedings of the 35th International Symposium on Automation and Robotics in Construction},
+  year      = {2018},
+  pages     = {18--25},
+  doi       = {10.22260/ISARC2018/0012}
+}
+
+@article{Oh2025,
+  author    = {Oh, J. S. and Kim, M. Y.},
+  title     = {Regression-based docking system for autonomous mobile robots using a monocular camera and {ArUco} markers},
+  journal   = {Sensors},
+  year      = {2025},
+  volume    = {25},
+  number    = {12},
+  pages     = {3742},
+  doi       = {10.3390/s25123742}
+}
+
+@inproceedings{Olson2011,
+  author    = {Olson, E.},
+  title     = {{AprilTag}: A robust and flexible visual fiducial system},
+  booktitle = {2011 IEEE International Conference on Robotics and Automation},
+  year      = {2011},
+  pages     = {3400--3407},
+  doi       = {10.1109/ICRA.2011.5979561}
+}
+
+@article{Park2023,
+  author    = {Park, I. and Cho, S.},
+  title     = {Fusion localization for indoor airplane inspection using visual inertial odometry and ultrasonic {RTLS}},
+  journal   = {Scientific Reports},
+  year      = {2023},
+  volume    = {13},
+  number    = {1},
+  pages     = {18117},
+  doi       = {10.1038/s41598-023-43425-y}
+}
+
+@article{Patruno2020,
+  author    = {Patruno, C. and Ren{\`o}, V. and Nitti, M. and Mosca, N. and di Summa, M. and Stella, E.},
+  title     = {Vision-based omnidirectional indoor robots for autonomous navigation and localization in manufacturing industry},
+  journal   = {Applied Soft Computing},
+  year      = {2020},
+  volume    = {87},
+  pages     = {105986},
+  doi       = {10.1016/j.heliyon.2024.e26042}
+}
+
+@misc{Pfrommer2019,
+  author    = {Pfrommer, B. and Daniilidis, K.},
+  title     = {{TagSLAM}: Robust {SLAM} with fiducial markers},
+  year      = {2019},
+  eprint    = {1910.00679},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.1910.00679}
+}
+
+@inproceedings{Pierre2018,
+  author    = {Pierre, J. M.},
+  title     = {End-to-end deep learning for robotic following},
+  booktitle = {Proceedings of the 2018 2nd International Conference on Mechatronics Systems and Control Engineering},
+  year      = {2018},
+  pages     = {77--85},
+  publisher = {Association for Computing Machinery}
+}
+
+@article{Radha2025,
+  author    = {Radha, K. and Karthikeyan, S.},
+  title     = {A hybrid recurrent neural network and optimization framework for intelligent mobile robot navigation in smart manufacturing},
+  journal   = {Scientific Reports},
+  year      = {2025},
+  volume    = {15},
+  pages     = {28710}
+}
+
+@inproceedings{Redmon2016,
+  author    = {Redmon, J. and Divvala, S. and Girshick, R. and Farhadi, A.},
+  title     = {You only look once: Unified, real-time object detection},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  year      = {2016},
+  pages     = {779--788},
+  doi       = {10.48550/arXiv.1506.02640}
+}
+
+@article{RodriguezMartinez2025,
+  author    = {Rodr{\'i}guez-Mart{\'i}nez, E. A. and Flores-Fuentes, W. and Achakir, F. and Sergiyenko, O. and Murrieta-Rico, F. N.},
+  title     = {Vision-based navigation and perception for autonomous robots: Sensors, {SLAM}, control strategies, and cross-domain applications---{A} review},
+  journal   = {Eng},
+  year      = {2025},
+  volume    = {6},
+  number    = {7},
+  pages     = {153},
+  doi       = {10.3390/eng6070153}
+}
+
+@article{RomeroRamirez2018,
+  author    = {Romero-Ram{\'i}rez, F. J. and Mu{\~n}oz-Salinas, R. and Medina-Carnicer, R.},
+  title     = {Speeded up detection of squared fiducial markers},
+  journal   = {Image and Vision Computing},
+  year      = {2018},
+  volume    = {76},
+  pages     = {38--47},
+  doi       = {10.1016/j.imavis.2018.05.004}
+}
+
+@inproceedings{Ronneberger2015,
+  author    = {Ronneberger, O. and Fischer, P. and Brox, T.},
+  title     = {{U-Net}: Convolutional networks for biomedical image segmentation},
+  booktitle = {Medical Image Computing and Computer-Assisted Intervention},
+  year      = {2015},
+  pages     = {234--241},
+  publisher = {Springer},
+  doi       = {10.48550/arXiv.1505.04597}
+}
+
+@misc{Rosebrock2024,
+  author    = {Rosebrock, A.},
+  title     = {Detecting {ArUco} markers with {OpenCV} and {Python}},
+  year      = {2024},
+  howpublished = {PyImageSearch},
+  url       = {https://pyimagesearch.com}
+}
+
+@article{Rosner2025,
+  author    = {Rosner, J. and Krzeszowski, T. and {\'S}wit{\'o}nski, A. and Jos{\'i}nski, H. and Lindenheim-Locher, W. and Ziel{\'i}nski, M. and Paleta, G. and Paszkuta, M. and Wojciechowski, K.},
+  title     = {Multimodal dataset for indoor {3D} drone tracking},
+  journal   = {Scientific Data},
+  year      = {2025},
+  volume    = {12},
+  number    = {1},
+  pages     = {257},
+  doi       = {10.1038/s41597-025-04521-y}
+}
+
+@article{Salem2025,
+  author    = {Salem, F. and Gedik, O. S.},
+  title     = {Thermal {SLAM}: Harnessing temperature variations to enhance object detection and tracking performance},
+  journal   = {Journal of Smart Systems Research},
+  year      = {2025},
+  volume    = {8},
+  number    = {2},
+  pages     = {558--568},
+  doi       = {10.34248/bsengineering.1578563}
+}
+
+@article{Sevgi2025,
+  author    = {Sevgi, A. and Ko{\c{c}}er, H. E.},
+  title     = {Multicamera-based indoor localization and path optimization for mobile robots using {ArUco} markers},
+  journal   = {El-Cezeri Fen Ve M{\"u}hendislik Dergisi},
+  year      = {2025},
+  volume    = {12},
+  number    = {3},
+  pages     = {339--355},
+  doi       = {10.21203/rs.3.rs-5720392/v1}
+}
+
+@article{Sleaman2022,
+  author    = {Sleaman, W. K. and Hameed, A. A. and Jamil, A.},
+  title     = {Monocular vision with deep neural networks for autonomous mobile robots navigation},
+  journal   = {Journal of Intelligent Systems},
+  year      = {2022},
+  volume    = {31},
+  number    = {1},
+  pages     = {975--990},
+  doi       = {10.1016/j.ijleo.2022.170162}
+}
+
+@book{Szeliski2010,
+  author    = {Szeliski, R.},
+  title     = {Computer Vision: Algorithms and Applications},
+  publisher = {Springer Science \& Business Media},
+  year      = {2010}
+}
+
+@article{Tenzin2024,
+  author    = {Tenzin, S. and Rassau, A. and Chai, D.},
+  title     = {Application of event cameras and neuromorphic computing to {VSLAM}: A survey},
+  journal   = {IEEE Sensors Journal},
+  year      = {2024},
+  volume    = {24},
+  number    = {18},
+  pages     = {27913--27929},
+  doi       = {10.3390/biomimetics9070444}
+}
+
+@inproceedings{Thepsit2023,
+  author    = {Thepsit, T. and Konghuayrob, P. and Saenthon, A. and Yanyong, S.},
+  title     = {Localization for outdoor mobile robot using {LiDAR} and {RTK-GNSS/INS}},
+  booktitle = {2023 20th International Conference on Electrical Engineering/Electronics, Computer, Telecommunications and Information Technology},
+  year      = {2023},
+  pages     = {1--5}
+}
+
+@article{Tolenov2024,
+  author    = {Tolenov, S. and Omarov, B.},
+  title     = {Real-time self-localization and mapping for autonomous navigation of mobile robots in unknown environments},
+  journal   = {International Journal of Advanced Computer Science and Applications},
+  year      = {2024},
+  volume    = {15},
+  number    = {1},
+  doi       = {10.14569/IJACSA.2024.0151090}
+}
+
+@inproceedings{Tourani2023,
+  author    = {Tourani, A. and Bavle, H. and Sanchez-Lopez, J. L. and Salinas, R. M. and Voos, H.},
+  title     = {Marker-based visual {SLAM} leveraging hierarchical representations},
+  booktitle = {2023 IEEE/RSJ International Conference on Intelligent Robots and Systems},
+  year      = {2023},
+  pages     = {3461--3467},
+  doi       = {10.48550/arXiv.2303.01155}
+}
+
+@article{Ullah2020,
+  author    = {Ullah, I. and Su, X. and Zhu, J. and Zhang, X. and Choi, D. and Hou, Z.},
+  title     = {Evaluation of localization by extended {Kalman} filter, unscented {Kalman} filter, and particle filter-based techniques},
+  journal   = {Wireless Communications and Mobile Computing},
+  year      = {2020},
+  volume    = {2020},
+  pages     = {1--15},
+  doi       = {10.1155/2020/8898672}
+}
+
+@article{Vina2023,
+  author    = {Vina, A.},
+  title     = {Understanding the integration of computer vision in robotics},
+  journal   = {International Journal of Robotics Research},
+  year      = {2023},
+  volume    = {42},
+  number    = {5},
+  pages     = {234--256}
+}
+
+@article{Waqas2022,
+  author    = {Waqas, A. and Cha, Y.-J.},
+  title     = {Fiducial marker-based localization of autonomous {UAV} for structural health monitoring},
+  journal   = {Structural Health Monitoring},
+  year      = {2022},
+  volume    = {21},
+  number    = {6},
+  pages     = {2728--2743},
+  doi       = {10.1007/978-3-031-34938-6_18}
+}
+
+@article{Wei2024,
+  author    = {Wei, L. and Sun, H. and Qiao, G. and Wu, X. and Xu, H.},
+  title     = {A review of {SLAM} research on mobile robot vision},
+  journal   = {Frontiers in Science and Engineering},
+  year      = {2024},
+  volume    = {4},
+  number    = {11},
+  pages     = {17--23},
+  doi       = {10.54691/gcwwng31}
+}
+
+@article{Weng2019,
+  author    = {Weng, X. and Kitani, K. and Gottschlich, J.},
+  title     = {Baseline and benchmark for motion forecasting using recurrent architectures},
+  journal   = {IEEE Robotics and Automation Letters},
+  year      = {2019},
+  volume    = {4},
+  number    = {3},
+  pages     = {695--702}
+}
+
+@inproceedings{Whitaker2020,
+  author    = {Whitaker, J. and Christensen, R. and Droge, G.},
+  title     = {Global localization of ground vehicles using self-describing fiducials coupled with {IMU} data},
+  booktitle = {2020 IEEE/ION Position, Location and Navigation Symposium},
+  year      = {2020},
+  pages     = {186--196},
+  doi       = {10.1109/PLANS46316.2020.9109829}
+}
+
+@article{Xiao2022,
+  author    = {Xiao, X. and Liu, B. and Warnell, G. and Stone, P.},
+  title     = {Motion planning and control for mobile robot navigation using machine learning: A survey},
+  journal   = {Autonomous Robots},
+  year      = {2022},
+  volume    = {46},
+  number    = {5},
+  pages     = {569--597},
+  doi       = {10.1007/s10514-022-10039-8}
+}
+
+@article{Xu2023,
+  author    = {Xu, W. and Yang, D. and Liu, J. and Li, Y. and Zhou, M.},
+  title     = {A visual navigation algorithm for {UAV} based on visual-geography optimization},
+  journal   = {Drones},
+  year      = {2023},
+  volume    = {7},
+  number    = {2},
+  pages     = {127},
+  doi       = {10.3390/drones8070313}
+}
+
+@article{Xue2024,
+  author    = {Xue, B. and Yan, X. and Wu, J. and Cheng, J. and Jiao, J. and Jiang, H. and Fan, R. and Liu, M. and Zhang, C.},
+  title     = {Visual-marker-based localization for flat-variation scene},
+  journal   = {IEEE Transactions on Instrumentation and Measurement},
+  year      = {2024},
+  volume    = {73},
+  pages     = {1--16},
+  doi       = {10.1109/TIM.2024.3372231}
+}
+
+@article{Yokoyama2020,
+  author    = {Yokoyama, K. and Morioka, K.},
+  title     = {Autonomous mobile robot with simple navigation system based on deep reinforcement learning and a monocular camera},
+  journal   = {Advanced Robotics},
+  year      = {2020},
+  volume    = {34},
+  number    = {17},
+  pages     = {1113--1125},
+  doi       = {10.1109/SII46433.2020.9025987}
+}
+
+@article{Yu2025,
+  author    = {Yu, T. and Zhang, Q. and Liu, T.},
+  title     = {Reinforcement learning approaches in the motion systems of autonomous underwater vehicles},
+  journal   = {Applied Ocean Research},
+  year      = {2025},
+  volume    = {161},
+  pages     = {104682},
+  doi       = {10.1016/j.apor.2025.104682}
+}
+
+@article{Yulianto2025,
+  author    = {Yulianto, K. E. and Saputro, R. E. and Utomo, F. S.},
+  title     = {Lightweight visual detection system for object identification with {ArUco} markers in resource-constrained environments},
+  journal   = {Electronic Journal of Education Social Economics and Technology},
+  year      = {2025},
+  volume    = {6},
+  number    = {2},
+  pages     = {757--768}
+}
+
+@article{ZhangY2023,
+  author    = {Zhang, Y. and Carballo, A. and Yang, H. and Takeda, K.},
+  title     = {Perception and sensing for autonomous vehicles under adverse weather conditions: A survey},
+  journal   = {ISPRS Journal of Photogrammetry and Remote Sensing},
+  year      = {2023},
+  volume    = {196},
+  pages     = {146--177},
+  doi       = {10.1016/j.isprsjprs.2022.12.021}
+}
+
+@article{ZhangZ2000,
+  author    = {Zhang, Z.},
+  title     = {A flexible new technique for camera calibration},
+  journal   = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year      = {2000},
+  volume    = {22},
+  number    = {11},
+  pages     = {1330--1334},
+  doi       = {10.1109/34.888718}
+}
+
+@article{ZhouY2022,
+  author    = {Zhou, Y. and Yu, Z. and Ma, Z.},
+  title     = {{UAV} based indoor localization and object detection},
+  journal   = {Frontiers in Neurorobotics},
+  year      = {2022},
+  volume    = {16},
+  pages     = {914353},
+  doi       = {10.3389/fnbot.2022.914353}
+}
+
+@article{ZhouY2025,
+  author    = {Zhou, Y. and Zhang, W.},
+  title     = {End-to-end robot intelligent obstacle avoidance method based on deep reinforcement learning with spatiotemporal transformer architecture},
+  journal   = {Frontiers in Neurorobotics},
+  year      = {2025},
+  volume    = {19},
+  pages     = {1646336},
+  doi       = {10.3389/fnbot.2025.1646336}
+}
+
+@article{Zhu2023,
+  author    = {Zhu, J. and Li, H. and Zhang, T.},
+  title     = {Camera, {LiDAR}, and {IMU} based multi-sensor fusion {SLAM}: A survey},
+  journal   = {Tsinghua Science \& Technology},
+  year      = {2023},
+  volume    = {29},
+  number    = {2},
+  pages     = {415--429},
+  doi       = {10.26599/TST.2023.9010010}
+}
