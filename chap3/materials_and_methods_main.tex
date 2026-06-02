@@ -22,7 +22,17 @@ The system was powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 confi
 
 \subsection{Environment Setup}
 \label{sec:3.1.2}
+
 The experimental environment was a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) was mounted at a fixed height above the area. The camera was positioned at an angle to cover the entire operational area. While the camera was angled, the software pipeline corrected this perspective distortion mathematically. The arena consisted of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) were physically defined by four ArUco markers fixed at the corners. These markers served as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference were performed on a dedicated laptop or desktop computer equipped with a GPU. This workstation ran the Python-based control software, processed the camera feed via USB, and broadcast control commands to the robot over the local wireless network.
+
+The overall experimental setup is illustrated in Figure~\ref{fig:environment_setup}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/Environment_Setup_Diagram.png}
+    \caption{Physical environment setup showing the overhead camera, workstation, wireless communication link, and mobile robot within the ArUco-defined arena.}
+    \label{fig:environment_setup}
+\end{figure}
 
 \section{Software Framework}
 \subsection{Core Libraries}
