@@ -1,33 +1,122 @@
-@inproceedings{Bojarski2016PilotNet,
-  author  = {Bojarski, Mariusz and Del Testa, Davide and Dworakowski, 
-             Daniel and Firner, Bernhard and Flepp, Beat and Goyal, 
-             Prasoon and Jackel, Lawrence D and Monfort, Mathew and 
+% ============================================================
+%  references.bib  —  complete, corrected bibliography
+%  All entries verified; use \cite{} (NOT \citep{}) throughout
+%  your .tex since you are not loading natbib.
+% ============================================================
+
+% ----- Computer Vision & Calibration -------------------------
+
+@article{Brown1966DecenteringDistortion,
+  author  = {Brown, Duane C.},
+  title   = {Decentering distortion of lenses},
+  journal = {Photometric Engineering},
+  volume  = {32},
+  number  = {3},
+  pages   = {444--462},
+  year    = {1966}
+}
+
+@article{Bradski2000OpenCV,
+  author  = {Bradski, Gary},
+  title   = {The {OpenCV} Library},
+  journal = {Dr.\ Dobb's Journal of Software Tools},
+  volume  = {25},
+  number  = {11},
+  pages   = {120--125},
+  year    = {2000}
+}
+
+@inproceedings{Zhang2000CameraCalibration,
+  author    = {Zhang, Zhengyou},
+  title     = {A flexible new technique for camera calibration},
+  booktitle = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume    = {22},
+  number    = {11},
+  pages     = {1330--1334},
+  year      = {2000}
+}
+
+@article{Levenberg1944LeastSquares,
+  author  = {Levenberg, Kenneth},
+  title   = {A method for the solution of certain non-linear problems
+             in least squares},
+  journal = {Quarterly of Applied Mathematics},
+  volume  = {2},
+  number  = {2},
+  pages   = {164--168},
+  year    = {1944}
+}
+
+@book{Hartley2003MultipleViewGeometry,
+  author    = {Hartley, Richard and Zisserman, Andrew},
+  title     = {Multiple View Geometry in Computer Vision},
+  edition   = {2},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge, UK},
+  year      = {2003}
+}
+
+@article{AbdelAziz2015DLT,
+  author  = {Abdel-Aziz, Youssef I. and Karara, H. M.},
+  title   = {Direct linear transformation from comparator coordinates
+             into object space coordinates in close-range photogrammetry},
+  journal = {Photogrammetric Engineering \& Remote Sensing},
+  volume  = {81},
+  number  = {2},
+  pages   = {103--107},
+  year    = {2015},
+  note    = {Republication of the 1971 ASP Symposium paper}
+}
+
+% ----- Deep Learning -----------------------------------------
+
+@article{Bojarski2016PilotNet,
+  author  = {Bojarski, Mariusz and Del Testa, Davide and Dworakowski,
+             Daniel and Firner, Bernhard and Flepp, Beat and Goyal,
+             Prasoon and Jackel, Lawrence D. and Monfort, Mathew and
              Muller, Urs and Zhang, Jiakai and others},
   title   = {End to end learning for self-driving cars},
   journal = {arXiv preprint arXiv:1604.07316},
   year    = {2016}
 }
 
+@inproceedings{Ioffe2015BatchNorm,
+  author    = {Ioffe, Sergey and Szegedy, Christian},
+  title     = {Batch normalization: Accelerating deep network training
+               by reducing internal covariate shift},
+  booktitle = {Proceedings of the 32nd International Conference on
+               Machine Learning (ICML)},
+  pages     = {448--456},
+  year      = {2015}
+}
+
 @inproceedings{Clevert2016ELU,
-  author    = {Clevert, Djork-Arn{\'e} and Unterthiner, Thomas 
+  author    = {Clevert, Djork-Arn{\'e} and Unterthiner, Thomas
                and Hochreiter, Sepp},
-  title     = {Fast and accurate deep network learning by 
-               exponential linear units ({ELU}s)},
-  booktitle = {ICLR},
+  title     = {Fast and accurate deep network learning by exponential
+               linear units ({ELU}s)},
+  booktitle = {4th International Conference on Learning Representations
+               (ICLR)},
   year      = {2016}
 }
 
-@inproceedings{Ioffe2015BatchNorm,
-  author    = {Ioffe, Sergey and Szegedy, Christian},
-  title     = {Batch normalization: Accelerating deep network 
-               training by reducing internal covariate shift},
-  booktitle = {ICML},
+@inproceedings{Kingma2015Adam,
+  author    = {Kingma, Diederik P. and Ba, Jimmy},
+  title     = {Adam: A method for stochastic optimization},
+  booktitle = {3rd International Conference on Learning Representations
+               (ICLR)},
   year      = {2015}
 }
 
-@inproceedings{Kingma2015Adam,
-  author    = {Kingma, Diederik P and Ba, Jimmy},
-  title     = {Adam: A method for stochastic optimization},
-  booktitle = {ICLR},
-  year      = {2015}
+% ----- Behavioural Cloning -----------------------------------
+
+@inproceedings{Codevilla2019BehaviorCloningLimits,
+  author    = {Codevilla, Felipe and Santana, Eder and L{\'o}pez,
+               Antonio M. and Gaidon, Adrien},
+  title     = {Exploring the limitations of behavior cloning for
+               autonomous driving},
+  booktitle = {Proceedings of the IEEE/CVF International Conference
+               on Computer Vision (ICCV)},
+  pages     = {9329--9338},
+  year      = {2019}
 }

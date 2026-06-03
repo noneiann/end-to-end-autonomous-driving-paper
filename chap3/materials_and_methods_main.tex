@@ -73,7 +73,7 @@ from the geometric relationship between the camera and the arena (homography).
 \end{itemize}
 
 In practice, wide-angle lenses such as the Logitech BRIO introduce radial and tangential
-distortion \citep{Brown1966DecenteringDistortion}. These are modelled by the following correction terms:
+distortion \cite{Brown1966DecenteringDistortion}. These are modelled by the following correction terms:
 
 \noindent Radial Distortion:
 \begin{equation}
@@ -100,10 +100,10 @@ distortion \citep{Brown1966DecenteringDistortion}. These are modelled by the fol
     \item \(r^2 = x^2 + y^2\)
 \end{itemize}
 
-In OpenCV \citep{Bradski2000OpenCV}, these coefficients were estimated once using the
+In OpenCV \cite{Bradski2000OpenCV}, these coefficients were estimated once using the
 \texttt{calibrateCamera} function via standard checkerboard calibration
-\citep{Zhang2000CameraCalibration}, and were stored for all subsequent image correction
-operations. The Levenberg--Marquardt algorithm \citep{Levenberg1944LeastSquares}
+\cite{Zhang2000CameraCalibration}, and were stored for all subsequent image correction
+operations. The Levenberg--Marquardt algorithm \cite{Levenberg1944LeastSquares}
 minimizes the reprojection error between detected and projected checkerboard corners
 to produce the optimal intrinsic matrix $K$ and distortion vector.
 
@@ -147,7 +147,7 @@ The output was a set of four ordered corner coordinates from the undistorted ima
 \label{sec:3.4.2}
 
 The geometric relationship between the camera's image plane and the physical floor is
-modelled as a Planar Homography \citep{Hartley2003MultipleViewGeometry}, an
+modelled as a Planar Homography \cite{Hartley2003MultipleViewGeometry}, an
 invertible projective transformation mapping image pixel coordinates
 $p = [u, v, 1]^T$ to world coordinates $P_w = [x, y, 1]^T$:
 
@@ -158,7 +158,7 @@ $p = [u, v, 1]^T$ to world coordinates $P_w = [x, y, 1]^T$:
 where $H$ is a $3 \times 3$ matrix with 8 degrees of freedom. Given the four
 sorted ArUco corner correspondences from Section~\ref{sec:3.4.1}, $H$ was solved
 analytically via the Direct Linear Transformation (DLT) algorithm
-\citep{AbdelAziz2015DLT} using OpenCV's \texttt{getPerspectiveTransform} function.
+\cite{AbdelAziz2015DLT} using OpenCV's \texttt{getPerspectiveTransform} function.
 
 \noindent\textbf{Perspective Warping (Runtime Application).}
 During runtime, the pre-computed $H$ was applied to every incoming frame via
@@ -569,9 +569,9 @@ deployment inference.
 This section details the implementation of the deep learning pipeline, translating the theoretical framework of Behavioral Cloning and CNNs (discussed in Section 2.7) into a functional navigation system. The pipeline is divided into model architecture design, data preprocessing, acquisition, training, and final deployment.
 \subsection{Model Architecture}
 
-The study employed a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model \citep{Bojarski2016PilotNet}, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts full-colour RGB tensors of size $W_{crop} \times H_{crop} \times 3$ — the preprocessed egocentric crop described in Section 3.4.2. 
+The study employed a modernized Convolutional Neural Network (CNN) architecture based on the NVIDIA DAVE-2 model \cite{Bojarski2016PilotNet}, optimized specifically for continuous regression tasks.  Unlike classification networks that output probabilities for discrete categories, this network is designed to output continuous control values. The architecture follows a standard "encoder-decoder" style flow adapted for control, starting with an Input Layer that accepts full-colour RGB tensors of size $W_{crop} \times H_{crop} \times 3$ — the preprocessed egocentric crop described in Section 3.4.2. 
 
-The core processing begins with the Convolutional Feature Extractor, which utilizes five sequential convolutional layers to extract spatial features from the homography-transformed overhead view. The first three layers utilize 5x5 kernels with a stride of 2 to rapidly reduce spatial dimensions and capture broad geometric structures, such as the path boundaries. The subsequent two layers employ 3x3 kernels with a stride of 1 to capture finer, higher-level spatial hierarchies. To mitigate the vanishing gradient problem and accelerate convergence, every convolutional layer is followed by Batch Normalization \citep{Ioffe2015BatchNorm} and an Exponential Linear Unit (ELU) \citep{Clevert2016ELU} activation function, which pushes mean activations closer to zero compared to standard ReLU.
+The core processing begins with the Convolutional Feature Extractor, which utilizes five sequential convolutional layers to extract spatial features from the homography-transformed overhead view. The first three layers utilize 5x5 kernels with a stride of 2 to rapidly reduce spatial dimensions and capture broad geometric structures, such as the path boundaries. The subsequent two layers employ 3x3 kernels with a stride of 1 to capture finer, higher-level spatial hierarchies. To mitigate the vanishing gradient problem and accelerate convergence, every convolutional layer is followed by Batch Normalization \cite{Ioffe2015BatchNorm} and an Exponential Linear Unit (ELU) \cite{Clevert2016ELU} activation function, which pushes mean activations closer to zero compared to standard ReLU.
 
 Following feature extraction, a flattening operation converts the multidimensional feature maps into a 1D vector (containing 20,736 elements for a 200x200 input), preparing the data for high-level reasoning.
 
@@ -662,7 +662,7 @@ samples in each batch:
     \label{eq:training_mse}
 \end{equation}
 
-The Adam optimizer \citep{Kingma2015Adam} was selected for its adaptive learning rate capabilities, ensuring stable
+The Adam optimizer \cite{Kingma2015Adam} was selected for its adaptive learning rate capabilities, ensuring stable
 convergence despite the non-convex nature of the loss landscape. A ReduceLROnPlateau scheduler is applied to the Adam optimizer; when the validation loss stagnates across successive epochs, the learning rate is reduced to assist convergence. Training proceeds for the full scheduled number of epochs without early termination.
 
 The throttle command was held at a fixed, conservative value during both data collection
@@ -686,7 +686,7 @@ The trained model was exported and optimized for the target hardware. The deploy
     \item \textbf{Model Serialization:} The trained network architecture and weights are saved in PyTorch's native serialization format (\texttt{.pth}).
 
     \item \textbf{Inference Loop:} The deployment script ran in a continuous loop on the dedicated offboard workstation, transmitting the resulting control commands to the robot's onboard microcontroller over a local Wi-Fi connection via UDP sockets:
-    \begin{enumerate}[\alph*.]
+    \begin{enumerate}[label=\alph*.]
         \item Captured and warped the overhead camera image using the homography transformation.
         \item Preprocessed the image and extracted the Region of Interest (ROI).
         \item Fed the processed sensor input into the Convolutional Neural Network (CNN).
