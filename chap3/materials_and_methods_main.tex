@@ -23,16 +23,24 @@ The system was powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 confi
 \subsection{Environment Setup}
 \label{sec:3.1.2}
 
-The experimental environment was a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) was mounted at a fixed height above the area. The camera was positioned at an angle to cover the entire operational area. While the camera was angled, the software pipeline corrected this perspective distortion mathematically. The arena consisted of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) were physically defined by four ArUco markers fixed at the corners. These markers served as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference were performed on a dedicated laptop or desktop computer equipped with a GPU. This workstation ran the Python-based control software, processed the camera feed via USB, and broadcast control commands to the robot over the local wireless network.
+The experimental environment was a controlled, structured arena designed to implement computer vision processing. A single high-definition RGB webcam (Logitech BRIO) was mounted at a fixed height above the area. The camera was positioned at an angle to cover the entire operational area. While the camera was angled, the software pipeline corrected this perspective distortion mathematically. The arena consisted of a flat, non-reflective surface (to minimize glare and specular highlights that could confuse the CNN). The boundaries of the Region of Interest (ROI) were physically defined by four ArUco markers fixed at the corners. These markers served as the static reference anchors for the system's homography calibration. All image processing, neural network training, and real-time inference were performed on a desktop computer equipped with a GPU. Another laptop workstation ran the Python-based control software, processed the camera feed via USB, and broadcast control commands to the robot over the local wireless network.
 
-The overall experimental setup is illustrated in Figure~\ref{fig:environment_setup}.
-
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{images/Environment_Setup_Diagram.png}
     \caption{Physical environment setup showing the overhead camera, workstation, wireless communication link, and mobile robot within the ArUco-defined arena.}
     \label{fig:environment_setup}
 \end{figure}
+
+\subsection{Training and Inference Hardware}
+To evaluate the lightweight nature of the proposed end-to-end architecture, the computational workload was divided between a high-performance desktop for offline training and a more constrained mobile system for real-time deployment.
+
+\subsubsection*{Offline Training Hardware}
+To support the intensive computational demands of neural network optimization, a dedicated high-performance workstation was utilized. The training system was powered by an Intel Core i9-12900K processor paired with 32 GB of system RAM, operating on Ubuntu Linux. Deep learning operations were offloaded to an NVIDIA GeForce RTX 4060 Ti Graphics Processing Unit (GPU) equipped with 16 GB of VRAM. During the offline Behavioral Cloning phase, this VRAM capacity easily accommodated the approximately 9,000-image dataset and the 2.2-million-parameter modified DAVE-2 architecture, allowing for efficient backpropagation and rapid model convergence.
+
+\subsubsection*{Real-Time Inference and Processing Hardware}
+During physical deployment, the role of the central processing hub was transferred to a computationally weaker mobile system to validate the efficiency of the pipeline. Specifically, a Lenovo IdeaPad 1 (14ALC7) laptop running Fedora Linux 42 (Workstation Edition) was utilized. This inference machine was equipped with an AMD Ryzen 5 5500U processor with integrated Radeon Graphics and 16 GB of RAM.Despite lacking a dedicated high-end GPU, this hardware was responsible for executing the synchronous control loop. It successfully handled the OpenCV-based ArUco detection, dynamic homography calculation, egocentric cropping, and the CNN forward passes. The system consistently met the target 20 Hz operating frequency, rapidly mapping the preprocessed $200 \times 200$ pixel visual state to continuous steering commands before transmitting the payload to the robot's onboard microcontroller over the local network.
+
 
 \section{Software Framework}
 \subsection{Core Libraries}
