@@ -121,10 +121,10 @@ The localization pipeline began with the detection of ArUco markers (Garrido-Jur
 
 To resolve the ambiguity of the arena’s orientation and prevent the coordinate system from mirroring or rotating if the camera placement changes, specific unique IDs were assigned to the four physical corners of the operational area. This fixed assignment acted as a ground truth for the homography estimation. The configuration was explicitly defined as follows:
 \begin{enumerate}
-    \item Top-Left (TL): Marker ID 0
-    \item Top-Right (TR): Marker ID 1
-    \item Bottom-Right (BR): Marker ID 2
-    \item Bottom-Left (BL): Marker ID 3
+    \item Top-Left (TL): Marker ID 24
+    \item Top-Right (TR): Marker ID 42
+    \item Bottom-Right (BR): Marker ID 66
+    \item Bottom-Left (BL): Marker ID 70
 \end{enumerate}
 
 Detection was performed on the undistorted frame, not the raw frame — to ensure that
@@ -399,9 +399,33 @@ human-demonstrated steering command. Telemetry frames were recorded frame-by-fra
 
 \subsection{Dataset Collection}
 
-A dataset of approximately 9,000 images was generated through a series of manual driving
-sessions in which a human operator controlled the differential-drive robot using a gamepad
-controller while the overhead camera system and data logger ran concurrently in real time.
+A dataset of approximately 9,000 images was generated through a series of manual 
+driving sessions in which a human operator controlled the differential-drive robot 
+using a gamepad controller while the overhead camera system and data logger ran 
+concurrently in real time. Figure~\ref{fig:dataset_samples} shows sample images 
+collected during these manual driving sessions.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/sample_image2_driving}
+        \caption{Sample image 1}
+        \label{fig:sample1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/sample_image1_driving}
+        \caption{Sample image 2}
+        \label{fig:sample2}
+    \end{subfigure}
+    \caption{Sample images from the behavioral cloning dataset, collected during 
+    manual driving sessions. Each image represents a preprocessed, egocentric 
+    bird's-eye view frame paired with its corresponding human-demonstrated 
+    steering command.}
+    \label{fig:dataset_samples}
+\end{figure}
 
 \subsubsection{Teleoperation Setup}
 
@@ -481,37 +505,67 @@ The complete pipeline proceeded through the following stages.
 
 \subsubsection{Stage 1 — Homography Warp (Bird's-Eye View Rectification)}
 
-The raw, undistorted frame from the overhead camera was transformed using the pre-computed
-homography matrix $H$ (computed during the initialization phase described in Section 3.4.2)
-via OpenCV's \texttt{warpPerspective} function:
+\subsubsection{Stage 1 — Homography Warp (Bird's-Eye View Rectification)}
+
+The raw, undistorted frame from the overhead camera was transformed using the 
+pre-computed homography matrix $H$ (computed during the initialization phase 
+described in Section 3.4.2) via OpenCV's \texttt{warpPerspective} function:
 
 \begin{equation}
-    \text{Img}_{world} = \texttt{warpPerspective}(\text{Img}_{raw},\ H,\ \text{arena\_dims})
+    \text{Img}_{\text{world}} = \text{warpPerspective}(\text{Img}_{\text{raw}}, H, \text{arena\_dims})
+    \label{eq:warp}
 \end{equation}
 
-This produced a geometrically rectified, orthographic top-down view of the arena in which
-pixel distances correspond to fixed metric distances on the floor, and the four ArUco corner
-markers aligned exactly with the image boundaries. The output was a standardized
-$W \times H$ pixel canvas representing the full area of interest.
+This produced a geometrically rectified, orthographic top-down view of the arena 
+in which pixel distances correspond to fixed metric distances on the floor, and 
+the four ArUco corner markers aligned exactly with the image boundaries. The 
+output was a standardized $W \times H$ pixel canvas representing the full area 
+of interest. Figure~\ref{fig:bev_warp} illustrates the resulting bird's-eye 
+view after the homography transformation was applied.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/bird's_eye_view}
+    \caption{Rectified bird's-eye view of the arena after homography warping. 
+    The four ArUco corner markers are aligned to the image boundaries, 
+    establishing a geometrically consistent top-down representation of 
+    the navigation surface.}
+    \label{fig:bev_warp}
+\end{figure}
 
 \subsubsection{Stage 2 — Semantic Polygon Extraction (Black Canvas Rendering)}
 
-To decouple the network from the physical appearance of the arena floor, the drivable track
-boundaries within the warped image were isolated and re-rendered as discrete geometric polygons
-on a pure black canvas. The track boundaries were detected as contiguous regions of a known
-color or intensity within the warped frame and extracted using OpenCV's contour detection
-pipeline. The resulting polygons were drawn in white onto a zero-valued (black) background
-image of identical dimensions. This semantic abstraction ensured the following:
+\subsubsection{Stage 2 — Semantic Polygon Extraction (Black Canvas Rendering)}
 
+To decouple the network from the physical appearance of the arena floor, the 
+drivable track boundaries within the warped image were isolated and re-rendered 
+as discrete geometric polygons on a pure black canvas. The track boundaries were 
+detected as contiguous regions of a known color or intensity within the warped 
+frame and extracted using OpenCV's contour detection pipeline. The resulting 
+polygons were drawn in white onto a zero-valued (black) background image of 
+identical dimensions. Figure~\ref{fig:black_canvas} shows the resulting semantic 
+representation after polygon extraction was applied to the warped bird's-eye view.
+
+This semantic abstraction ensured the following:
 \begin{itemize}
     \item All RGB texture, floor reflections, and lighting variation were discarded.
-    \item The network received only the binary geometry of the drivable surface — the
-          features that were invariant across sessions, lighting conditions, and track
-          configurations.
-    \item The model no longer processed an image of ``a robot on a floor'' but rather a
-          normalized geometric representation of path curvature relative to the robot's
-          position.
+    \item The network received only the binary geometry of the drivable surface --- 
+    the features that were invariant across sessions, lighting conditions, and 
+    track configurations.
+    \item The model no longer processed an image of ``a robot on a floor'' but 
+    rather a normalized geometric representation of path curvature relative to 
+    the robot's position.
 \end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/black_canvas_sample}
+    \caption{Semantic black canvas rendering of the drivable track boundaries. 
+    White polygons represent the extracted path geometry, with all floor texture, 
+    lighting artifacts, and background information discarded, leaving only the 
+    features causally relevant to the steering decision.}
+    \label{fig:black_canvas}
+\end{figure}
 
 \subsubsection{Stage 3 — Path Injection (State Augmentation)}
 
@@ -526,27 +580,43 @@ path (giving it the optimization target).
 
 \subsubsection{Stage 4 — Egocentric Dynamic Cropping (ROI Extraction)}
 
-As established in the preliminary evaluation (Section 4.2), feeding the full warped arena into
-the CNN caused the network to overfit to the robot's absolute pixel coordinates rather than
-learning generalizable path geometry. The definitive solution was the egocentric dynamic crop:
-at every time step, the robot's current pixel centroid $(c_x,\ c_y)$ was detected from the
-chassis-mounted ArUco marker within the warped frame, and a fixed-dimension bounding
-window of size $W_{crop} \times H_{crop}$ (e.g., $200 \times 200$ pixels) was extracted
-centered on that coordinate:
+\subsubsection{Stage 4 — Egocentric Dynamic Cropping (ROI Extraction)}
+
+As established in the preliminary evaluation (Section 4.2), feeding the full 
+warped arena into the CNN caused the network to overfit to the robot's absolute 
+pixel coordinates rather than learning generalizable path geometry. The definitive 
+solution was the egocentric dynamic crop: at every time step, the robot's current 
+pixel centroid $(c_x, c_y)$ was detected from the chassis-mounted ArUco marker 
+within the warped frame, and a fixed-dimension bounding window of size 
+$W_{\text{crop}} \times H_{\text{crop}}$ (e.g., $200 \times 200$ pixels) was 
+extracted centered on that coordinate:
 
 \begin{equation}
-    s_t = \text{canvas}\!\left[
-        c_y - \frac{H_{crop}}{2} : c_y + \frac{H_{crop}}{2},\
-        c_x - \frac{W_{crop}}{2} : c_x + \frac{W_{crop}}{2}
-    \right]
+    s_t = \text{canvas}\left[c_y - \frac{H_{\text{crop}}}{2} : c_y + 
+    \frac{H_{\text{crop}}}{2},\ c_x - \frac{W_{\text{crop}}}{2} : c_x + 
+    \frac{W_{\text{crop}}}{2}\right]
+    \label{eq:egocrop}
 \end{equation}
 
-By continuously re-centering the crop on the robot, its absolute position within the global
-arena was rendered invariant. From the network's perspective, the robot does not move; instead,
-the semantically extracted path geometry translated and rotated around the robot's fixed origin.
-The only dynamic variables passed to the convolutional feature extractor were the relative
-orientation, curvature, and proximity of the approaching path boundaries — the precise features
-required to generate a geometrically correct steering command.
+By continuously re-centering the crop on the robot, its absolute position within 
+the global arena was rendered invariant. From the network's perspective, the robot 
+does not move; instead, the semantically extracted path geometry translated and 
+rotated around the robot's fixed origin. The only dynamic variables passed to the 
+convolutional feature extractor were the relative orientation, curvature, and 
+proximity of the approaching path boundaries --- the precise features required to 
+generate a geometrically correct steering command. Figure~\ref{fig:ego_crop} 
+shows a representative sample of the egocentric crop as seen by the CNN during 
+both training and inference.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/egocentric_sample}
+    \caption{Representative egocentric dynamic crop fed to the CNN. The robot 
+    remains fixed at the center of the frame while the surrounding path geometry 
+    translates and rotates, ensuring the network learns steering behavior from 
+    relative path curvature rather than absolute spatial position.}
+    \label{fig:ego_crop}
+\end{figure}
 
 \subsubsection{Stage 5 — Storage and Normalization}
 
