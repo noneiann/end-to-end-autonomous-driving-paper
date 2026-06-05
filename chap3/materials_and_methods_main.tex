@@ -237,9 +237,14 @@ During runtime, the pre-computed $H$ was applied to every incoming frame via
     \text{Img}_{world} = \texttt{warpPerspective}(\text{Img}_{raw},\ H)
 \end{equation}
 
-This produced a rectified Bird's-Eye View in which the four corner markers aligned exactly
-with the image boundaries, giving the CNN a geometrically stable input that was invariant
-to minor shifts in camera placement or angle.
+This transformation produced a rectified Bird's-Eye View (BEV) image in which the four ArUco corner markers aligned precisely with the image boundaries. As a result, the CNN received a geometrically consistent representation of the environment that was largely invariant to minor variations in camera position, orientation, and perspective distortion. Figure~\ref{fig:bev_rectification} illustrates the resulting BEV perspective generated from the four corner ArUco markers.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/bird's_eye_view}
+    \caption{Rectified Bird's-Eye View (BEV) perspective generated using the four corner ArUco markers. The homography transformation maps the arena into a top-down view, providing a geometrically consistent input for the CNN.}
+    \label{fig:bev_rectification}
+\end{figure}
 
 \section{System Integration and Control Flow}
 The proposed system implemented a centralized, vision-based autonomous navigation
@@ -476,23 +481,10 @@ collected during these manual driving sessions.
 
 \begin{figure}[h]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/sample_image2_driving}
-        \caption{Sample image 1}
-        \label{fig:sample1}
-    \end{subfigure}
+    \includegraphics[width=0.45\textwidth]{images/sample_image2_driving}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/sample_image1_driving}
-        \caption{Sample image 2}
-        \label{fig:sample2}
-    \end{subfigure}
-    \caption{Sample images from the behavioral cloning dataset, collected during 
-    manual driving sessions. Each image represents a preprocessed, egocentric 
-    bird's-eye view frame paired with its corresponding human-demonstrated 
-    steering command.}
+    \includegraphics[width=0.45\textwidth]{images/sample_image1_driving}
+    \caption{Sample images from the behavioral cloning dataset.}
     \label{fig:dataset_samples}
 \end{figure}
 
@@ -626,7 +618,7 @@ This semantic abstraction ensured the following:
     the robot's position.
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{images/black_canvas_sample}
     \caption{Semantic black canvas rendering of the drivable track boundaries. 
@@ -646,8 +638,6 @@ polyline or filled polygon, drawn in a distinct intensity value, that traced the
 through the current track topology. The resulting composite image contained exactly two classes
 of information: the track boundaries (giving the network the constraint space) and the reference
 path (giving it the optimization target).
-
-\subsubsection{Stage 4 — Egocentric Dynamic Cropping (ROI Extraction)}
 
 \subsubsection{Stage 4 — Egocentric Dynamic Cropping (ROI Extraction)}
 
@@ -912,7 +902,7 @@ analysis and confidence-interval reporting in Chapter~4.
     \label{fig:testing_scenarios}
 \end{figure}
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.45\textwidth]{chap3/path-new.jpg}
     \caption{The held-out track (\texttt{path-new}) used for the Scenario~4 generalization test. This topology was \emph{not} present in the training set and is evaluated under the same randomized-start protocol as the trained tracks.}

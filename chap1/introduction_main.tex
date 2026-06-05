@@ -39,7 +39,7 @@ path.
 \subsection{Specific Objectives}
 \begin{enumerate}
     \item To implement a robust Inverse Perspective Mapping (IPM) pipeline using ArUco markers for dynamic homography calibration, capable of transforming angled, ego-centric RGB camera frames into rectified, top-down, bird’s-eye view (BEV) representations of the local path.
-    \item To construct a specialized behavioral cloning dataset by manually driving therobot, consisting of synchronized pairs of preprocessed BEV path images and human-demonstrated steering angles, collected across various track configurations.
+    \item To construct a specialized behavioral cloning dataset by manually driving the robot, consisting of synchronized pairs of preprocessed BEV path images and human-demonstrated steering angles, collected across various track configurations.
     \item To train the robot on a regression-based Convolutional Neural Network (CNN) architecture that maps high-dimensional BEV visual inputs directly to continuous steering commands (and optionally linear velocity), utilizing Mean Squared Error (MSE) loss for optimization.
     \item To deploy the trained model in the driving pipeline and its inference output is sent directly to the robot to control the movement and drive autonomously
     \item To evaluate the autonomous robot by measuring lane‑keeping accuracy (CTE/RMSE), heading error, trial‑to‑trial consistency, and steering actuation behaviour (raw command magnitudes after scaling by $k_{steer}$), and summarizing results using confusion matrices and per‑scenario statistics.
