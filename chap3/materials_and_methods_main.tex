@@ -3,19 +3,88 @@
 \section{Hardware Setup}
 
 \subsection{Robot Platform}
-The mobile agent utilized in this study was a custom-built differential drive robot designed for low-latency execution of remote commands. The platform is intentionally minimized to function as a "remote-controlled" agent, removing the need for heavy onboard computation.
 
-\subsubsection*{Robot Chassis and Drivetrain}
-The mobile agent utilized a DFRobot Devastator Tank Mobile Platform. This platform operates on a 3-8V DC working voltage and features two micro DC geared motors. It weighs 780 g, measures 8.86 x 8.86 x 4.25 inches, and includes driver wheels with a 43mm diameter. The chassis is configured for Differential Drive kinematics, which allows for zero-radius turning and precise heading adjustments.
+The mobile agent utilized in this study was a custom-built differential drive 
+robot designed for low-latency execution of remote commands. The platform is 
+intentionally minimized to function as a ``remote-controlled'' agent, removing 
+the need for heavy onboard computation. Figure~\ref{fig:robot_assembly} shows 
+the fully assembled robot platform used throughout this study.
 
-\subsubsection*{Embedded Controller}
-The robot was equipped with a Raspberry Pi 3B running Raspi OS, acting as the low-cost microcontroller and communication bridge. Its sole function is to receive data packets from the central workstation and convert them into Pulse Width Modulation (PWM) signals.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{images/devastator_robot}
+    \caption{Fully assembled custom-built differential drive robot platform, 
+    consisting of the DFRobot Devastator chassis, Raspberry Pi 3B, L298N motor 
+    controller, and onboard power supply.}
+    \label{fig:robot_assembly}
+\end{figure}
 
-\subsubsection*{Motor Controller}
-An L298N H-Bridge DC Motor Controller was used to interface the microcontroller with the DC motors. This provides the necessary current amplification and direction control.
+\subsubsection{Robot Chassis and Drivetrain}
 
-\subsubsection*{Wireless Handheld Controller}
-A Logitech Gamepad F710 Joystick Controller with a USB Dongle was utilized for manually controlling the robot during the data collection phase.
+The mobile agent utilized a DFRobot Devastator Tank Mobile Platform. This 
+platform operates on a 3--8V DC working voltage and features two micro DC geared 
+motors. It weighs 780 g, measures 8.86 $\times$ 8.86 $\times$ 4.25 inches, and 
+includes driver wheels with a 43mm diameter. The chassis is configured for 
+Differential Drive kinematics, which allows for zero-radius turning and precise 
+heading adjustments. Figure~\ref{fig:devastator} shows the DFRobot Devastator 
+Tank Mobile Platform used as the base chassis for this study.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/mobile_platform}
+    \caption{DFRobot Devastator Tank Mobile Platform. The chassis supports 
+    Differential Drive kinematics via two micro DC geared motors, enabling 
+    zero-radius turning and precise directional control.}
+    \label{fig:devastator}
+\end{figure}
+
+\subsubsection{Embedded Controller}
+
+The robot was equipped with a Raspberry Pi 3B running Raspi OS, acting as the 
+low-cost microcontroller and communication bridge. Its sole function was to 
+receive data packets from the central workstation and convert them into Pulse 
+Width Modulation (PWM) signals. Figure~\ref{fig:raspi} shows the Raspberry Pi 
+3B unit used in this study.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/raspberry_pi3}
+    \caption{Raspberry Pi 3B single-board computer, serving as the onboard 
+    microcontroller responsible for receiving control commands from the 
+    workstation and generating PWM signals to drive the motors.}
+    \label{fig:raspi}
+\end{figure}
+
+\subsubsection{Motor Controller}
+
+An L298N H-Bridge DC Motor Controller was used to interface the microcontroller 
+with the DC motors. This provides the necessary current amplification and 
+direction control. Figure~\ref{fig:l298n} shows the L298N H-Bridge module 
+integrated into the robot platform.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/L298N _controller}
+    \caption{L298N H-Bridge DC Motor Controller, responsible for current 
+    amplification and bidirectional motor control between the Raspberry Pi 
+    and the drive motors.}
+    \label{fig:l298n}
+\end{figure}
+
+\subsubsection{Wireless Handheld Controller}
+
+A Logitech Gamepad F710 Joystick Controller with a USB Dongle was utilized for 
+manually controlling the robot during the data collection phase. 
+Figure~\ref{fig:gamepad} shows the Logitech F710 controller used during 
+teleoperation sessions.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/f710-controller}
+    \caption{Logitech Gamepad F710 wireless joystick controller used during 
+    manual teleoperation for behavioral cloning dataset collection.}
+    \label{fig:gamepad}
+\end{figure}
 
 \subsubsection*{Power Supply}
 The system was powered by a Lithium-Ion battery pack (e.g., 2S or 3S 18650 configuration) to provide stable voltage to the microcontroller and raw power to the motor driver.
