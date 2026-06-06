@@ -1,4 +1,4 @@
-\begin{thebibliography}{108}
+\begin{thebibliography}{110}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -52,6 +52,12 @@ S.~Bhat and A.~Kavasseri.
 \newblock Multi-source data integration for navigation in gps-denied autonomous driving environments.
 \newblock \emph{International Journal of Electrical and Electronics Research}, 12\penalty0 (3):\penalty0 863--869, 2024.
 \newblock \doi{10.37391/IJEER.120317}.
+
+\bibitem[Bian et~al.(2023)Bian, Chen, Ran, Liang, and Mei]{Bian2023FiMa}
+Xiaohui Bian, Wei Chen, Dong Ran, Zhong Liang, and Xuesong Mei.
+\newblock Fima-reader: A cost-effective fiducial marker reader system for autonomous mobile robot docking in manufacturing environments.
+\newblock \emph{Applied Sciences}, 13\penalty0 (24):\penalty0 13079, 2023.
+\newblock \doi{10.3390/app132413079}.
 
 \bibitem[Bojarski et~al.(2016)Bojarski, Del~Testa, Dworakowski, Firner, Flepp, Goyal, Jackel, Monfort, Muller, Zhang, et~al.]{Bojarski2016PilotNet}
 Mariusz Bojarski, Davide Del~Testa, Daniel Dworakowski, Bernhard Firner, Beat Flepp, Prasoon Goyal, Lawrence~D. Jackel, Mathew Monfort, Urs Muller, Jiakai Zhang, et~al.
@@ -155,6 +161,12 @@ V.~De~Silva, J.~Roche, and A.~Kondoz.
 \newblock Robust fusion of {LiDAR} and wide-angle camera data for autonomous mobile robots.
 \newblock \emph{Sensors}, 18\penalty0 (8):\penalty0 2730, 2018.
 \newblock \doi{10.3390/s18082730}.
+
+\bibitem[Debeunne and Vivet(2020)]{Debeunne2020Review}
+C{\'e}sar Debeunne and Damien Vivet.
+\newblock A review of visual-lidar fusion based simultaneous localization and mapping.
+\newblock \emph{Sensors}, 20\penalty0 (7):\penalty0 2068, 2020.
+\newblock \doi{10.3390/s20072068}.
 
 \bibitem[Dosovitskiy et~al.(2021)Dosovitskiy, Beyer, Kolesnikov, Weissenborn, Zhai, Unterthiner, Dehghani, Minderer, Heigold, Gelly, Uszkoreit, and Houlsby]{Dosovitskiy2021ViT}
 A.~Dosovitskiy, L.~Beyer, A.~Kolesnikov, D.~Weissenborn, X.~Zhai, T.~Unterthiner, M.~Dehghani, M.~Minderer, G.~Heigold, S.~Gelly, J.~Uszkoreit, and N.~Houlsby.
