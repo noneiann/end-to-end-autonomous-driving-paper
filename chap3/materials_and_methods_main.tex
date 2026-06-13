@@ -7,16 +7,24 @@
 The mobile agent utilized in this study was a custom-built differential drive 
 robot designed for low-latency execution of remote commands. The platform is 
 intentionally minimized to function as a ``remote-controlled'' agent, removing 
-the need for heavy onboard computation. Figure~\ref{fig:robot_assembly} shows 
+the need for heavy onboard computation. Figure~\ref{fig:robot_assembly_front} shows 
 the fully assembled robot platform used throughout this study.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\textwidth]{images/devastator_robot}
-    \caption{Fully assembled custom-built differential drive robot platform, 
-    consisting of the DFRobot Devastator chassis, Raspberry Pi 3B, L298N motor 
-    controller, and onboard power supply.}
-    \label{fig:robot_assembly}
+    \begin{minipage}{0.38\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/assembled_robot_front}
+        \caption{Front view of the fully assembled custom-built differential drive robot platform.}
+        \label{fig:robot_assembly_front}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.38\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/assembled_robot_back}
+        \caption{Rear view of the fully assembled custom-built differential drive robot platform.}
+        \label{fig:robot_assembly_back}
+    \end{minipage}
 \end{figure}
 
 \subsubsection{Robot Chassis and Drivetrain}
@@ -29,12 +37,10 @@ Differential Drive kinematics, which allows for zero-radius turning and precise
 heading adjustments. Figure~\ref{fig:devastator} shows the DFRobot Devastator 
 Tank Mobile Platform used as the base chassis for this study.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textwidth]{images/mobile_platform}
-    \caption{DFRobot Devastator Tank Mobile Platform. The chassis supports 
-    Differential Drive kinematics via two micro DC geared motors, enabling 
-    zero-radius turning and precise directional control.}
+    \includegraphics[width=0.45\textwidth]{images/devastator_robot}
+    \caption{DFRobot Devastator Tank Mobile Platform.}
     \label{fig:devastator}
 \end{figure}
 
