@@ -336,49 +336,49 @@ Table~\ref{tab:generalization-telemetry-sample} presents a sample of the frame-l
 \end{table}
 
 \section{Control Decision Discretization and Confusion Matrix}
-To examine the directional structure of the steering decisions issued by the end-to-end CNN, the continuous telemetry from all $40$ evaluation trials was discretized into three control states and cross-tabulated. Under the system's sign convention, positive values denote a rightward sense for both quantities: a positive CTE indicates the chassis is displaced to the \emph{right} of the reference path, and a positive steering command drives a rightward turn. Consequently, a positive CTE calls for a corrective \emph{leftward} steering action. The desired (corrective) action is defined from the lateral displacement (CTE) using a $0.5$~cm ($2$~px) dead-band:
+To examine the directional structure of the steering decisions issued by the end-to-end CNN, the continuous telemetry from all $40$ evaluation trials was discretized into three control states and cross-tabulated. Under the system's sign convention, positive values denote a rightward sense for both quantities: a positive heading error indicates the chassis is pointing to the \emph{right} of the reference path's tangent direction, and a positive steering command drives a rightward turn. Consequently, a positive heading error calls for a corrective \emph{leftward} steering action. The desired (corrective) action is defined from the instantaneous heading error (in degrees) using a $\pm 5^{\circ}$ dead-band:
 
 \begin{equation}
 \text{Desired Action} =
 \begin{cases}
-\text{Left}, & \text{if } \text{CTE} > 0.5\text{ cm} \\
-\text{Straight}, & \text{if } -0.5\text{ cm} \le \text{CTE} \le 0.5\text{ cm} \\
-\text{Right}, & \text{if } \text{CTE} < -0.5\text{ cm}
+\text{Left}, & \text{if } \theta_e > 5^{\circ} \\
+\text{Straight}, & \text{if } -5^{\circ} \le \theta_e \le 5^{\circ} \\
+\text{Right}, & \text{if } \theta_e < -5^{\circ}
 \end{cases}
 \end{equation}
 
-The executed action is discretized from the raw steering command with a matching $\pm 2$ command-unit dead-band: commands above $+2$ are classified as Right, those below $-2$ as Left, and the interval between as Straight. Cross-tabulating the desired action (rows) against the executed action (columns) over all $54{,}031$ marker-tracked frames yields the contingency table in Table~\ref{tab:confusion}, visualized as a row-normalized heat map in Figure~\ref{fig:confusion}; in both, the diagonal corresponds to instantaneous agreement between the lateral-error correction and the executed steering.
+where $\theta_e$ denotes the signed heading error in degrees (positive = pointing right of the path). The executed action is discretized from the raw steering command with a $\pm 2$ command-unit dead-band: commands above $+2$ are classified as Right, those below $-2$ as Left, and the interval between as Straight. Cross-tabulating the desired action (rows) against the executed action (columns) over all $54{,}031$ marker-tracked frames yields the contingency table in Table~\ref{tab:confusion}, visualized as a row-normalized heat map in Figure~\ref{fig:confusion}; in both, the diagonal corresponds to instantaneous agreement between the heading-error correction and the executed steering.
 
 \begin{table}[H]
 \centering
-\caption{Control-decision contingency table pooled over all four scenarios ($40$ trials, $54{,}031$ marker-tracked frames). Rows are the desired corrective action implied by the instantaneous CTE; columns are the executed steering action. Cells give frame counts with row percentages in parentheses; bold marks the diagonal (instantaneous agreement).}
+\caption{Control-decision contingency table pooled over all four scenarios ($40$ trials, $54{,}031$ marker-tracked frames). Rows are the desired corrective action implied by the instantaneous heading error ($\pm 5^{\circ}$ dead-band); columns are the executed steering action. Cells give frame counts with row percentages in parentheses; bold marks the diagonal (instantaneous agreement).}
 \label{tab:confusion}
 \footnotesize
 \begin{tabular}{@{}l r r r r@{}}
 \toprule
  & \multicolumn{3}{c}{\textbf{Executed steering action}} & \\
 \cmidrule(lr){2-4}
-\textbf{Desired (from CTE)} & \textbf{Left} & \textbf{Straight} & \textbf{Right} & \textbf{Total} \\
+\textbf{Desired (from heading error)} & \textbf{Left} & \textbf{Straight} & \textbf{Right} & \textbf{Total} \\
 \midrule
-Left     & \textbf{2{,}228 (22.2\%)} & 3{,}072 (30.6\%) & 4{,}726 (47.1\%) & 10{,}026 \\
-Straight & 2{,}630 (16.9\%) & \textbf{6{,}374 (40.9\%)} & 6{,}580 (42.2\%) & 15{,}584 \\
-Right    & 5{,}765 (20.3\%) & 9{,}508 (33.5\%) & \textbf{13{,}148 (46.3\%)} & 28{,}421 \\
+Left     & \textbf{4{,}317 (30.2\%)} & 3{,}442 (24.0\%) & 6{,}557 (45.8\%) & 14{,}316 \\
+Straight & 4{,}602 (14.8\%) & \textbf{14{,}268 (46.0\%)} & 12{,}172 (39.2\%) & 31{,}042 \\
+Right    & 1{,}707 (19.7\%) & 1{,}210 (14.0\%) & \textbf{5{,}756 (66.4\%)} & 8{,}673 \\
 \midrule
-\textbf{Total} & 10{,}623 & 18{,}954 & 24{,}454 & 54{,}031 \\
+\textbf{Total} & 10{,}626 & 18{,}920 & 24{,}485 & 54{,}031 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.72\linewidth]{chap4/images/confusion_matrix_redo.png}
-	\caption{Control-decision contingency heat map (pooled over all four scenarios, $54{,}031$ marker-tracked frames). Rows are the desired corrective action implied by the instantaneous CTE and columns are the executed steering action; cells are shaded by row-normalized frequency and annotated with frame counts and row percentages. The diagonal cells (instantaneous agreement) are outlined. The darker Right column reflects a mild rightward steering bias, while the substantial off-diagonal mass reflects anticipatory, phase-lagged steering rather than tracking failure.}\label{fig:confusion}
+	\includegraphics[width=0.72\linewidth]{chap4/images/confusion_matrix_heading.png}
+	\caption{Control-decision contingency heat map (pooled over all four scenarios, $54{,}031$ marker-tracked frames). Rows are the desired corrective action implied by the instantaneous heading error ($\pm 5^{\circ}$ dead-band) and columns are the executed steering action; cells are shaded by row-normalized frequency and annotated with frame counts and row percentages. The diagonal cells (instantaneous agreement) are outlined. The substantial off-diagonal mass in the Straight row reflects anticipatory, phase-lagged steering rather than tracking failure.}\label{fig:confusion}
 \end{figure}
 
-If the controller implemented a purely reactive proportional correction, the table would concentrate on its diagonal. Instead, only $40.3\%$ of frames lie on the diagonal, and even when both the desired and executed actions are committed turns (excluding the dead-band) the directional agreement is $59.4\%$. This modest instantaneous agreement is expected, and is consistent with the rest of the chapter for two reasons.
+If the controller implemented a purely reactive proportional correction, the table would concentrate on its diagonal. Instead, only $45.1\%$ of frames lie on the diagonal, and even when both the desired and executed actions are committed turns (excluding the dead-band) the directional agreement is $54.9\%$. This modest instantaneous agreement is expected, and is consistent with the rest of the chapter for two reasons.
 
-First, \textbf{closed-loop phase lag}. A frame-level regression of the raw steering command on the instantaneous heading error and on the CTE yields a coefficient of determination below $0.1$ in both cases: the steering signal leads while the lateral error responds roughly half a second later. A strict frame-by-frame comparison therefore registers as disagreement even though the loop is stable and convergent over time.
+First, \textbf{closed-loop phase lag}. A frame-level regression of the raw steering command on the instantaneous heading error yields a coefficient of determination below $0.1$: the steering signal leads while the angular error responds roughly half a second later. A strict frame-by-frame comparison therefore registers as disagreement even though the loop is stable and convergent over time.
 
-Second, \textbf{anticipatory curve following}. Much like a human driver, the network begins to turn while still on the straight section just before a curve, rather than waiting until a lateral error has accumulated. During this lead-in the chassis is still close to the centerline (so the instantaneous CTE implies ``Straight'' or even the opposite correction) while the executed steering is already committed to the turn. The resulting off-diagonal mass therefore reflects this look-ahead behaviour rather than tracking error. This behavior is consistent with findings from human driving research. Lehtonen et al. observed that drivers make look-ahead fixations toward upcoming sections of a curve before substantial steering corrections are required, using visual information from the future road segment for trajectory planning rather than relying solely on immediate lane-position errors. Experienced drivers exhibited these anticipatory behaviors more frequently, indicating that successful curve negotiation depends on previewing upcoming path geometry rather than purely reactive control\cite{lehtonen2014anticipatory}.
+Second, \textbf{anticipatory curve following}. Much like a human driver, the network begins to turn while the heading error is still within the dead-band, rather than waiting until a measurable angular deviation has accumulated. During this lead-in the chassis is still approximately aligned to the path (so the instantaneous heading error implies ``Straight'' or even the opposite correction) while the executed steering is already committed to the turn. The $39.2\%$ of Straight-desired frames that map to an executed Right action captures precisely this lead-in behaviour. The resulting off-diagonal mass therefore reflects this look-ahead behaviour rather than tracking error. This behavior is consistent with findings from human driving research. Lehtonen et al. observed that drivers make look-ahead fixations toward upcoming sections of a curve before substantial steering corrections are required, using visual information from the future road segment for trajectory planning rather than relying solely on immediate lane-position errors. Experienced drivers exhibited these anticipatory behaviors more frequently, indicating that successful curve negotiation depends on previewing upcoming path geometry rather than purely reactive control\cite{lehtonen2014anticipatory}.
 
-Crucially, this low instantaneous agreement coexists with the $100\%$ closed-loop success rate and sub-centimetre tracking reported above. The contingency table should therefore be read not as a classifier accuracy but as direct evidence that the CNN learned a temporally extended, anticipatory steering policy rather than an instantaneous proportional-correction law---the same conclusion reached from the steering--error regressions. The table also reveals a mild rightward steering bias: the Right column holds $45.3\%$ of all executed actions, and the single largest cell is the correct Right--Right pairing ($13{,}148$ frames), corresponding to the controller steering right to recover from a slight leftward offset that the chassis carried through most trials.
+Crucially, this low instantaneous agreement coexists with the $100\%$ closed-loop success rate and sub-centimetre tracking reported above. The contingency table should therefore be read not as a classifier accuracy but as direct evidence that the CNN learned a temporally extended, anticipatory steering policy rather than an instantaneous proportional-correction law---the same conclusion reached from the steering--error regressions. The table also reveals a mild rightward steering bias: the Right column holds $45.3\%$ of all executed actions, and the highest per-row agreement is in the Right-desired category ($66.4\%$, corresponding to $5{,}756$ frames), reflecting a corrective rightward response when the chassis is already pointing noticeably left of the path tangent.

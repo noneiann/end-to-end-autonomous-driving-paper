@@ -252,38 +252,85 @@ This transformation produced a rectified Bird's-Eye View (BEV) image in which th
     \label{fig:bev_rectification}
 \end{figure}
 
-\section{System Integration and Control Flow}
-The proposed system implemented a centralized, vision-based autonomous navigation
-architecture that offloaded all image processing and CNN inference to a remote workstation,
-communicating control commands to the robot over a local wireless link. The full
-architectural data flow is illustrated in Figure~\ref{fig:3.1}.
+\noindent\textbf{Pixel-to-Centimetre Scale Calibration.}
+Because the homography transformation maps the physical arena floor to a fixed-resolution
+output canvas, each pixel in the warped BEV corresponds to a known, constant metric
+distance on the ground plane. This pixel-to-centimetre (px-to-cm) scale factor is derived
+directly from the known physical arena dimensions and the configured canvas resolution:
+
+\begin{equation}
+    S = \frac{D_{\text{physical}}}{D_{\text{canvas}}}
+    \label{eq:px_cm_scale}
+\end{equation}
+
+\noindent where $D_{\text{physical}}$ is the real-world dimension of the arena (in centimetres) along one axis
+and $D_{\text{canvas}}$ is the corresponding canvas dimension in pixels. For the arena used in
+this study, the confirmed scale is:
+
+\begin{equation}
+    S = \frac{200\ \text{cm}}{800\ \text{px}} = 0.25\ \text{cm/px}
+    \label{eq:px_cm_value}
+\end{equation}
+
+This single scale factor is applied uniformly to convert any pixel-domain measurement
+(e.g., Cross-Track Error) into a physically interpretable centimetre value throughout
+the evaluation reported in Section~\ref{sec:performance_metrics}. Because the homography
+always maps the arena to the same fixed canvas size regardless of camera placement, the
+scale factor remains constant across all sessions and does not require re-calibration
+between trials.
+
+\section{System Architecture and Control Flow}
+
+The system is structured as a two-node distributed architecture in which all computation is offloaded to a central host workstation acting as the network client, while a lightweight embedded controller onboard the robot acts as the server. Figure~\ref{fig:sys_arch} illustrates this client-server hardware topology, and Figure~\ref{fig:3.1} details the end-to-end processing pipeline that executes within it.
+
+\subsection{Client-Server Hardware Architecture}
+
+As illustrated in Figure~\ref{fig:sys_arch}, the system comprises two computational nodes communicating over a local wireless network via the User Datagram Protocol (UDP).
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/figure3_arch.png}
+    \caption{Client-server hardware architecture of the autonomous navigation system. The Host PC (client) handles all perception, offline training, and real-time inference, transmitting control commands to the onboard Raspberry Pi (server) over UDP.}
+    \label{fig:sys_arch}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Host PC (Client):} The central workstation served as the sole processing node for all computationally intensive tasks. During the data collection phase, a human operator used a gamepad controller to drive the robot while the workstation simultaneously captured overhead camera frames and logged synchronized image--steering pairs to a catalog store. These recordings were subsequently used to train the DAVE-2 CNN offline. During deployment, the trained model artifact was loaded onto the same workstation, which processed live camera frames through the full perception pipeline and executed real-time inference. The resulting steering commands were packaged and dispatched to the robot via UDP.
+
+    \item \textbf{Robot --- Raspberry Pi (Server):} The onboard Raspberry Pi 3B acted as a stateless command receiver. It listened on a fixed UDP port for incoming control payloads, decoded the steering and throttle values, and translated them into GPIO PWM signals that drove the L298N motor controller. No perception, reasoning, or state estimation was performed onboard the robot itself.
+\end{itemize}
+
+The use of UDP rather than TCP was a deliberate design choice. The control loop operated at 20\,Hz, and the low-latency, connectionless nature of UDP was more appropriate for continuous real-time command streaming than the overhead introduced by TCP’s connection handshake and retransmission mechanisms. Occasional packet loss was tolerable, as the subsequent command frame arrived within 50\,ms.
+
+\subsection{System Processing Pipeline}
+
+Within the Host PC, the end-to-end control flow followed a three-stage pipeline --- sensing, processing, and actuation --- as illustrated in Figure~\ref{fig:3.1}.
 
 \begin{figure}[!ht]
     \centering
     {\includegraphics[width=1.0\textwidth]{images/figure3_1.png}}\qquad
-    \caption[Short Caption]{System Architecture.}        
+    \caption[Short Caption]{End-to-end system processing pipeline, showing the flow from raw camera input through perception, CNN inference, and command transmission to the robot.}
     \label{fig:3.1}
 \end{figure}
 
-
-As depicted in Figure~\ref{fig:3.1}, the system architecture was divided into three functional subsystems: sensing, processing, and actuation. Together, these components formed a closed-loop control pipeline for autonomous navigation.
+As depicted in Figure~\ref{fig:3.1}, the pipeline was organized into three functional subsystems: sensing, processing, and actuation. Together, these components formed a closed-loop control pipeline for autonomous navigation.
 
 \begin{itemize}
-    \item \textbf{Sensing Subsystem (Arena):}  
+    \item \textbf{Sensing Subsystem (Arena):}
     Located in the physical environment, this block consisted of an overhead camera and fixed ArUco markers. The camera captured the entire operational arena and provided the raw visual input used by the system. The ArUco markers acted as reference points for geometric correction and spatial alignment.
 
-    \item \textbf{Processing Subsystem (Workstation):}  
+    \item \textbf{Processing Subsystem (Workstation):}
     This block contained the core intelligence of the system and executed a two-stage processing pipeline:
     \begin{itemize}
-        \item \textbf{Localization and State Preparation:}  
+        \item \textbf{Localization and State Preparation:}
         The system detected ArUco markers to compute a homography matrix, which warped the angled camera feed into a standardized top-down bird’s-eye view using inverse perspective mapping (IPM). The transformed image was cropped and augmented with the target navigation path to form the system state.
-        
-        \item \textbf{CNN-Based Policy Inference:}  
+
+        \item \textbf{CNN-Based Policy Inference:}
         The pre-processed visual state was fed directly into a convolutional neural network (CNN), which served as an end-to-end behavioral policy mapping visual observations directly to low-level motor control commands.
     \end{itemize}
 
-    \item \textbf{Actuation Subsystem (Robot):}  
-    The inferred control commands, including steering and throttle signals, were transmitted wirelessly via Wi-Fi to the mobile robot. The robot’s onboard microcontroller received these commands and drove the motors, completing the closed-loop control cycle.
+    \item \textbf{Actuation Subsystem (Robot):}
+    The inferred control commands, including steering and throttle signals, were transmitted wirelessly to the mobile robot over UDP. The onboard Raspberry Pi received these commands and drove the motors via the L298N motor controller, completing the closed-loop control cycle.
 \end{itemize}
 
 \subsection{Module Integration}
