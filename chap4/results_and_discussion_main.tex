@@ -8,7 +8,13 @@ To validate the necessity of the final image preprocessing architecture, the cha
 During the development of the navigation framework, the state representation of the track underwent three major iterations. All models were trained using a modified NVIDIA DAVE-2 Convolutional Neural Network (CNN) architecture with 2,211,175 parameters, processing $200 \times 200$ pixel images, and minimizing Mean Squared Error (MSE) using the Adam optimizer.
 
 \subsection{Iteration 1: Baseline A (Allocentric Full AOI Model)}
-The initial approach utilized the raw, top-down Bird's-Eye View (BEV) image, retaining the room's floor textures and permanent background elements.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{chap4/images/baseline_1.jpg}
+    \caption{A sample image from the dataset of the full Area-of-Interest allocentric state representation for the Baseline A model.}
+    \label{fig:baseline_1}
+\end{figure}
+The initial approach utilized the raw, top-down Bird's-Eye View (BEV) image as shown in Figure~\ref{fig:baseline_1}, retaining the room's floor textures and permanent background elements.
 
 During offline training, Baseline A converged rapidly. As shown in Figure~\ref{fig:4.1}, both MSE and MAE decreased exponentially, with validation loss plateauing near 0.05 and 0.13, and reaching a low validation MSE of 0.0489 by Epoch 30.
 
@@ -32,7 +38,13 @@ As shown in Figure~\ref{fig:4.2}, both the Cross-Track Error (CTE) and the Headi
 Post-deployment analysis revealed the model suffered from \textbf{shortcut learning}. Because the room environment and global track remained static in the camera's view, the CNN bypassed learning the path geometry entirely. Instead, it overfit directly to the robot's absolute pixel coordinates within the room frame. The validation error remained low during training because validation images came from that same static frame. During inference, any minor starting deviation created an out-of-distribution pixel state that the model could not interpret.
 
 \subsection{Iteration 2: Baseline B (Feature-Extracted Allocentric Model)}
-To eliminate background shortcuts like floor reflections, shadows, and pixel discrepancies, the pipeline was updated to add a semantic polygon extraction step. This process isolated the AOI as flat white shapes with a red polygon on a pure black canvas, removing all environmental noise and forcing the network to learn the path geometry itself.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{chap4/images/baseline_2.jpg}
+    \caption{A sample image from the dataset of the feature-extracted allocentric state representation for the Baseline B model.}
+    \label{fig:baseline_2}
+\end{figure}
+To eliminate background shortcuts like floor reflections, shadows, and pixel discrepancies, the pipeline was updated to add a semantic polygon extraction step as seen in Figure~\ref{fig:baseline_2}. This process isolated the AOI as flat white shapes with a red polygon on a pure black canvas, removing all environmental noise and forcing the network to learn the path geometry itself.
 
 While this removed environmental noise, offline training metrics immediately destabilized. As shown in Figure~\ref{fig:4.3}, the training profile exhibited severe validation noise and a massive loss spike near epoch 13, indicating the network struggled to map steering angles without its familiar background shortcuts. The resulting controller was not stable enough to justify full physical deployment, and the model was therefore not advanced beyond limited sanity checks. 
 
@@ -61,11 +73,22 @@ In both deployment sessions the robot immediately departed the path boundary and
 Together, these failures established the need for a representation that is both egocentric and dynamically aligned to the robot's local path context, motivating the subsequent Egocentric Dynamic Crop Model.
 
 \section{The Egocentric Dynamic Crop Model}
+
+
 To resolve both the shortcut learning of Iteration 1 and the spatial translation issues of Iteration 2, the final proposed model implemented the Egocentric Dynamic Crop.
 
 By cropping the image continuously around the ArUco marker, the robot's position remains fixed at the center of the neural network's view. With the background removed, the path geometry simply rotates and approaches the robot, forcing the CNN to learn actual driving rules based strictly on path curvature.
+
+
 \subsection{Offline Training Convergence}
-The proposed model resolved the previous instability issues. By centering the image on the robot, the network required only 9,679 samples to establish geometric stability.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\linewidth]{chap4/images/baseline_3.jpg}
+    \caption{A sample image from the dataset of the egocentric cropped feature-extracted state representation used for the Egocentric Dynamic Model.}
+    \label{fig:baseline_3}
+\end{figure}
+
+The proposed model resolved the previous instability issues. As shown in Figure~\ref{fig:baseline_3}, by centering the image on the robot, the network required only 9,679 samples to establish geometric stability.
 
 \begin{figure}[H]
 	\centering
