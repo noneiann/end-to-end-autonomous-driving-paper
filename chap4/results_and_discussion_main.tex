@@ -5,15 +5,16 @@ To validate the necessity of the final image preprocessing architecture, the cha
 
 
 \section{Chronological Development and Experimental Baselines}
-During the development of the navigation framework, the state representation of the track underwent three major iterations. All models were trained using a modified NVIDIA DAVE-2 Convolutional Neural Network (CNN) architecture with 2,211,175 parameters, processing $200 \times 200$ pixel images, and minimizing Mean Squared Error (MSE) using the Adam optimizer.
 
 \subsection{Iteration 1: Baseline A (Allocentric Full AOI Model)}
-\begin{figure}[!ht]
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{chap4/images/baseline_1.jpg}
     \caption{A sample image from the dataset of the full Area-of-Interest allocentric state representation for the Baseline A model.}
     \label{fig:baseline_1}
 \end{figure}
+
 The initial approach utilized the raw, top-down Bird's-Eye View (BEV) image as shown in Figure~\ref{fig:baseline_1}, retaining the room's floor textures and permanent background elements.
 
 During offline training, Baseline A converged rapidly. As shown in Figure~\ref{fig:4.1}, both MSE and MAE decreased exponentially, with validation loss plateauing near 0.05 and 0.13, and reaching a low validation MSE of 0.0489 by Epoch 30.
