@@ -6,9 +6,11 @@ To validate the necessity of the final image preprocessing architecture, the cha
 
 \section{Chronological Development and Experimental Baselines}
 
+\FloatBarrier
+
 \subsection{Iteration 1: Baseline A (Allocentric Full AOI Model)}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{chap4/images/baseline_1.jpg}
     \caption{A sample image from the dataset of the full Area-of-Interest allocentric state representation for the Baseline A model.}
@@ -38,8 +40,10 @@ As shown in Figure~\ref{fig:4.2}, both the Cross-Track Error (CTE) and the Headi
 
 Post-deployment analysis revealed the model suffered from \textbf{shortcut learning}. Because the room environment and global track remained static in the camera's view, the CNN bypassed learning the path geometry entirely. Instead, it overfit directly to the robot's absolute pixel coordinates within the room frame. The validation error remained low during training because validation images came from that same static frame. During inference, any minor starting deviation created an out-of-distribution pixel state that the model could not interpret.
 
+\FloatBarrier
+
 \subsection{Iteration 2: Baseline B (Feature-Extracted Allocentric Model)}
-\begin{figure}[!ht]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{chap4/images/baseline_2.jpg}
     \caption{A sample image from the dataset of the feature-extracted allocentric state representation for the Baseline B model.}
@@ -50,7 +54,7 @@ To eliminate background shortcuts like floor reflections, shadows, and pixel dis
 While this removed environmental noise, offline training metrics immediately destabilized. As shown in Figure~\ref{fig:4.3}, the training profile exhibited severe validation noise and a massive loss spike near epoch 13, indicating the network struggled to map steering angles without its familiar background shortcuts. The resulting controller was not stable enough to justify full physical deployment, and the model was therefore not advanced beyond limited sanity checks. 
 
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/4th-session.png}
 	\caption{The Feature-Extracted Allocentric Model's training profile was unstable, with severe validation noise and a massive loss spike, indicating the network struggled without background shortcuts.}\label{fig:4.3}
@@ -58,11 +62,13 @@ While this removed environmental noise, offline training metrics immediately des
 
 Limited real-world trials at reduced speed still exposed the same instability. The failure was reproduced across two separate deployment sessions, in which the controller survived only 772 and 1{,}122 frames with CTE RMSE values of 8.93~cm and 21.09~cm respectively (Table~\ref{tab:4.1}), confirming that the instability was systematic rather than an isolated event. As shown in Figure~\ref{fig:4.4} for the longer session, the Cross-Track Error (CTE) drifted steadily upward to roughly 20~cm before collapsing, while the Heading Error hovered around $-20^\circ$ and then jumped abruptly to approximately $+60^\circ$ near the failure point. The steering signal oscillated with a near-zero mean while speed was increased, indicating the controller was reacting to noise rather than tracking a stable path.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/4th_metrics_1_interpretation.png}
 	\caption{Limited real-world trial for Baseline B. CTE drifted upward with a late-stage heading discontinuity, while steering oscillations persisted under increasing speed.}\label{fig:4.4}
 \end{figure}
+
+\FloatBarrier
 
 \subsection*{Failure Analysis of Baselines A and B}
 The two allocentric baselines failed for complementary reasons that both trace back to the state representation. Baseline A preserved the full room context, which enabled shortcut learning: the CNN exploited static background cues and absolute pixel coordinates rather than learning the path geometry. This produced excellent offline metrics but catastrophic real-world generalization under even minor pose shifts.
@@ -73,6 +79,8 @@ In both deployment sessions the robot immediately departed the path boundary and
 
 Together, these failures established the need for a representation that is both egocentric and dynamically aligned to the robot's local path context, motivating the subsequent Egocentric Dynamic Crop Model.
 
+\FloatBarrier
+
 \section{The Egocentric Dynamic Crop Model}
 
 
@@ -81,8 +89,10 @@ To resolve both the shortcut learning of Iteration 1 and the spatial translation
 By cropping the image continuously around the ArUco marker, the robot's position remains fixed at the center of the neural network's view. With the background removed, the path geometry simply rotates and approaches the robot, forcing the CNN to learn actual driving rules based strictly on path curvature.
 
 
+\FloatBarrier
+
 \subsection{Offline Training Convergence}
-\begin{figure}[!ht]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{chap4/images/baseline_3.jpg}
     \caption{A sample image from the dataset of the egocentric cropped feature-extracted state representation used for the Egocentric Dynamic Model.}
@@ -91,7 +101,7 @@ By cropping the image continuously around the ArUco marker, the robot's position
 
 The proposed model resolved the previous instability issues. As shown in Figure~\ref{fig:baseline_3}, by centering the image on the robot, the network required only 9,679 samples to establish geometric stability.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/best_model_metrics.png}
 	\caption{The Egocentric Dynamic Crop Model's training profile showed stable convergence, with both MSE and MAE decreasing steadily without significant validation noise.}\label{fig:4.5}
@@ -116,11 +126,13 @@ As shown in Figure~\ref{fig:4.5}, it quickly achieved a highly stable validation
 	\end{tabular}
 \end{table}
 
+\FloatBarrier
+
 \subsection{Real-World Navigation and Endurance}
 
 The proposed Egocentric Model successfully guided the robot through the entire track.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/Best_Metrics_interpretation.png}
 	\caption{Physical deployment of the Egocentric Dynamic Crop Model resulted in successful navigation through the entire track, with stable CTE and Heading Error profiles.}\label{fig:4.6}
@@ -150,6 +162,8 @@ Deployed over a continuous run of 3,642 frames, it achieved an extremely low tra
 	\end{tabular}
 \end{table}
 
+\FloatBarrier
+
 \section{Comparative Tracking Performance}
 Table~\ref{tab:4.1} and Figure~\ref{fig:4.7} summarize the final real-world tracking metrics across all three chronological iterations, clearly illustrating the dramatic stability improvements achieved by the egocentric crop.
 
@@ -169,15 +183,19 @@ Final System & Proposed Egocentric Model & 3,642 & Completed successfully & 1.01
 \end{tabularx}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/absolute_cte_boxplot.png}
 	\caption{Real-World Trajectory Deviations: absolute Cross-Track Error (cm) box plot across model iterations.}\label{fig:4.7}
 \end{figure}
 The box plot in Figure~\ref{fig:4.7} shows a dramatic contraction of the error distribution for the proposed model, with a much lower median and tighter interquartile range than Baselines A and B. This indicates not only lower average tracking error but also substantially reduced variability and fewer large deviations.
 
+\FloatBarrier
+
 \section{In-Depth Performance of the Model}
 To comprehensively validate the proposed end-to-end architecture, the Egocentric Dynamic Crop model was evaluated across three trained track topologies of increasing B{\'e}zier curve complexity, plus a fourth held-out topology reserved for the generalization test (Section~\ref{sec:generalization}). By entirely removing the PID control components and relying strictly on the Convolutional Neural Network (CNN) for high-level navigation, this phase of testing isolates the controller's ability to dynamically scale continuous steering outputs based solely on visual geometric features.
+
+\FloatBarrier
 
 \subsection{Statistical Analysis Methodology}
 For each evaluation scenario, the robot was deployed in $N=10$ independent trials. Each trial begins from a randomized start pose within the lane and constitutes a single discrete circuit of the track, in contrast to the earlier single continuous multi-lap recordings. During every trial the tracking system recorded per-frame Cross-Track Error (CTE) and Heading Error at an effective control-loop rate of approximately 30~Hz (mean 29.7~Hz, SD 1.6~Hz across the 40 trials). Because each trial is exactly one circuit, tracking consistency is reported across the independent trials (trial-to-trial repeatability) rather than over laps within a single run. Success rates are reported as the proportion of completed trials per scenario. The full quantitative summary is presented in Tables~\ref{tab:4.2}, \ref{tab:reliability}, and \ref{tab:per_lap_consistency}.
@@ -210,6 +228,8 @@ All cross-track errors are measured in the rectified bird's-eye-view canvas, whi
 
 \input{chap4/per_lap_consistency}
 
+\FloatBarrier
+
 \subsection{System Reliability}
 Across all four scenarios the egocentric controller completed every trial without the chassis
 leaving the lane: no failures were observed in $4 \times 10 = 40$ independent randomized-start
@@ -234,13 +254,17 @@ per scenario'' rather than claiming near-perfect reliability in an absolute sens
 \end{tabular}
 \end{table}
 
+\FloatBarrier
+
 \subsection{Scenario 1: 45-Degree B{\'e}zier Curves}
 The first scenario tests mild, continuous curvature across $N=10$ independent randomized-start trials (mean 1{,}266 frames per trial). Rather than exhibiting the fishtailing or oscillatory steering behavior commonly observed in pure behavioral cloning models without derivative damping, the model demonstrated highly anticipatory steering. As the $45^\circ$ curves entered the egocentric bounding box, the convolutional feature extractor registered the gradual geometric shift, resulting in a smooth, continuous adjustment of the steering vector. Pooled over the 10 trials, the model achieved a mean absolute CTE of \textbf{0.79 $\pm$ 0.57}~cm (RMSE = 0.97~cm), with 95\% of all frames remaining within 1.88~cm of the reference path. Trial-to-trial consistency was high: per-trial CTE RMSE was \textbf{0.98 $\pm$ 0.11}~cm (range 0.76--1.15~cm, Table~\ref{tab:per_lap_consistency}), confirming near-identical tracking across independent runs. The Heading Error remained bounded, with a mean of $1.25 \pm 6.73^\circ$ and a 95th-percentile magnitude of \textbf{13.55$^\circ$}, showing that the model does not overreact to gentle path deviations and smoothly tracks shallow curves.
+
+\FloatBarrier
 
 \subsection{Scenario 2: 90-Degree Square Path}
 Navigating the square path across $N=10$ independent trials (mean 1{,}514 frames per trial) tested the model's response to rapid, orthogonal geometric changes. Pooled over the 10 trials, the model achieved a mean absolute CTE of \textbf{1.28 $\pm$ 0.78}~cm (RMSE = 1.50~cm), with 95\% of frames within 2.63~cm of the reference path and a worst-case deviation of 4.25~cm. The Heading Error remained bounded, with a mean of $1.38 \pm 7.54^\circ$ and a 95th-percentile magnitude of $18.73^\circ$. Per-trial CTE RMSE was \textbf{1.49 $\pm$ 0.14}~cm (range 1.26--1.69~cm, Table~\ref{tab:per_lap_consistency}). Approaching a $90^\circ$ corner requires a sharp spike in actuation, and upon entering the apex the model executed aggressive, high-magnitude steering commands, reaching raw command magnitudes near the $\pm 50$ saturation limit (peak $\approx 46$, with 95\% of commands at or below a magnitude of $32$).
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/90_Degree_Telemetry.png}
 	\caption{90-degree cornering telemetry showing rapid actuation and recovery under orthogonal curvature.}\label{fig:4.8}
@@ -270,10 +294,12 @@ Importantly, as visualized in Figure~\ref{fig:4.8}, the Egocentric Dynamic Crop 
 	\end{tabular}
 \end{table}
 
+\FloatBarrier
+
 \subsection{Scenario 3: 180-Degree Sustained U-Turns}
 The final trained topology tested the system's kinematic behavior under extreme, continuous curvature. The scenario was evaluated across $N=10$ independent trials (mean 950 frames per trial), each a single circuit of the U-turn track. During the 180-degree U-turns, the model was forced to hold a near-maximum steering angle through the sustained curve.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/180_Degree_Endurance.png}
 	\caption{180-degree U-turn telemetry illustrating sustained steering actuation under extreme curvature.}\label{fig:4.9}
@@ -303,6 +329,8 @@ The telemetry in Figure~\ref{fig:4.9} confirms that the network successfully han
 	\end{tabular}
 \end{table}
 
+\FloatBarrier
+
 \subsection{Generalization to an Unseen Track Topology}
 \label{sec:generalization}
 The decisive test of whether the network learned transferable path geometry rather than memorizing
@@ -323,13 +351,13 @@ the structured marker arena}, rather than a track-specific coordinate map. We sc
 unseen track \emph{topologies within the marker arena}; it does not extend to unstructured or
 markerless environments, which Chapter~1 explicitly places outside the scope of this work.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{chap4/images/fig4_generalization.png}
 	\caption{Generalization: CTE RMSE on the trained tracks (pooled, $N=30$) versus the held-out track ($N=10$). Error grows $1.70\times$ on the unseen topology while success remains at 100\%.}\label{fig:generalization}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{chap4/images/fig2_cte_boxplot.png}
 	\caption{Distribution of absolute Cross-Track Error (cm) per scenario, pooled over $N=10$ trials each, including the held-out track. Error scales with curvature severity and rises on the unseen topology while remaining bounded.}\label{fig:4.10}
@@ -358,6 +386,8 @@ Table~\ref{tab:generalization-telemetry-sample} presents a sample of the frame-l
 		\bottomrule
 	\end{tabular}
 \end{table}
+
+\FloatBarrier
 
 \section{Control Decision Discretization and Confusion Matrix}
 To examine the directional structure of the steering decisions issued by the end-to-end CNN, the continuous telemetry from all $40$ evaluation trials was discretized into three control states and cross-tabulated. Under the system's sign convention, positive values denote a rightward sense for both quantities: a positive heading error indicates the chassis is pointing to the \emph{right} of the reference path's tangent direction, and a positive steering command drives a rightward turn. Consequently, a positive heading error calls for a corrective \emph{leftward} steering action. The desired (corrective) action is defined from the instantaneous heading error (in degrees) using a $\pm 5^{\circ}$ dead-band:
@@ -393,7 +423,7 @@ Right    & 1{,}707 (19.7\%) & 1{,}210 (14.0\%) & \textbf{5{,}756 (66.4\%)} & 8{,
 \end{tabular}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.72\linewidth]{chap4/images/confusion_matrix_heading.png}
 	\caption{Control-decision contingency heat map (pooled over all four scenarios, $54{,}031$ marker-tracked frames). Rows are the desired corrective action implied by the instantaneous heading error ($\pm 5^{\circ}$ dead-band) and columns are the executed steering action; cells are shaded by row-normalized frequency and annotated with frame counts and row percentages. The diagonal cells (instantaneous agreement) are outlined. The substantial off-diagonal mass in the Straight row reflects anticipatory, phase-lagged steering rather than tracking failure.}\label{fig:confusion}
