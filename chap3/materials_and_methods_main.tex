@@ -333,6 +333,68 @@ As depicted in Figure~\ref{fig:3.1}, the pipeline was organized into three funct
     The inferred control commands, including steering and throttle signals, were transmitted wirelessly to the mobile robot over UDP. The onboard Raspberry Pi received these commands and drove the motors via the L298N motor controller, completing the closed-loop control cycle.
 \end{itemize}
 
+\subsection{Data Structures and Representations}
+\label{sec:data_structures}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.4}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{2.1cm}|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Data Structure} & \textbf{Type / Shape} & \textbf{Stage} & \textbf{Role in the System} \\
+\hline
+\texttt{raw\_frame} & \texttt{ndarray}, $H\times W\times3$, \texttt{uint8} & Sensing & Raw RGB image from the overhead camera; the sole exteroceptive input to the system. \\
+\hline
+$K$,\ $D$ & $3\times3$ and $1\times5$ float arrays & Calibration (static) & Intrinsic camera matrix and lens distortion coefficients; applied per frame to undistort \texttt{raw\_frame}. \\
+\hline
+\texttt{corners},\ \texttt{ids} & list of $4\times2$ float arrays; integer array & Localization & ArUco marker corner pixel coordinates and their decoded identifiers, providing ground-truth arena reference points. \\
+\hline
+\texttt{src\_points},\ \texttt{dst\_points} & $4\times2$ float arrays & Localization & Ordered source--destination correspondences (TL, TR, BR, BL) that define the perspective transform. \\
+\hline
+$H$ & $3\times3$ float matrix & Localization / State prep. & Homography mapping the angled view to a metric top-down plane; pre-computed once and reused every loop. \\
+\hline
+\texttt{warped\_frame} & \texttt{ndarray}, \texttt{arena\_dims}$\times3$ & State prep. & Bird's-eye orthographic image produced by inverse perspective mapping (IPM). \\
+\hline
+$s_t$ & float tensor, $200\times200\times3$, range $[0,1]$ & State representation & Egocentric-cropped, path-injected, normalized visual state; the direct input to the CNN policy. \\
+\hline
+$(steering,\ throttle)$ & tuple of two floats & Inference / Actuation & Control vector; steering scaled by $k_{steer}=50$ and saturated to $[-50,50]$, throttle held in $[0,1]$. \\
+\hline
+UDP payload & packed byte string & Transmission & Serialized control vector sent over the wireless link; the wire-format interface between client and server. \\
+\hline
+Frame buffer & latest-frame buffer (depth~1) & Perception interface & Held inside \texttt{CameraStream} to decouple capture from processing, so the loop always reads the most recent frame. \\
+\hline
+$(s_t,\ a_t)$ + \texttt{.catalog} & NumPy array + paired float record, keyed by frame index & Data logging / storage & Temporally synchronized behavioral-cloning training pair persisted to disk. \\
+\hline
+\end{tabularx}
+\caption{Principal data structures of the navigation system and their progression through the sensing, processing, and actuation stages of the control pipeline.}
+\label{tab:data_structures}
+\end{table}
+
+The control flow described above is most precisely understood as a sequence of
+transformations applied to a small set of well-defined data structures. As data
+propagates through the pipeline, its representation changes systematically: a
+high-dimensional array of raw camera pixels is progressively reduced to a compact,
+normalized visual state and finally to a two-element control vector. Making these
+representations explicit clarifies the interfaces between the software modules
+(Section~\ref{sec:module_integration}) and the algorithms that operate on them.
+Table~\ref{tab:data_structures} catalogs each principal structure, its concrete type
+and shape, the pipeline stage at which it appears, and its role in the system.
+
+Two structures are of particular architectural significance. The first is the
+processed visual state $s_t$, a fixed-size normalized tensor that serves as the
+learned interface between perception and control: every upstream calibration,
+warping, cropping, and path-injection operation exists solely to produce this
+representation, and it is the only observation the CNN policy ever consumes. The
+second is the serialized control vector transmitted over UDP, which constitutes the
+sole interface between the host client and the onboard server; its compactness
+(two floating-point values) is what permits the low-latency, connectionless
+transport strategy described above. A third structure, the synchronized
+$(s_t,\ a_t)$ training pair persisted to disk, is not part of the real-time loop but
+underpins the entire behavioral-cloning approach, since it is the only on-disk
+record from which the driving policy is learned.
+
 \subsection{Module Integration}
 \label{sec:module_integration}
 
@@ -805,7 +867,7 @@ layer that maps the 20{,}736-element flattened vector to 100 neurons.
 \hline
 \end{tabular}%
 }
-\caption{Table 3.1 Modified DAVE-2 Convolutional Neural Network Architecture}
+\caption{Modified DAVE-2 Convolutional Neural Network Architecture}
 \label{tab:architecture}
 \end{table}
 
