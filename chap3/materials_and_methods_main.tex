@@ -198,8 +198,8 @@ To resolve the ambiguity of the arena’s orientation and prevent the coordinate
 \begin{enumerate}
     \item Top-Left (TL): Marker ID 24
     \item Top-Right (TR): Marker ID 42
-    \item Bottom-Right (BR): Marker ID 66
-    \item Bottom-Left (BL): Marker ID 70
+    \item Bottom-Left (BL): Marker ID 66
+    \item Bottom-Right (BR): Marker ID 70
 \end{enumerate}
 
 Detection was performed on the undistorted frame, not the raw frame — to ensure that
@@ -287,10 +287,73 @@ The system is structured as a two-node distributed architecture in which all com
 
 As illustrated in Figure~\ref{fig:sys_arch}, the system comprises two computational nodes communicating over a local wireless network via the User Datagram Protocol (UDP).
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{images/figure3_arch.png}
-    \caption{Client-server hardware architecture of the autonomous navigation system. The Host PC (client) handles all perception, offline training, and real-time inference, transmitting control commands to the onboard Raspberry Pi (server) over UDP.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[>=Stealth]
+        % ================= Offline training pipeline (blue) =================
+        \node[dsblock=zoneOffline] (hdrive) at (0,4.7)    {\dsicon{ic human}\\Human\\Driving};
+        \node[dsblock=zoneOffline] (dcoll)  at (3.1,4.7)  {\dsicon{ic camera}\\Dataset\\Collection};
+        \node[dsblock=zoneOffline] (dstore) at (6.2,4.7)  {\dsicon{ic disk}\\Dataset\\Storage};
+        \node[dsblock=zoneOffline] (otrain) at (9.4,4.7)  {\dsicon{ic chip}\\Offline Train\\(DAVE-2)};
+        \node[dsblock=zoneOffline] (tmodel) at (12.5,4.7) {\dsicon{ic file}\\Trained\\Model};
+        \node[dsblock=zoneOffline] (deploy) at (15.5,4.7) {\dsicon{ic deploy}\\Model\\Deployment};
+
+        % ================= Host PC (green) =================
+        \node[dsblock=zoneHost] (ocam) at (0,0.7) {\dsicon{ic camera}\\Overhead\\Camera};
+        \node[dsblock=zoneHost, text width=3.1cm, align=center] (fproc) at (4.1,0.7)
+              {\dsicon{ic crop}\\\textbf{Frame Processing}\\[1pt]\footnotesize ArUco Detection\\[-1pt]\footnotesize Perspective (BEV)\\[-1pt]\footnotesize Resize, Normalize};
+        \node[dsblock=zoneHost] (infer) at (8.4,0.7)  {\dsicon{ic chip}\\\textbf{Inference}\\Engine};
+        \node[dsblock=zoneHost] (udpc)  at (11.9,0.7) {\dsicon{ic wifi}\\\textbf{UDP Client}\\(Sender)};
+
+        % ================= Robot / Raspberry Pi (purple) =================
+        \node[dsblock=zoneRobot] (urecv) at (15.5,0.7)  {\dsicon{ic wifi}\\UDP\\Receiver};
+        \node[dsblock=zoneRobot] (cdec)  at (15.5,-1.1) {\dsicon{ic chip}\\Command\\Decoder};
+        \node[dsblock=zoneRobot] (mctrl) at (15.5,-2.9) {\dsicon{ic gear}\\Motor\\Control Logic};
+        \node[dsblock=zoneRobot] (gpio)  at (15.5,-4.7) {\dsicon{ic board}\\GPIO / PWM\\Output};
+        \node[dsblock=zoneRobot] (rmot)  at (15.5,-6.5) {\dsicon{ic wheel}\\Motors};
+
+        % ================= zone backdrops =================
+        \begin{scope}[on background layer]
+          \node[dszone=zoneOffline, fit=(hdrive)(deploy),
+                label={[dszonetitle=zoneOffline]above:1.~Offline Training Pipeline (done once)}] {};
+          \node[dszone=zoneHost, fit=(ocam)(udpc),
+                label={[dszonetitle=zoneHost]above:2.~Host PC (Client) --- Real-Time Inference}] {};
+          \node[dszone=zoneRobot, fit=(urecv)(rmot),
+                label={[dszonetitle=zoneRobot]above:3.~Robot --- Raspberry Pi (Server)}] {};
+        \end{scope}
+
+        % ================= offline chain =================
+        \draw[dsflow] (hdrive) -- node[dslabel,above]{img--steer} (dcoll);
+        \draw[dsflow] (dcoll)  -- node[dslabel,above]{.catalog}   (dstore);
+        \draw[dsflow] (dstore) -- node[dslabel,above]{$(s_t,a_t)$} (otrain);
+        \draw[dsflow] (otrain) -- node[dslabel,above]{weights}    (tmodel);
+        \draw[dsflow] (tmodel) -- node[dslabel,above]{.pth}       (deploy);
+
+        % ================= host chain =================
+        \draw[dsflow] (ocam)  -- node[dslabel,above]{raw\_frame} (fproc);
+        \draw[dsflow] (fproc) -- node[dslabel,above]{$s_t$}      (infer);
+        \draw[dsflow] (infer) -- node[dslabel,above,align=center]{steer\\[-2pt]+throttle} (udpc);
+
+        % ================= robot chain =================
+        \draw[dsflow] (urecv) -- node[dslabel,right]{seq,speed,steer} (cdec);
+        \draw[dsflow] (cdec)  -- node[dslabel,right]{speed,steer} (mctrl);
+        \draw[dsflow] (mctrl) -- node[dslabel,right]{duty+dir} (gpio);
+        \draw[dsflow] (gpio)  -- node[dslabel,right]{PWM} (rmot);
+
+        % ================= cross-zone links =================
+        % model deployed into the inference engine (routed above the host/robot zones)
+        \draw[dsflow] (deploy.south) -- ++(0,-1.1)
+              -| node[dslabel,pos=0.25]{model .pth} (infer.north);
+        % camera frames + steering feed the dataset collection
+        \draw[dsflow] (fproc.north) to[out=90,in=-90]
+              node[dslabel,pos=0.4]{frames} (dcoll.south);
+        % control command sent over the wireless network
+        \draw[dsflowd] (udpc.east) --
+              node[dslabel,above,align=center]{\texttt{"seq,speed,steer"}\\[-1pt]UDP / Wi-Fi} (urecv.west);
+    \end{tikzpicture}%
+    }
+    \caption{Client--server hardware architecture of the autonomous navigation system. The Host PC (client, green) performs offline training (blue, done once) and real-time inference, transmitting the serialized control command to the onboard Raspberry Pi (server, purple) over UDP. Arrow labels name the data structure passed at each step (cf.\ Table~\ref{tab:data_structures}).}
     \label{fig:sys_arch}
 \end{figure}
 
@@ -306,10 +369,45 @@ The use of UDP rather than TCP was a deliberate design choice. The control loop 
 
 Within the Host PC, the end-to-end control flow followed a three-stage pipeline --- sensing, processing, and actuation --- as illustrated in Figure~\ref{fig:3.1}.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
-    {\includegraphics[width=1.0\textwidth]{images/figure3_1.png}}\qquad
-    \caption[Short Caption]{End-to-end system processing pipeline, showing the flow from raw camera input through perception, CNN inference, and command transmission to the robot.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tikzpicture}[>=Stealth]
+        % ---- nodes ----
+        \node[dsblock=zoneHost] (aruco) at (0,1.15) {\dsicon{ic tag}\\ArUco\\Markers};
+        \node[dsblock=zoneHost] (cam)   at (0,-1.25) {\dsicon{ic camera}\\Overhead\\Camera};
+        \node[dsblock=zoneHost, text width=2.9cm, align=center] (loc) at (4.5,-0.05)
+              {\dsicon{ic grid}\\\textbf{Localization}\\[1pt]\footnotesize Undistort Frame\\[-1pt]\footnotesize Compute Homography};
+        \node[dsblock=zoneHost, text width=2.9cm, align=center] (state) at (8.9,-0.05)
+              {\dsicon{ic crop}\\\textbf{State Prep}\\[1pt]\footnotesize IPM Warp\\[-1pt]\footnotesize Inject Path \& Crop};
+        \node[dsblock=zoneHost] (cnn) at (12.3,-0.05) {\dsicon{ic chip}\\\textbf{CNN}\\Policy};
+        \node[dsblock=zoneRobot] (wifi)   at (15.6,1.15) {\dsicon{ic wifi}\\Wireless\\Link};
+        \node[dsblock=zoneRobot] (mcu)    at (15.6,-1.25) {\dsicon{ic board}\\Micro-\\controller};
+        \node[dsblock=zoneRobot] (motors) at (15.6,-3.4) {\dsicon{ic wheel}\\Motors};
+
+        % ---- zone backdrops ----
+        \begin{scope}[on background layer]
+          \node[dszone=zoneHost, fit=(aruco)(cam),
+                label={[dszonetitle=zoneHost]above:1.~Sensing (Arena)}] {};
+          \node[dszone=zoneHost, fit=(loc)(state)(cnn),
+                label={[dszonetitle=zoneHost]above:2.~Processing (Workstation)}] {};
+          \node[dszone=zoneRobot, fit=(wifi)(mcu)(motors),
+                label={[dszonetitle=zoneRobot]above:3.~Actuation (Robot)}] {};
+        \end{scope}
+
+        % ---- internal flows ----
+        \draw[dsflow] (aruco) -- (cam);
+        \draw[dsflow] (wifi) -- (mcu);
+        \draw[dsflow] (mcu) -- node[dslabel,right]{PWM} (motors);
+
+        % ---- data-flow between stages (labelled with data structures) ----
+        \draw[dsflow] (cam.east)   -- node[dslabel,above]{raw\_frame} (loc.west);
+        \draw[dsflow] (loc.east)   -- node[dslabel,above]{$H$} (state.west);
+        \draw[dsflow] (state.east) -- node[dslabel,above]{$s_t$} (cnn.west);
+        \draw[dsflow] (cnn.east)   -- node[dslabel,above,align=center]{\texttt{seq,speed,steer}\\[-1pt]\scriptsize via UDP} (wifi.west);
+    \end{tikzpicture}%
+    }
+    \caption{End-to-end system processing pipeline. Boxes denote processing stages grouped into the sensing, processing, and actuation zones; labels on the arrows name the data structure passed between stages (see Table~\ref{tab:data_structures}): the raw frame is localized into a homography $H$, prepared into the normalized state $s_t$, mapped by the CNN to a control vector, and transmitted over UDP to the robot.}
     \label{fig:3.1}
 \end{figure}
 
@@ -345,27 +443,27 @@ As depicted in Figure~\ref{fig:3.1}, the pipeline was organized into three funct
 \hline
 \textbf{Data Structure} & \textbf{Type / Shape} & \textbf{Stage} & \textbf{Role in the System} \\
 \hline
-\texttt{raw\_frame} & \texttt{ndarray}, $H\times W\times3$, \texttt{uint8} & Sensing & Raw RGB image from the overhead camera; the sole exteroceptive input to the system. \\
+\texttt{raw\_frame} & \texttt{ndarray}, $H\times W\times3$, \texttt{uint8} & Sensing & Raw 8-bit image (BGR, OpenCV) from the overhead camera; the sole exteroceptive input to the system. \\
 \hline
-$K$,\ $D$ & $3\times3$ and $1\times5$ float arrays & Calibration (static) & Intrinsic camera matrix and lens distortion coefficients; applied per frame to undistort \texttt{raw\_frame}. \\
+$K$,\ $D$ & $3\times3$ and $1\times5$ float arrays & Calibration (static) & Intrinsic camera matrix and lens distortion coefficients (loaded from \texttt{calibration.pkl}); applied per frame to undistort \texttt{raw\_frame}. \\
 \hline
 \texttt{corners},\ \texttt{ids} & list of $4\times2$ float arrays; integer array & Localization & ArUco marker corner pixel coordinates and their decoded identifiers, providing ground-truth arena reference points. \\
 \hline
-\texttt{src\_points},\ \texttt{dst\_points} & $4\times2$ float arrays & Localization & Ordered source--destination correspondences (TL, TR, BR, BL) that define the perspective transform. \\
+\texttt{src\_points},\ \texttt{dst\_points} & $4\times2$ float arrays & Localization & Ordered source--destination correspondences (TL, TR, BL, BR) that define the perspective transform. \\
 \hline
 $H$ & $3\times3$ float matrix & Localization / State prep. & Homography mapping the angled view to a metric top-down plane; pre-computed once and reused every loop. \\
 \hline
-\texttt{warped\_frame} & \texttt{ndarray}, \texttt{arena\_dims}$\times3$ & State prep. & Bird's-eye orthographic image produced by inverse perspective mapping (IPM). \\
+\texttt{warped\_frame} & \texttt{ndarray}, $800\times800\times3$, \texttt{uint8} & State prep. & Bird's-eye orthographic image produced by inverse perspective mapping (IPM). \\
 \hline
-$s_t$ & float tensor, $200\times200\times3$, range $[0,1]$ & State representation & Egocentric-cropped, path-injected, normalized visual state; the direct input to the CNN policy. \\
+$s_t$ & \texttt{uint8} $[0,255]$ on disk; CHW float tensor $3\times200\times200$, scaled to $[-1,1]$ by the model input layer & State representation & Egocentric-cropped, path-injected visual state; the direct input to the CNN policy. \\
 \hline
-$(steering,\ throttle)$ & tuple of two floats & Inference / Actuation & Control vector; steering scaled by $k_{steer}=50$ and saturated to $[-50,50]$, throttle held in $[0,1]$. \\
+$(steering,\ throttle)$ & pair of integers & Inference / Actuation & Control vector. The CNN emits \emph{steering only}: scaled by $k_{steer}=50$, rounded, and saturated to $[-50,50]$. Throttle is a fixed operator/gear value in $[0,100]$. \\
 \hline
-UDP payload & packed byte string & Transmission & Serialized control vector sent over the wireless link; the wire-format interface between client and server. \\
+UDP payload & ASCII string \texttt{"seq,speed,steer"} (three integers) & Transmission & Wire-format interface between client and server; carries a \texttt{uint16} sequence number for stale-packet rejection. \\
 \hline
-Frame buffer & latest-frame buffer (depth~1) & Perception interface & Held inside \texttt{CameraStream} to decouple capture from processing, so the loop always reads the most recent frame. \\
+Frame buffer & \texttt{queue.Queue} (\texttt{maxsize}$=2$), drop-oldest & Perception interface & Decouples camera capture (\texttt{camera\_thread}) from processing; the loop consumes the newest frame and discards stale ones. \\
 \hline
-$(s_t,\ a_t)$ + \texttt{.catalog} & NumPy array + paired float record, keyed by frame index & Data logging / storage & Temporally synchronized behavioral-cloning training pair persisted to disk. \\
+image + \texttt{.catalog} & JPEG frame on disk + JSON-lines record (\texttt{index}, \texttt{cam/image\_array}, \texttt{angle}, \texttt{throttle}, \dots), keyed by \texttt{index} & Data logging / storage & Temporally synchronized behavioral-cloning pair: the image is the state, \texttt{angle} the steering label. \\
 \hline
 \end{tabularx}
 \caption{Principal data structures of the navigation system and their progression through the sensing, processing, and actuation stages of the control pipeline.}
@@ -387,11 +485,11 @@ processed visual state $s_t$, a fixed-size normalized tensor that serves as the
 learned interface between perception and control: every upstream calibration,
 warping, cropping, and path-injection operation exists solely to produce this
 representation, and it is the only observation the CNN policy ever consumes. The
-second is the serialized control vector transmitted over UDP, which constitutes the
+second is the serialized control payload transmitted over UDP, which constitutes the
 sole interface between the host client and the onboard server; its compactness
-(two floating-point values) is what permits the low-latency, connectionless
+(a short ASCII string of three integers) is what permits the low-latency, connectionless
 transport strategy described above. A third structure, the synchronized
-$(s_t,\ a_t)$ training pair persisted to disk, is not part of the real-time loop but
+image--steering training pair persisted to disk, is not part of the real-time loop but
 underpins the entire behavioral-cloning approach, since it is the only on-disk
 record from which the driving policy is learned.
 
@@ -402,20 +500,23 @@ The software was organized into four distinct functional modules, ensuring separ
 concerns and allowing independent testing of subsystems.
 
 \begin{enumerate}
-    \item \textbf{Perception Interface (\textit{CameraStream}):} Interfaced with the
-    hardware camera driver and managed the frame buffer to ensure the processing pipeline
-    always retrieved the most recent frame, minimizing input lag.
+    \item \textbf{Perception Interface} (\texttt{camera\_thread} + \texttt{frame\_queue}):
+    A capture thread pulled frames from the camera driver into a bounded
+    \texttt{queue.Queue}, ensuring the processing pipeline always retrieved the most
+    recent frame (stale frames dropped) and minimizing input lag.
 
-    \item \textbf{State Estimator (\textit{Preprocessor}):} Encapsulated the pre-computed
+    \item \textbf{State Estimator} (\texttt{ArenaWarper}, \texttt{PathRenderer},
+    \texttt{EgocentricRenderer}): Encapsulated the pre-computed
     homography matrix $H$ from Section~\ref{sec:3.4.2} and executed the full state
     representation pipeline — perspective warp, semantic extraction, path injection,
-    egocentric crop, and normalization.
+    egocentric rotation and crop.
 
-    \item \textbf{Inference Engine (\textit{PilotModel}):} Loaded the pre-trained CNN
-    weights into memory on startup and exposed a \texttt{predict()} method that accepted
-    a processed image tensor and returned the raw normalized steering command.
+    \item \textbf{Inference Engine} (\texttt{InferenceEngine} wrapping \texttt{DAVE2}):
+    Loaded the pre-trained CNN weights (\texttt{dave2\_robot\_model.pth}) into memory on
+    startup and exposed a \texttt{predict\_frame()} method that accepted a processed image
+    and returned the steering command (the raw $\tanh$ output scaled to $[-50,50]$).
 
-    \item \textbf{Actuation Interface (\textit{MotorDriver}):}
+    \item \textbf{Actuation Interface} (\texttt{MotorController}, on the Raspberry Pi):
     \begin{itemize}
         \item Abstracted low-level GPIO commands from the rest of the pipeline.
         \item Converted the normalized CNN output into a raw steering command using a
@@ -451,30 +552,30 @@ concerns and allowing independent testing of subsystems.
 
 \Statex
 \State \textbf{// Phase 3: ID-Based Sorting (Ground Truth Assignment)}
-\State \textbf{// Marker IDs: 0=TL, 1=TR, 2=BR, 3=BL}
-\State $expected\_ids \gets \{0,1,2,3\}$
+\State \textbf{// Corner marker IDs: 24=TL, 42=TR, 66=BL, 70=BR}
+\State $expected\_ids \gets \{24, 42, 66, 70\}$
 
 \If{$|ids| < 4$ \textbf{or} $expected\_ids \not\subseteq ids$}
-    \State \Return \textbf{Error} ``Markers 0--3 not found''
+    \State \Return \textbf{Error} ``Corner markers 24, 42, 66, 70 not found''
 \EndIf
 
 \State $src\_points \gets$ empty list of size $4$
 
 \For{$i \gets 1$ to $|ids|$}
-    \If{$ids[i] = 0$}
-        \State $src\_points[0] \gets corners[i]$ \Comment{Top-Left}
-    \ElsIf{$ids[i] = 1$}
-        \State $src\_points[1] \gets corners[i]$ \Comment{Top-Right}
-    \ElsIf{$ids[i] = 2$}
-        \State $src\_points[2] \gets corners[i]$ \Comment{Bottom-Right}
-    \ElsIf{$ids[i] = 3$}
-        \State $src\_points[3] \gets corners[i]$ \Comment{Bottom-Left}
+    \If{$ids[i] = 24$}
+        \State $src\_points[0] \gets \textsc{Center}(corners[i])$ \Comment{Top-Left}
+    \ElsIf{$ids[i] = 42$}
+        \State $src\_points[1] \gets \textsc{Center}(corners[i])$ \Comment{Top-Right}
+    \ElsIf{$ids[i] = 66$}
+        \State $src\_points[2] \gets \textsc{Center}(corners[i])$ \Comment{Bottom-Left}
+    \ElsIf{$ids[i] = 70$}
+        \State $src\_points[3] \gets \textsc{Center}(corners[i])$ \Comment{Bottom-Right}
     \EndIf
 \EndFor
 
 \Statex
 \State \textbf{// Phase 4: Homography Calculation}
-\State $dst\_points \gets \{(0,0), (W,0), (W,H), (0,H)\}$
+\State $dst\_points \gets \{(0,0), (W,0), (0,H), (W,H)\}$ \Comment{TL, TR, BL, BR}
 \State $homography\_matrix \gets \textsc{GetPerspectiveTransform}(src\_points, dst\_points)$
 
 \Statex
@@ -499,20 +600,20 @@ concerns and allowing independent testing of subsystems.
     \Statex
     \State \textbf{// Step 1: Pre-processing}
     \State $input \gets \textsc{Resize}(warped\_frame, 200 \times 200)$
-    \State $input \gets \textsc{NormalizePixelValues}(input)$ \Comment{Scale to range [0, 1]}
+    \State $input \gets \textsc{ToTensor}(input)$ \Comment{\texttt{float32}, pixels kept in [0,255]; input layer scales to [-1,1]}
 
     \Statex
     \State \textbf{// Step 2: Deep Learning Inference}
-    \State $(raw\_steer, raw\_throttle) \gets \textsc{ModelPredict}(cnn\_model, input)$
+    \State $raw\_steer \gets \textsc{ModelPredict}(cnn\_model, input)$ \Comment{single $\tanh$ output in [-1,1]}
     \State $k_{steer} \gets 50$ \Comment{Scaling gain from normalized model output to raw command}
-    \State $steering\_cmd \gets k_{steer} \cdot raw\_steer$ \Comment{Scale normalized steering}
+    \State $steering\_cmd \gets \textsc{Round}(k_{steer} \cdot raw\_steer)$ \Comment{Scale normalized steering}
     \State $steer\_min, steer\_max \gets -50, 50$ \Comment{Raw command saturation bounds}
 
     \Statex
     \State \textbf{// Step 3: Safety Saturation}
-    \State \Comment{Clip outputs to ensure values are within hardware limits}
+    \State \Comment{Clip steering to hardware limits; throttle is a fixed operator/gear value}
     \State $steering \gets \textsc{Clip}(steering\_cmd, steer\_min, steer\_max)$
-    \State $throttle \gets \textsc{Clip}(raw\_throttle, 0.0, 1.0)$
+    \State $throttle \gets fixed\_throttle$ \Comment{$[0,100]$; not a network output}
 
     \State \Return $steering, throttle$
 \EndFunction
@@ -537,15 +638,16 @@ concerns and allowing independent testing of subsystems.
     \EndIf
 
     \Statex
-    \State \textbf{// Step 2: Signal Conversion}
-    \State \Comment{Convert normalized values to Pulse Width Modulation (PWM)}
-    \State $servo\_signal \gets \textsc{MapToServoDutyCycle}(steering)$
-    \State $motor\_signal \gets \textsc{MapToDCMotorSpeed}(throttle)$
+    \State \textbf{// Step 2: Signal Conversion (L298N dual H-bridge)}
+    \State \Comment{Map commands to PWM duty cycles and direction bits}
+    \State $steer\_duty \gets |steering| \times 2$ \Comment{$[-50,50] \rightarrow [0,100]\%$ duty}
+    \State $throttle\_duty \gets \textsc{Clip}(throttle, 0, 100)$
 
     \Statex
     \State \textbf{// Step 3: Hardware Execution}
-    \State \textsc{WriteGPIO}(SERVO\_PIN, $servo\_signal$)
-    \State \textsc{WriteGPIO}(MOTOR\_PIN, $motor\_signal$)
+    \State \textsc{SetDirection}(steering, throttle) \Comment{IN1--IN4 direction pins}
+    \State \textsc{WritePWM}(ENB, $steer\_duty$) \Comment{steering motor channel}
+    \State \textsc{WritePWM}(ENA, $throttle\_duty$) \Comment{throttle motor channel}
 
 \EndFunction
 
@@ -564,10 +666,10 @@ The main execution pipeline followed a ``Sense-Think-Act'' cycle:
     \item \textbf{Initialization Phase:} On startup, the system verified hardware connections, warmed up the camera sensor (allowing auto-exposure to settle), and loaded the CNN model into RAM.
     \item \textbf{The Control Loop:} The system entered a \texttt{while(true)} loop that executed the following sequence:
     \begin{itemize}
-        \item Acquire: The \texttt{CameraStream} fetched the latest frame.
-        \item Process: The \texttt{Preprocessor} warped and cropped the image.
-        \item Infer: The \texttt{PilotModel} computed the control vector.
-        \item Drive: The \texttt{MotorDriver} executed the command.
+        \item Acquire: The camera thread fetched the latest frame from the queue.
+        \item Process: The state estimator (\texttt{PathRenderer}/\texttt{EgocentricRenderer}) warped and cropped the image.
+        \item Infer: The \texttt{InferenceEngine} computed the steering command.
+        \item Drive: The \texttt{MotorController} executed the command.
         \item Log: (Optional) Data was saved for debugging or further training.
     \end{itemize}
 \end{enumerate}
@@ -625,13 +727,14 @@ iteration of the loop, the following operations were performed atomically before
 written to disk:
 
 \begin{enumerate}
-    \item The latest undistorted frame was fetched from the \texttt{CameraStream} buffer.
-    \item The \texttt{Preprocessor} module applied the full state representation pipeline
+    \item The latest undistorted frame was fetched from the frame queue.
+    \item The state estimator (\texttt{PathRenderer}/\texttt{EgocentricRenderer}) applied the full state representation pipeline
           (detailed in Section 3.4.2) to produce the final input tensor $s_t$.
     \item The current gamepad axis reading was polled via \texttt{pygame.event.pump()} to
           obtain the instantaneous steering value $a_t$.
-    \item The pair $(s_t,\ a_t)$ was appended to a running log as a NumPy array and the
-          corresponding raw steering float was recorded to a paired \texttt{.catalog} file, keyed by a
+    \item The state image $s_t$ was written to disk as a JPEG file, and the corresponding
+          record --- the raw steering value $a_t$, the throttle, and auxiliary metrics ---
+          was appended as a JSON line to the paired \texttt{.catalog} file, keyed by a
           shared frame index.
 \end{enumerate}
 
@@ -759,15 +862,25 @@ path (giving it the optimization target).
 As established in the preliminary evaluation (Section 4.2), feeding the full 
 warped arena into the CNN caused the network to overfit to the robot's absolute 
 pixel coordinates rather than learning generalizable path geometry. The definitive 
-solution was the egocentric dynamic crop: at every time step, the robot's current 
-pixel centroid $(c_x, c_y)$ was detected from the chassis-mounted ArUco marker 
-within the warped frame, and a fixed-dimension bounding window of size 
-$W_{\text{crop}} \times H_{\text{crop}}$ (e.g., $200 \times 200$ pixels) was 
-extracted centered on that coordinate:
+solution was the egocentric dynamic crop. At every time step, the robot's current
+pixel centroid $(c_x, c_y)$ and heading $\theta$ were recovered from the chassis-mounted
+ArUco marker within the warped frame. The canvas was first rotated about the centroid so
+that the robot's heading always pointed ``up'' (aligning the heading with the vertical
+image axis) via an affine warp:
 
 \begin{equation}
-    s_t = \text{canvas}\left[c_y - \frac{H_{\text{crop}}}{2} : c_y + 
-    \frac{H_{\text{crop}}}{2},\ c_x - \frac{W_{\text{crop}}}{2} : c_x + 
+    \text{canvas}_{\text{rot}} = \texttt{warpAffine}\!\left(\text{canvas},\
+    R_{\theta,(c_x, c_y)}\right)
+    \label{eq:egorot}
+\end{equation}
+
+A fixed-dimension bounding window of size $W_{\text{crop}} \times H_{\text{crop}}$
+(e.g., $200 \times 200$ pixels) was then extracted, centered on the
+(now rotation-normalized) centroid:
+
+\begin{equation}
+    s_t = \text{canvas}_{\text{rot}}\left[c_y - \frac{H_{\text{crop}}}{2} : c_y +
+    \frac{H_{\text{crop}}}{2},\ c_x - \frac{W_{\text{crop}}}{2} : c_x +
     \frac{W_{\text{crop}}}{2}\right]
     \label{eq:egocrop}
 \end{equation}

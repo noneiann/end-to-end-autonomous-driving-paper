@@ -51,6 +51,119 @@
 \usepackage{enumitem}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, backgrounds, shapes.geometric}
+
+%% ----- Shared TikZ styling for the architecture / data-flow diagrams -----
+\definecolor{zoneOffline}{HTML}{2B4B8C} %% blue  - offline training
+\definecolor{zoneHost}{HTML}{2E7D46}    %% green - host PC (client)
+\definecolor{zoneRobot}{HTML}{6A3D9A}   %% purple- robot (server)
+\definecolor{dataInk}{HTML}{B23A00}     %% burnt orange - data-structure labels
+
+\tikzset{
+  dsblock/.style={rectangle, rounded corners=2.5pt, draw=#1, line width=0.8pt,
+                  fill=#1!6, text=black, align=center, minimum height=8.5mm,
+                  inner xsep=5pt, inner ysep=3.5pt, font=\small},
+  dsblock/.default=black,
+  dsflow/.style={-{Stealth[length=2.6mm]}, line width=0.9pt},
+  dsflowd/.style={-{Stealth[length=2.6mm]}, line width=0.9pt, dashed},
+  dslabel/.style={font=\ttfamily\scriptsize, text=dataInk, fill=white,
+                  inner sep=1.5pt, rounded corners=1pt},
+  dszone/.style={rounded corners=4pt, draw=#1, line width=1pt, fill=#1!3,
+                 inner sep=6pt},
+  dszonetitle/.style={font=\bfseries\footnotesize, text=#1},
+}
+
+%% ----- Self-contained TikZ icons for the data-flow diagrams (no extra fonts) -----
+\definecolor{iconInk}{HTML}{263238}
+\tikzset{
+  ds ic/.style={draw=iconInk, line width=0.7pt},
+  pics/ic camera/.style={code={
+    \draw[ds ic, fill=iconInk!8] (-2.2,2.0) -- (-1.4,3.0) -- (0.4,3.0) -- (1.2,2.0) -- cycle;
+    \draw[ds ic, fill=iconInk!8, rounded corners=1.2] (-4,-2.6) rectangle (4,2.4);
+    \draw[ds ic, fill=white] (0,-0.1) circle (1.7);
+    \draw[ds ic] (0,-0.1) circle (0.8);
+    \fill[iconInk] (2.7,1.4) circle (0.3);
+  }},
+  pics/ic tag/.style={code={
+    \fill[iconInk] (-3.4,-3.4) rectangle (3.4,3.4);
+    \fill[white] (-2.3,-2.3) rectangle (2.3,2.3);
+    \fill[iconInk] (-2.3,0.9) rectangle (-0.6,2.3);
+    \fill[iconInk] (0.0,-2.3) rectangle (1.2,-0.4);
+    \fill[iconInk] (0.6,0.6) rectangle (2.3,1.5);
+    \fill[iconInk] (-2.3,-2.3) rectangle (-1.3,-1.0);
+  }},
+  pics/ic chip/.style={code={
+    \draw[ds ic, fill=iconInk!8, rounded corners=1] (-2.7,-2.7) rectangle (2.7,2.7);
+    \draw[ds ic, fill=white, rounded corners=0.6] (-1.3,-1.3) rectangle (1.3,1.3);
+    \foreach \y in {-1.6,0,1.6}{
+      \draw[ds ic] (-2.7,\y) -- (-3.7,\y);
+      \draw[ds ic] (2.7,\y) -- (3.7,\y);}
+    \foreach \x in {-1.6,0,1.6}{
+      \draw[ds ic] (\x,2.7) -- (\x,3.7);
+      \draw[ds ic] (\x,-2.7) -- (\x,-3.7);}
+  }},
+  pics/ic wifi/.style={code={
+    \fill[iconInk] (0,-2.8) circle (0.5);
+    \draw[ds ic] (-1.8,-1.4) arc (200:-20:1.9);
+    \draw[ds ic] (-3.0,-0.4) arc (205:-25:3.2);
+    \draw[ds ic] (-4.1,0.6) arc (208:-28:4.4);
+  }},
+  pics/ic gear/.style={code={
+    \draw[ds ic, fill=iconInk!8] (0,0) circle (2.2);
+    \foreach \a in {0,45,...,315}{ \draw[line width=1.3pt, iconInk] (\a:2.2) -- (\a:3.1); }
+    \draw[ds ic, fill=white] (0,0) circle (1.0);
+  }},
+  pics/ic disk/.style={code={
+    \draw[ds ic, fill=iconInk!8] (-3,2.3) -- (-3,-2.3) arc (180:360:3 and 1.0) -- (3,2.3);
+    \draw[ds ic, fill=white] (0,2.3) ellipse (3 and 1.0);
+    \draw[ds ic] (-3,0.2) arc (180:360:3 and 1.0);
+  }},
+  pics/ic wheel/.style={code={
+    \draw[ds ic, fill=iconInk!8] (0,0) circle (2.9);
+    \draw[ds ic, fill=white] (0,0) circle (1.0);
+    \foreach \a in {0,60,...,300}{ \draw[ds ic] (\a:1.0) -- (\a:2.9); }
+  }},
+  pics/ic board/.style={code={
+    \draw[ds ic, fill=iconInk!8, rounded corners=0.8] (-3.6,-2.8) rectangle (3.6,2.8);
+    \draw[ds ic, fill=white] (-1.4,-1.2) rectangle (1.4,1.4);
+    \foreach \x in {-3.0,-2.4,-1.8}{ \fill[iconInk] (\x,2.2) circle (0.28); }
+    \fill[iconInk] (2.6,-2.0) circle (0.3);
+    \fill[iconInk] (2.6,2.0) circle (0.3);
+  }},
+  pics/ic crop/.style={code={
+    \draw[line width=1.1pt, iconInk] (-3,3) -- (-1.6,3) (-3,3) -- (-3,1.6);
+    \draw[line width=1.1pt, iconInk] (3,3) -- (1.6,3) (3,3) -- (3,1.6);
+    \draw[line width=1.1pt, iconInk] (-3,-3) -- (-1.6,-3) (-3,-3) -- (-3,-1.6);
+    \draw[line width=1.1pt, iconInk] (3,-3) -- (1.6,-3) (3,-3) -- (3,-1.6);
+    \fill[iconInk] (0,0) circle (0.5);
+  }},
+  pics/ic grid/.style={code={
+    \draw[ds ic, fill=iconInk!8] (-3,-3) rectangle (3,3);
+    \draw[ds ic] (-1,-3) -- (-1,3) (1,-3) -- (1,3) (-3,-1) -- (3,-1) (-3,1) -- (3,1);
+    \fill[iconInk] (-3,3) rectangle (-1.8,1.8);
+  }},
+  pics/ic human/.style={code={
+    \draw[ds ic, fill=iconInk!8] (0,2.1) circle (1.2);
+    \draw[ds ic, fill=iconInk!8] (-2.4,-3.2) -- (-1.6,0.2) -- (1.6,0.2) -- (2.4,-3.2) -- cycle;
+  }},
+  pics/ic deploy/.style={code={
+    \draw[ds ic, fill=iconInk!8, rounded corners=0.8] (1.2,-3) rectangle (3.6,3);
+    \draw[ds ic] (2.4,-2.2) -- (2.4,2.2);
+    \draw[line width=1.3pt, iconInk, -{Stealth[length=2mm]}] (-3.8,0) -- (0.4,0);
+  }},
+  pics/ic file/.style={code={
+    \draw[ds ic, fill=iconInk!8] (-2.4,-3.2) -- (-2.4,3.2) -- (1.2,3.2) -- (2.6,1.8) -- (2.6,-3.2) -- cycle;
+    \draw[ds ic, fill=white] (1.2,3.2) -- (1.2,1.8) -- (2.6,1.8);
+    \draw[ds ic] (-1.4,0.6) -- (1.6,0.6) (-1.4,-0.6) -- (1.6,-0.6) (-1.4,-1.8) -- (0.6,-1.8);
+  }},
+}
+%% Inline icon: \dsicon{ic camera} — renders a small fixed-height glyph.
+%% \resizebox forces the height so the pic's internal coordinates don't matter.
+\newcommand{\dsicon}[1]{%
+  \raisebox{-0.2ex}{\resizebox{!}{4mm}{%
+    \begin{tikzpicture}\pic{#1};\end{tikzpicture}}}}
+%% -------------------------------------------------------------------------
 
 %% ***************** (Your) Packages (End) *******************
 
